@@ -576,16 +576,31 @@ function stepDrips(now,dt){
   }
 }
 
-let down=false,lx=0,ly=0,acc=0,dist=0;
+let down=false,lx=0,ly=0,acc=0,dist=0,pend=null;
 const pt=e=>[e.clientX*Q,e.clientY*Q+sy];   // screen position -> page position
 const skip=e=>e.target.closest&&e.target.closest('.menu,.time,.rail,a,button,input,video,.screens,.final,.zoomable,.no-draw');   // clicks on controls and links shouldn't leave a mark
 
+// TOUCH SCREENS: a finger that lands on the page is usually about to scroll, not draw. So on touch:
+//   - only the top "window" (the hero) can be drawn on, the rest of the page just scrolls
+//   - a stroke only starts once the finger has clearly moved SIDEWAYS; anything mostly up/down is treated as a scroll
+// (mouse and pen draw instantly, anywhere, as before)
+const heroEl=document.querySelector('.hero');
+const inHero=e=>{if(!heroEl)return false;const r=heroEl.getBoundingClientRect();return e.clientY>=r.top&&e.clientY<=r.bottom};
+function begin(x,y){down=true;acc=dist=0;[lx,ly]=pt({clientX:x,clientY:y});seg(lx,ly,lx+.01,ly);document.body.classList.add('drawn')}
+
 document.addEventListener('pointerdown',e=>{
   if(skip(e)||e.button>0)return;                  // primary button / touch / pen only
-  down=true;acc=dist=0;[lx,ly]=pt(e);seg(lx,ly,lx+.01,ly);
-  document.body.classList.add('drawn');
+  if(e.pointerType==='touch'){pend=inHero(e)?{x:e.clientX,y:e.clientY,id:e.pointerId}:null;return}   // wait to see which way the finger goes
+  begin(e.clientX,e.clientY);
 });
 document.addEventListener('pointermove',e=>{
+  if(pend&&e.pointerId===pend.id){
+    const dx=e.clientX-pend.x,dy=e.clientY-pend.y;
+    if(Math.hypot(dx,dy)<10)return;               // not enough movement to tell yet
+    const o=pend;pend=null;
+    if(Math.abs(dy)>Math.abs(dx)*.8)return;       // mostly up/down: that's a scroll, leave it alone
+    begin(o.x,o.y);                               // sideways: start drawing from where the finger first landed
+  }
   if(!down)return;
   if(!e.buttons){down=false;return}               // button released outside the window: stop drawing
   const evs=(e.getCoalescedEvents&&e.getCoalescedEvents())||[];
@@ -596,8 +611,8 @@ document.addEventListener('pointermove',e=>{
     lx=x;ly=y;
   }
 });
-['pointerup','pointercancel'].forEach(n=>document.addEventListener(n,()=>{down=false}));
-addEventListener('blur',()=>{down=false});
+['pointerup','pointercancel'].forEach(n=>document.addEventListener(n,()=>{down=false;pend=null}));
+addEventListener('blur',()=>{down=false;pend=null});
 
 // BREATH: hold Shift and move the mouse over the page to fog the glass up, like breathing on a window.
 // The fog covers up the clear marks (drawings, title) under it, then slowly evaporates and they come back.

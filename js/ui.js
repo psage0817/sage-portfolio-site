@@ -58,6 +58,8 @@ if(time){
 /* ---------- touch screens: the case study's "hover" hint doesn't apply, and cards un-blur as they reach the middle of the screen ---------- */
 if(!fine){
   const hh=$('.hint-hover');hh&&hh.remove();
+  const dh=$('.hero .hint');                      // tell people how drawing works on a touch screen
+  if(dh&&dh.firstChild&&dh.firstChild.nodeType===3)dh.firstChild.nodeValue='swipe sideways to draw on the window';
   if('IntersectionObserver'in window){
     const cio=new IntersectionObserver(es=>es.forEach(e=>e.target.classList.toggle('clear',e.isIntersecting)),{rootMargin:'-30% 0px -30% 0px'});
     $$('.card').forEach(c=>cio.observe(c));
