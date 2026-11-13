@@ -32,20 +32,36 @@ if(menu){
   home();addEventListener('resize',home);document.fonts&&document.fonts.ready.then(home);
 }
 
-/* ---------- 2. time chip: hover (or tap the sun) opens the slider; the little hint fades once used ---------- */
+/* ---------- 2. time chip: hover (mouse) or tap (touch) opens the slider; the little hint fades once used ---------- */
 const time=$('.time'),hint=$('#timehint');
 if(time){
   const seen=()=>{try{return sessionStorage.getItem('sp-time-hint')}catch(_){return null}};
   const used=()=>{hint&&hint.classList.add('gone');try{sessionStorage.setItem('sp-time-hint','1')}catch(_){}};
+  const setOpen=v=>{time.classList.toggle('open',v);document.body.classList.toggle('time-open',v)};
   if(hint){
     if(seen())hint.classList.add('gone');
-    if(!fine)hint.querySelector('span').textContent='tap the sun to change the sky';
+    if(!fine){
+      hint.querySelector('span').textContent='tap to change the sky';
+      addEventListener('scroll',()=>{if(scrollY>120)hint.classList.add('gone')},{passive:true});   // a one-time nudge: it steps aside once you scroll
+    }
   }
   time.addEventListener('pointerenter',used);
   time.addEventListener('focusin',used);
-  const sun=$('.time-sun',time);
-  sun&&sun.addEventListener('click',()=>{if(!fine){time.classList.toggle('open');used()}});
-  document.addEventListener('pointerdown',e=>{if(!fine&&!time.contains(e.target))time.classList.remove('open')});
+  // touch: tap the chip to open or close it (taps on the slider / live button just use them)
+  time.addEventListener('click',e=>{
+    if(fine||e.target.closest('.time-extra'))return;
+    setOpen(!time.classList.contains('open'));used();
+  });
+  document.addEventListener('pointerdown',e=>{if(!fine&&!time.contains(e.target))setOpen(false)});
+}
+
+/* ---------- touch screens: the case study's "hover" hint doesn't apply, and cards un-blur as they reach the middle of the screen ---------- */
+if(!fine){
+  const hh=$('.hint-hover');hh&&hh.remove();
+  if('IntersectionObserver'in window){
+    const cio=new IntersectionObserver(es=>es.forEach(e=>e.target.classList.toggle('clear',e.isIntersecting)),{rootMargin:'-30% 0px -30% 0px'});
+    $$('.card').forEach(c=>cio.observe(c));
+  }
 }
 
 /* ---------- 3. cards: tilt toward the cursor + a light that follows it ---------- */

@@ -287,7 +287,7 @@ function build(h){
 
   // time chip: "it is 5:34 PM in my timezone" (or the previewed time while scrubbing)
   const mins=Math.floor(h*60)%1440,hr=Math.floor(mins/60),mn=mins%60,clock=`${(hr%12)||12}:${String(mn).padStart(2,'0')} ${hr<12?'AM':'PM'}`;
-  if(tl)tl.textContent=live?`it is ${clock} in my timezone`:`previewing ${clock}`;
+  if(tl)tl.innerHTML=live?`<span class="t-pre">it is </span><b>${clock}</b><span class="t-post"> in my timezone</span>`:`<span class="t-pre">previewing </span><b>${clock}</b>`;
   if(live&&tin)tin.value=mins;
   // colours the page's glass panels follow as the sky changes (light and milky by day, deep navy at night)
   const N=s.l,rt=document.documentElement.style;
