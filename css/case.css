@@ -37,7 +37,8 @@
 .himg-logo{background:linear-gradient(160deg,rgba(70,80,126,.92),rgba(34,40,84,.94));display:grid;place-items:center}
 .himg-logo img{height:98%;width:auto;object-fit:contain;filter:drop-shadow(0 22px 40px rgba(0,0,0,.3));transform:translate(calc((var(--px,.5) - .5)*22px),calc((var(--py,.5) - .5)*22px));transition:transform .5s var(--ease)}
 .himg-logo:hover img{transform:translate(calc((var(--px,.5) - .5)*36px),calc((var(--py,.5) - .5)*36px)) scale(1.05) rotate(-1.5deg)}
-.himg-fan{background:linear-gradient(160deg,rgba(70,80,126,.92),rgba(34,40,84,.94))}
+.himg-fan{background:#2a2a50}
+/* .himg-fan{background:linear-gradient(160deg,rgba(70,80,126,.92),rgba(34,40,84,.94))} */
 .himg-fan::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity .35s;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.28),transparent 50%)}
 .himg-fan:hover::before{opacity:1}
 .himg-fan img{position:absolute;bottom:-3%;width:31%;height:auto;border-radius:6%;box-shadow:0 22px 50px rgba(5,12,40,.45);transition:transform .7s var(--ease)}
