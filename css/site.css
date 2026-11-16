@@ -32,7 +32,7 @@
 :root {
   --sans: 'Alte Haas Grotesk', 'AlteHaasGrotesk', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --script: 'Ashton', 'P22 Ashton', 'Ashton Script', 'Beth Ellen', cursive;
-  --hand: 'Le Jardin du Bonheur', 'LeJardinduBonheur', 'Ashton', 'P22 Ashton', 'Beth Ellen', cursive;
+  --hand: 'Le Jardin Du Bonheur', 'LeJardinDuBonheur', 'Ashton', 'P22 Ashton', 'Beth Ellen', cursive;
 
   /* the sticky note: paper colour, tilt, and how much to thin the handwriting */
   --note-paper: #FBF2CF;
@@ -196,6 +196,26 @@ input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius
 .sk-near-line { stroke: var(--sk-near); fill: none; }
 .sk-water { fill: var(--sk-water); }
 .sk-refl { fill: var(--sk-refl); opacity: var(--sk-refl-op, .3); }
+/* the san diego coast */
+.sk-ocean { fill: var(--sk-ocean); }
+.sk-cliff { fill: var(--sk-cliff); }
+.sk-gully { fill: var(--sk-gully); }
+.sk-strata { stroke: #FFF4E0; stroke-width: 3; fill: none; opacity: calc(var(--sk-foam-op, .5) * .22); }
+.sk-pine { fill: var(--sk-pine); }
+.sk-pine-line { stroke: var(--sk-pine); fill: none; }
+.sk-sand { fill: var(--sk-sand); }
+.sk-wet { fill: var(--sk-wet); }
+.sk-foam { stroke: #fff; stroke-width: 2; fill: none; opacity: var(--sk-foam-op, .5); }
+.sk-dots { fill: #FFD9A0; opacity: var(--sk-lit-op, 0); }
+.sk-birds { stroke: var(--sk-near); stroke-width: 1.3; stroke-linecap: round; fill: none; }
+.sk-wave { stroke: var(--sk-refl); fill: none; stroke-linecap: round; }
+.sk-wash { fill: #fff; opacity: calc(var(--sk-foam-op, .5) * .35); }
+.sk-sheen { stroke: #fff; stroke-width: 1.2; fill: none; opacity: calc(var(--sk-foam-op, .5) * .45); }
+.sk-ridge { stroke: var(--sk-cliff-top); stroke-width: 1.2; fill: none; opacity: .55; }
+.sk-scrub { fill: var(--sk-scrub); }
+.sk-scrub-dark { fill: var(--sk-scrub-dark); }
+.sk-pine-lite { fill: var(--sk-pine-lite); }
+.sk-sand-deep { fill: var(--sk-sand-deep); }
 .sky-fog { position: absolute; inset: 0; width: 100%; height: 100%; cursor: crosshair; }
 .window.is-drawing { -webkit-user-select: none; user-select: none; }
 
@@ -208,15 +228,23 @@ input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius
   width: 244px; pointer-events: none;
 }
 .note-tape {
-  position: absolute; z-index: 1; left: 50%; top: -13px; width: 92px; height: 26px; margin-left: -46px;
-  background: rgba(255, 255, 255, 0.55);
-  -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+  position: absolute; z-index: 1; left: 50%; top: -13px; width: 94px; height: 26px; margin-left: -47px;
+  /* matte tape: faint streaks along its length, a little grit, and torn ends */
+  background-color: rgba(250, 248, 240, 0.5);
+  background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9 .012' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  .9 0 0 0 -.3'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23t)'/%3E%3C/svg%3E"), url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5  0 0 0 0 .5  0 0 0 0 .55  .6 0 0 0 -.38'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23s)'/%3E%3C/svg%3E");
+  -webkit-backdrop-filter: blur(2.5px) saturate(115%); backdrop-filter: blur(2.5px) saturate(115%);
+  clip-path: polygon(3% 0, 97% 0, 100% 14%, 96% 27%, 99% 41%, 97% 55%, 100% 70%, 96% 84%, 98% 100%, 2% 100%, 0 86%, 3% 72%, 0 58%, 3% 44%, 1% 30%, 4% 16%, 0 4%);
   transform: rotate(-4deg); transition: opacity .8s ease;
 }
 .note {
   padding: 30px 26px 28px;
-  background: var(--note-paper);
-  box-shadow: 0 1px 1px rgba(60, 50, 20, 0.08), 0 14px 20px -12px rgba(30, 36, 70, 0.45);
+  /* paper: fine grain and soft fibre, multiplied into the paper colour so it works for any shade */
+  background-color: var(--note-paper);
+  background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32  0 0 0 0 .25  0 0 0 0 .14  .32 0 0 0 -.13'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23g)'/%3E%3C/svg%3E"), url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.018 .045' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .4  0 0 0 0 .3  0 0 0 0 .15  .2 0 0 0 -.08'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23m)'/%3E%3C/svg%3E");
+  background-size: 180px 180px, 320px 320px;
+  background-blend-mode: multiply, multiply;
+  /* the shadow sits further out at the bottom right, as if that corner is lifting a little */
+  box-shadow: 0 1px 1px rgba(60, 50, 20, 0.1), 5px 14px 18px -12px rgba(30, 36, 70, 0.5);
   font-family: var(--hand); font-size: 22px; font-weight: 300; font-synthesis: none;
   /* a hairline of paper colour around each letter makes the strokes a touch thinner */
   -webkit-text-stroke: var(--note-thin) var(--note-paper);
@@ -242,7 +270,7 @@ input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius
   height: 1.35em; overflow: hidden; white-space: nowrap;
   transition: width .7s cubic-bezier(.2, .7, .2, 1);
 }
-.rot .w { display: inline-block; white-space: nowrap; font-weight:50;}
+.rot .w { display: inline-block; white-space: nowrap; font-weight: 600;}
 .rot.is-live .w {
   position: absolute; left: 0; top: 0;
   transition: transform .7s cubic-bezier(.2, .7, .2, 1), opacity .55s ease;

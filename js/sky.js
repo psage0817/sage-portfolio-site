@@ -9,6 +9,11 @@
 (function () {
   'use strict';
 
+  // how far the san diego coast is raised in the window, in drawing units (the window is 540 tall):
+  // a little on wide screens, more on tall phone screens, so the headline always sits on sand
+  var COAST_LIFT_WIDE = 95;
+  var COAST_LIFT_TALL = 165;
+
   var CITIES = {
     sd: { name: 'san diego', tz: 'America/Los_Angeles' },
     stl: { name: 'st. louis', tz: 'America/Chicago' }
@@ -116,11 +121,185 @@
       s += 'M' + f1(b[0] - 7 * q) + ' ' + (b[1] + 2) + 'h' + f1(28 * q) + 'l' + f1(-5 * q) + ' ' + f1(6 * q) + 'h' + f1(-18 * q) + 'z';
     });
     G.boats = s;
+
+    /* ---- san diego: the coast at torrey pines, looking toward la jolla ----
+       drawn with smooth, slightly wandering lines so nothing reads as a flat block */
+    function wander(x0, x1, step, base, a1, a2, a3) {
+      var pts = [], q1 = R() * 6.28, q2 = R() * 6.28, q3 = R() * 6.28;
+      for (var x = x0; x <= x1 + 0.01; x += step) {
+        pts.push([x, base(x) + a1 * Math.sin(x / 53 + q1) + a2 * Math.sin(x / 19 + q2) + a3 * Math.sin(x / 7.3 + q3)]);
+      }
+      return pts;
+    }
+    // a smooth curve through points (catmull-rom turned into beziers)
+    function curve(pts, move) {
+      var d = (move === false ? 'L' : 'M') + f1(pts[0][0]) + ' ' + f1(pts[0][1]);
+      for (var j = 0; j < pts.length - 1; j++) {
+        var p0 = pts[j - 1] || pts[j], p1 = pts[j], p2 = pts[j + 1], p3 = pts[j + 2] || p2;
+        d += 'C' + f1(p1[0] + (p2[0] - p0[0]) / 6) + ' ' + f1(p1[1] + (p2[1] - p0[1]) / 6) + ' ' +
+          f1(p2[0] - (p3[0] - p1[0]) / 6) + ' ' + f1(p2[1] - (p3[1] - p1[1]) / 6) + ' ' + f1(p2[0]) + ' ' + f1(p2[1]);
+      }
+      return d;
+    }
+    function ell(cx, cy, rx, ry) { return 'M' + f1(cx - rx) + ' ' + f1(cy) + 'a' + f1(rx) + ' ' + f1(ry) + ' 0 1 0 ' + f1(2 * rx) + ' 0a' + f1(rx) + ' ' + f1(ry) + ' 0 1 0 ' + f1(-2 * rx) + ' 0z'; }
+
+    // la jolla in two layers: the far hills fade into the sea haze, the nearer point is a little clearer
+    G.headFar = curve(wander(0, 500, 10, function (x) { return 318 - 42 * Math.pow(Math.max(0, 1 - x / 500), 0.55); }, 3, 1.3, 0.4)) + 'L500 318L0 318Z';
+    G.headNear = curve(wander(0, 330, 8, function (x) { return 318 - 16 * Math.pow(Math.max(0, 1 - x / 330), 0.8); }, 1.6, 0.8, 0.4)) + 'L330 318L0 318Z';
+    s = '';
+    for (i = 0; i < 34; i++) { var hx0 = 6 + R() * 300, hy0 = 300 + R() * 15 + (hx0 / 300) * 4; s += 'M' + f1(hx0) + ' ' + f1(hy0) + 'h1.6v1.6h-1.6z'; }
+    G.headlandLights = s;
+
+    // waves: lots of small strokes, finer and denser toward the horizon
+    var wThin = '', wMid = '', wWide = '';
+    for (i = 0; i < 190; i++) {
+      var t = Math.pow(R(), 1.7);
+      var wy = 322 + t * 120, len = 3 + t * 30 * (0.5 + R()), wx = R() * 1200, bow = -0.4 - t * 1.2;
+      var seg = 'M' + f1(wx) + ' ' + f1(wy) + 'q' + f1(len / 2) + ' ' + f1(bow) + ' ' + f1(len) + ' 0';
+      if (t < 0.3) wThin += seg; else if (t < 0.65) wMid += seg; else wWide += seg;
+    }
+    G.wavesThin = wThin; G.wavesMid = wMid; G.wavesWide = wWide;
+
+    // scripps pier, in perspective: wider and closer on the left, narrowing toward the lab at the end
+    var legs = '', legRefl = '';
+    for (k = 0; k <= 30; k++) {
+      var pt = k / 30, lx = 300 + 312 * pt, ly = 394 - 14 * pt, ll = 22 - 9 * pt;
+      legs += 'M' + f1(lx) + ' ' + f1(ly) + 'V' + f1(ly + ll);
+      legRefl += 'M' + f1(lx) + ' ' + f1(ly + ll + 1) + 'v' + f1(6 - 3 * pt);
+    }
+    G.pierLegs = legs; G.pierRefl = legRefl;
+    G.pierDeck = 'M298 391.6L612 378.4L612 380.2L298 394.4Z';
+    G.pierRail = 'M298 389L612 376.6';
+    G.pierHouse = 'M600 368.5h34v10.5h-34z M603 364.5h26l2 4h-30z';
+    s = '';
+    for (k = 1; k < 9; k++) { var lpx = 300 + k * 34, lpy = 392 - k * 34 * (14 / 312) - 5; s += 'M' + f1(lpx) + ' ' + f1(lpy) + 'h1.8v1.8h-1.8z'; }
+    G.pierLights = s + 'M605 371h3v3h-3z M615 371h3v3h-3z M625 371h3v3h-3z';
+
+    // the shoreline: wavering foam, a wash of surf, wet sand, then dry sand
+    var foamA = wander(-10, 1210, 8, function () { return 446; }, 2.2, 1.1, 0.5);
+    var foamB = wander(-10, 1210, 8, function () { return 439; }, 1.6, 0.9, 0.4);
+    var foamC = wander(-10, 1210, 8, function () { return 452; }, 1.4, 0.7, 0.3);
+    G.foamA = curve(foamA); G.foamB = curve(foamB); G.foamC = curve(foamC);
+    G.wash = curve(foamA) + curve(foamC.slice().reverse(), false) + 'Z';
+    var wetTop = wander(-10, 1210, 10, function () { return 453; }, 1.2, 0.6, 0.3);
+    var wetBot = wander(-10, 1210, 10, function () { return 468; }, 2.4, 1.2, 0.5);
+    G.wet = curve(wetTop) + curve(wetBot.slice().reverse(), false) + 'Z';
+    G.sheen = curve(wander(-10, 1210, 12, function () { return 459; }, 1.6, 0.8, 0.3));
+    G.sand = curve(wetBot) + 'L1210 545L-10 545Z';
+
+    // the torrey pines bluffs: a wandering top edge, soft gullies, scrub along the top
+    var top = [[684,474],[704,452],[722,424],[740,384],[758,352],[776,328],[798,300],[822,284],[858,274],[905,264],[950,258],[1000,252],[1040,248],[1090,244],[1140,240],[1200,236]];
+    function topY(x) {
+      for (var j = 0; j < top.length - 1; j++) {
+        if (x >= top[j][0] && x <= top[j + 1][0]) { var u = (x - top[j][0]) / (top[j + 1][0] - top[j][0]); return top[j][1] + (top[j + 1][1] - top[j][1]) * u; }
+      }
+      return 236;
+    }
+    var edge = wander(684, 1210, 6, topY, 1.2, 1.4, 0.8);
+    var base = wander(684, 1210, 12, function () { return 471; }, 1, 0.8, 0.4).reverse();
+    G.bluff = curve(edge) + curve(base, false) + 'Z';
+    var gul = '', ridge = '';
+    for (var gx = 752; gx < 1196; gx += 16 + R() * 34) {
+      var gt = topY(gx) + 5 + R() * (R() < 0.3 ? 80 : 16), bot = 470;
+      var w0 = 1.2 + R() * 2.5, w1 = 5 + R() * 15, lean = (R() - 0.5) * 16;
+      var L = [], Rr = [];
+      for (var st = 0; st <= 6; st++) {
+        var f = st / 6, yy = gt + (bot - gt) * f, ww = w0 + (w1 - w0) * Math.pow(f, 1.4), jx = (R() - 0.5) * 3;
+        L.push([gx + lean * f - ww + jx, yy]); Rr.push([gx + lean * f + ww * 0.7 + jx, yy]);
+      }
+      gul += curve(L) + curve(Rr.slice().reverse(), false) + 'Z';
+      if (R() < 0.6) ridge += curve(Rr.map(function (q) { return [q[0] + 1.6, q[1]]; }));
+    }
+    G.gullies = gul; G.ridges = ridge;
+    var scrub = '', scrubDark = '';
+    edge.forEach(function (q, n) {
+      if (q[0] < 790) return;
+      for (var c2 = 0; c2 < 2; c2++) {
+        if (R() < 0.25) continue;
+        scrub += ell(q[0] + (R() - 0.5) * 6, q[1] - 0.6 - R() * 1.2, 1.8 + R() * 2.6, 0.9 + R() * 1.3);
+      }
+      if (R() < 0.5) scrubDark += ell(q[0] + (R() - 0.5) * 6, q[1] + 0.6, 1.4 + R() * 2, 0.7 + R() * 0.9);
+    });
+    G.scrub = scrub; G.scrubDark = scrubDark;
+
+    // torrey pines: tapering trunks, a side branch, and crowns built from many small clumps
+    function limb(x0, y0, cx, cy, x1, y1, w0, w1) {
+      var Lp = [], Rp = [];
+      for (var st = 0; st <= 10; st++) {
+        var u = st / 10, iu = 1 - u;
+        var px = iu * iu * x0 + 2 * iu * u * cx + u * u * x1, py = iu * iu * y0 + 2 * iu * u * cy + u * u * y1;
+        var dx = 2 * iu * (cx - x0) + 2 * u * (x1 - cx), dy = 2 * iu * (cy - y0) + 2 * u * (y1 - cy), dl = Math.hypot(dx, dy) || 1;
+        var w = (w0 + (w1 - w0) * u) / 2;
+        Lp.push([px - dy / dl * w, py + dx / dl * w]); Rp.push([px + dy / dl * w, py - dx / dl * w]);
+      }
+      return curve(Lp) + curve(Rp.reverse(), false) + 'Z';
+    }
+    function pine(x, y, lean, sc) {
+      var tx = x + lean, ty = y - 72 * sc;
+      var wood = limb(x, y, x + lean * 0.15, y - 40 * sc, tx, ty, 7 * sc, 2.2 * sc) +
+        limb(x + lean * 0.3, y - 36 * sc, x + lean * 0.3 + 20 * sc, y - 46 * sc, x + lean * 0.3 + 40 * sc, y - 54 * sc, 2.6 * sc, 1 * sc) +
+        limb(tx - 2, ty + 6 * sc, tx - 18 * sc, ty + 2 * sc, tx - 32 * sc, ty - 2 * sc, 2 * sc, 0.8 * sc);
+      var dark = '', lite = '';
+      [[-32,-2,30,10],[-4,-12,32,12],[26,-2,26,10],[42,16,18,8],[-14,8,24,8]].forEach(function (c) {
+        var ccx = tx + c[0] * sc, ccy = ty + c[1] * sc;
+        for (var b = 0; b < 34; b++) {
+          var ox = (R() - 0.5) * c[2] * 1.8 * sc, oy = (R() - 0.5) * c[3] * 1.5 * sc;
+          // flatter toward the edges of each clump, like wind-combed needles
+          var edgeF = 1 - Math.min(1, Math.abs(ox) / (c[2] * 0.9 * sc));
+          dark += ell(ccx + ox, ccy + oy, (2 + R() * 3) * sc, (1.1 + R() * 1.4 + edgeF) * sc);
+          if (oy < -1 && R() < 0.3) lite += ell(ccx + ox - 1.2 * sc, ccy + oy - 1.2 * sc, (1.4 + R() * 2) * sc, (0.7 + R() * 0.9) * sc);
+        }
+      });
+      var side = x + lean * 0.3 + 40 * sc, sideY = y - 56 * sc;
+      for (var b2 = 0; b2 < 26; b2++) {
+        var sx = (R() - 0.5) * 32 * sc, sy = (R() - 0.5) * 8 * sc;
+        dark += ell(side + sx, sideY + sy, (1.8 + R() * 2.8) * sc, (1 + R() * 1.6) * sc);
+        if (sy < -1 && R() < 0.3) lite += ell(side + sx - 1, sideY + sy - 1.2, (1.2 + R() * 1.8) * sc, (0.6 + R() * 0.8) * sc);
+      }
+      return { wood: wood, dark: dark, lite: lite };
+    }
+    var p1 = pine(985, topY(985) + 1, -18, 1.12), p2 = pine(1118, topY(1118) + 1, 14, 0.92);
+    G.pineWood = p1.wood + p2.wood;
+    G.pineDark = p1.dark + p2.dark;
+    G.pineLite = p1.lite + p2.lite;
+
+    // a line of brown pelicans gliding along the bluffs
+    s = '';
+    [[520, 226, 1], [544, 231, 0.9], [570, 234, 0.85]].forEach(function (b) {
+      var q = b[2];
+      s += 'M' + b[0] + ' ' + b[1] + 'q' + f1(5 * q) + ' ' + f1(-4.2 * q) + ' ' + f1(10 * q) + ' ' + f1(-0.6 * q) + 'q' + f1(4.5 * q) + ' ' + f1(-3.2 * q) + ' ' + f1(9.5 * q) + ' ' + f1(0.6 * q);
+    });
+    G.pelicans = s;
   })();
 
   var LIT = '<defs><pattern id="lit" width="12" height="16" patternUnits="userSpaceOnUse"><rect x="3" y="4" width="5" height="7" fill="#FFD9A0"/></pattern></defs>';
 
+  // gradients and textures for the coast; their colours come from the time of day (see paint)
+  var COAST_DEFS = '<defs>' +
+    '<linearGradient id="oceanG" gradientUnits="userSpaceOnUse" x1="0" y1="318" x2="0" y2="470">' +
+      '<stop offset="0" style="stop-color:var(--sk-ocean-far)"/><stop offset=".4" style="stop-color:var(--sk-ocean)"/><stop offset="1" style="stop-color:var(--sk-ocean-near)"/></linearGradient>' +
+    '<linearGradient id="hazeG" gradientUnits="userSpaceOnUse" x1="0" y1="262" x2="0" y2="338">' +
+      '<stop offset="0" style="stop-color:var(--sky-bottom);stop-opacity:0"/><stop offset=".72" style="stop-color:var(--sky-bottom);stop-opacity:.6"/><stop offset="1" style="stop-color:var(--sky-bottom);stop-opacity:0"/></linearGradient>' +
+    '<linearGradient id="sandG" gradientUnits="userSpaceOnUse" x1="0" y1="460" x2="0" y2="545">' +
+      '<stop offset="0" style="stop-color:var(--sk-sand)"/><stop offset="1" style="stop-color:var(--sk-sand-deep)"/></linearGradient>' +
+    '<linearGradient id="cliffG" gradientUnits="userSpaceOnUse" x1="0" y1="236" x2="0" y2="474">' +
+      '<stop offset="0" style="stop-color:var(--sk-cliff-top)"/><stop offset="1" style="stop-color:var(--sk-cliff)"/></linearGradient>' +
+    // fine sand grain
+    '<filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3"/>' +
+      '<feColorMatrix values="0 0 0 0 .35  0 0 0 0 .27  0 0 0 0 .16  .55 0 0 0 -.2"/><feComposite in2="SourceAlpha" operator="in"/></filter>' +
+    // weathered sandstone: streaks that run down the cliff face
+    '<filter id="streaks" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".07 .007" numOctaves="3" seed="8"/>' +
+      '<feColorMatrix values="0 0 0 0 .3  0 0 0 0 .2  0 0 0 0 .12  .85 0 0 0 -.3"/><feComposite in2="SourceAlpha" operator="in"/></filter>' +
+    '<filter id="soft" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation=".8"/></filter>' +
+    '</defs>';
+
+  function coastLift() {
+    var r = hero.getBoundingClientRect();
+    return r.width && r.width / r.height < 1 ? COAST_LIFT_TALL : COAST_LIFT_WIDE;
+  }
+
   function heroScene(city) {
+    var COAST_LIFT = coastLift();
     var s = LIT + '<path class="sk-stars" d="' + G.stars + '"/>';
     if (city === 'stl') {
       s += '<path class="sk-far" d="' + G.stlFar + '"/><path class="sk-lit" d="' + G.stlFar + '"/>' +
@@ -129,13 +308,37 @@
         '<rect class="sk-near" x="0" y="470" width="1200" height="22"/><path class="sk-near" d="' + G.trees + '"/>' +
         '<rect class="sk-water" x="0" y="490" width="1200" height="50"/><path class="sk-refl" d="' + G.stlRefl + '"/>';
     } else {
-      s += '<path class="sk-far" d="M760 452C860 420 1010 404 1200 416L1200 452Z"/>' +
-        '<path class="sk-far" d="' + G.sdFar + '"/><path class="sk-lit" d="' + G.sdFar + '"/>' +
-        '<rect class="sk-water" x="0" y="452" width="1200" height="88"/><path class="sk-refl" d="' + G.sdRefl + '"/>' +
-        '<path class="sk-near" d="' + G.boats + '"/>' +
-        '<path class="sk-near-line" style="stroke-width:5" d="' + G.piers + '"/>' +
-        '<path class="sk-near-line" style="stroke-width:8" d="M400 504Q800 330 1240 428"/>' +
-        '<path class="sk-near-line" style="stroke-width:6;stroke-linecap:round" d="' + G.palms + '"/>';
+      // the coast is lifted so the headline sits over open sand; see COAST_LIFT_WIDE / _TALL at the top
+      s += COAST_DEFS +
+        '<rect class="sk-sand-deep" x="0" y="' + (540 - COAST_LIFT - 12) + '" width="1200" height="' + (COAST_LIFT + 12) + '"/>' +
+        '<rect fill="#000" filter="url(#grain)" x="0" y="' + (540 - COAST_LIFT - 12) + '" width="1200" height="' + (COAST_LIFT + 12) + '"/>' +
+        '<g transform="translate(0 ' + (-COAST_LIFT) + ')">' +
+        '<rect fill="url(#oceanG)" x="0" y="318" width="1200" height="152"/>' +
+        '<path class="sk-wave" style="stroke-width:.7;opacity:calc(var(--sk-refl-op) * 1.1)" d="' + G.wavesThin + '"/>' +
+        '<path class="sk-wave" style="stroke-width:1.1;opacity:calc(var(--sk-refl-op) * .85)" d="' + G.wavesMid + '"/>' +
+        '<path class="sk-wave" style="stroke-width:1.6;opacity:calc(var(--sk-refl-op) * .6)" d="' + G.wavesWide + '"/>' +
+        '<path class="sk-far" style="opacity:.75" d="' + G.headFar + '"/>' +
+        '<rect fill="url(#hazeG)" x="0" y="262" width="1200" height="76"/>' +
+        '<path class="sk-far" d="' + G.headNear + '"/><path class="sk-dots" d="' + G.headlandLights + '"/>' +
+        '<path class="sk-wave" style="stroke-width:1;opacity:calc(var(--sk-refl-op) * .5)" d="' + G.pierRefl + '"/>' +
+        '<path class="sk-near-line" style="stroke-width:1.1" d="' + G.pierLegs + '"/>' +
+        '<path class="sk-near" d="' + G.pierDeck + '"/><path class="sk-near-line" style="stroke-width:.8" d="' + G.pierRail + '"/>' +
+        '<path class="sk-near" d="' + G.pierHouse + '"/><path class="sk-dots" d="' + G.pierLights + '"/>' +
+        '<path class="sk-foam" style="stroke-width:1;opacity:calc(var(--sk-foam-op) * .6)" d="' + G.foamB + '"/>' +
+        '<path class="sk-wash" d="' + G.wash + '"/>' +
+        '<path class="sk-foam" style="stroke-width:1.6" d="' + G.foamA + '"/>' +
+        '<path class="sk-foam" style="stroke-width:.9;opacity:calc(var(--sk-foam-op) * .7)" d="' + G.foamC + '"/>' +
+        '<path class="sk-wet" d="' + G.wet + '"/>' +
+        '<path class="sk-sheen" d="' + G.sheen + '"/>' +
+        '<path fill="url(#sandG)" d="' + G.sand + '"/><path fill="#000" filter="url(#grain)" d="' + G.sand + '"/>' +
+        '<path fill="url(#cliffG)" d="' + G.bluff + '"/><path fill="#000" filter="url(#streaks)" d="' + G.bluff + '"/>' +
+        '<path class="sk-gully" filter="url(#soft)" d="' + G.gullies + '"/>' +
+        '<path class="sk-ridge" d="' + G.ridges + '"/>' +
+        '<path class="sk-scrub" d="' + G.scrub + '"/><path class="sk-scrub-dark" d="' + G.scrubDark + '"/>' +
+        '<path class="sk-pine" d="' + G.pineWood + '"/>' +
+        '<path class="sk-pine" d="' + G.pineDark + '"/><path class="sk-pine-lite" d="' + G.pineLite + '"/>' +
+        '<path class="sk-birds" d="' + G.pelicans + '"/>' +
+        '</g>';
     }
     return s;
   }
@@ -146,11 +349,14 @@
     if (city === 'stl') {
       s += '<path fill="#1A2852" d="' + G.stlFar + '"/><path fill="url(#lit)" opacity=".35" d="' + G.stlFar + '"/><path fill="#2E3F70" d="' + G.arch + '"/>';
     } else {
-      s += '<path fill="#141F42" d="M760 452C860 420 1010 404 1200 416L1200 452Z"/>' +
-        '<path fill="#1A2852" d="' + G.sdFar + '"/><path fill="url(#lit)" opacity=".35" d="' + G.sdFar + '"/>' +
-        '<rect fill="#0E1838" x="0" y="452" width="1200" height="88"/><path fill="#FFD69A" opacity=".5" d="' + G.sdRefl + '"/>' +
-        '<path fill="none" stroke="#2E3F70" stroke-width="5" d="' + G.piers + '"/>' +
-        '<path fill="none" stroke="#2E3F70" stroke-width="8" d="M400 504Q800 330 1240 428"/>';
+      s += '<rect fill="#0E1838" x="0" y="318" width="1200" height="222"/>' +
+        '<path fill="none" stroke="#FFD69A" stroke-width=".8" opacity=".35" d="' + G.wavesThin + G.wavesMid + '"/>' +
+        '<path fill="#131D40" d="' + G.headFar + '"/><path fill="#16224A" d="' + G.headNear + '"/><path fill="#FFD9A0" opacity=".85" d="' + G.headlandLights + '"/>' +
+        '<path fill="none" stroke="#24335F" stroke-width="1.1" d="' + G.pierLegs + '"/><path fill="#24335F" d="' + G.pierDeck + G.pierHouse + '"/><path fill="#FFD9A0" d="' + G.pierLights + '"/>' +
+        '<path fill="none" stroke="#3A4C80" stroke-width="1.4" opacity=".6" d="' + G.foamA + G.foamC + '"/>' +
+        '<path fill="#141E40" d="' + G.wet + '"/><path fill="#18234A" d="' + G.sand + '"/>' +
+        '<path fill="#1C2A57" d="' + G.bluff + '"/><path fill="#162248" d="' + G.gullies + '"/><path fill="#141D40" d="' + G.scrub + '"/>' +
+        '<path fill="#0F1733" d="' + G.pineWood + G.pineDark + '"/>';
     }
     return s;
   }
@@ -161,7 +367,7 @@
   function drawCity() {
     heroSvg.innerHTML = heroScene(state.city);
     if (footSvg) {
-      footSvg.setAttribute('viewBox', state.city === 'sd' ? '0 230 1200 280' : '0 200 1200 270');
+      footSvg.setAttribute('viewBox', state.city === 'sd' ? '0 190 1200 320' : '0 200 1200 270');
       footSvg.innerHTML = footScene(state.city);
     }
     document.querySelectorAll('[data-city-name]').forEach(function (el) { el.textContent = CITIES[state.city].name; });
@@ -229,6 +435,21 @@
     st.setProperty('--sk-near', near);
     st.setProperty('--sk-arch', mix('#7C869C', '#D3D9E0', light));
     st.setProperty('--sk-water', mix(sky[1], near, 0.5));
+    st.setProperty('--sk-ocean', mix(sky[1], '#2C6699', 0.55));
+    st.setProperty('--sk-cliff', mix('#3B3650', '#D9B488', light));
+    st.setProperty('--sk-gully', mix('#2A263D', '#B78E64', light));
+    st.setProperty('--sk-pine', mix('#121722', '#495A45', light));
+    st.setProperty('--sk-sand', mix('#2E3045', '#E8D3AE', light));
+    st.setProperty('--sk-wet', mix('#262A40', '#C9B48F', light));
+    st.setProperty('--sk-foam-op', (0.3 + 0.4 * light).toFixed(2));
+    st.setProperty('--sky-bottom', sky[1]);
+    st.setProperty('--sk-ocean-far', mix(sky[1], '#5E86A8', 0.45));
+    st.setProperty('--sk-ocean-near', mix('#17233A', '#245E80', light));
+    st.setProperty('--sk-cliff-top', mix('#4A4560', '#EBCEA3', light));
+    st.setProperty('--sk-sand-deep', mix('#262838', '#D9BF95', light));
+    st.setProperty('--sk-scrub', mix('#161C24', '#7C7D5C', light));
+    st.setProperty('--sk-scrub-dark', mix('#10151C', '#596142', light));
+    st.setProperty('--sk-pine-lite', mix('#1B2331', '#5F7552', light));
     st.setProperty('--sk-refl', mix('#FFFFFF', '#FFD69A', 1 - light));
     st.setProperty('--sk-refl-op', (0.2 + 0.55 * (1 - light)).toFixed(2));
     st.setProperty('--sk-lit-op', ((1 - light) * 0.95).toFixed(2));
@@ -250,7 +471,8 @@
     if (range) range.setAttribute('aria-valuetext', label);
     if (nowBtn) nowBtn.hidden = state.live;
     var view = hero.querySelector('.sky-view');
-    if (view) view.setAttribute('aria-label', 'The ' + city.name + ' skyline at ' + label + ', seen through a fogged window');
+    var scene = state.city === 'sd' ? 'The coast at Torrey Pines, looking toward La Jolla,' : 'The St. Louis riverfront';
+    if (view) view.setAttribute('aria-label', scene + ' at ' + label + ', seen through a fogged window');
 
     fog.retint();
   }
@@ -266,7 +488,7 @@
       f.setTransform(dpr, 0, 0, dpr, 0, 0);
       var L = light; painted = L;
       var base = mix('#2B3554', '#E3E9F1', L), hi = mix('#3E4A70', '#FFFFFF', L), lo = mix('#1E2640', '#C4CEDC', L);
-      f.fillStyle = 'rgba(' + rgb(base) + ',' + (0.45 + 0.06 * L).toFixed(2) + ')';
+      f.fillStyle = 'rgba(' + rgb(base) + ',' + (0.65 + 0.06 * L).toFixed(2) + ')';
       f.fillRect(0, 0, w, h);
       var r = rng(11);
       for (var i = 0; i < 34; i++) {
@@ -429,6 +651,11 @@
 
   drawCity();
   paint();
+  var lastLift = coastLift();
+  window.addEventListener('resize', function () {
+    var l = coastLift();
+    if (l !== lastLift) { lastLift = l; drawCity(); }
+  });
   requestAnimationFrame(fog.init);
   setInterval(function () { if (state.live && !document.hidden) paint(); }, 15000);
   document.addEventListener('visibilitychange', function () { if (!document.hidden && state.live) paint(); });
