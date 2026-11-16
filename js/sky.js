@@ -332,9 +332,30 @@
       last = { x: x, y: y };
       schedule();
     }
-    hero.addEventListener('pointermove', move);
-    hero.addEventListener('pointerdown', move);
-    hero.addEventListener('pointerleave', function () { last = null; });
+    // press and drag to wipe the glass; hold shift while moving to fog it back up
+    var drawing = false;
+    function start(e) {
+      if (e.button !== 0) return;
+      if (e.target.closest('.nav, .time-panel, a, button, input, label')) return;
+      drawing = true; last = null;
+      if (e.pointerType === 'mouse') e.preventDefault(); // don't select the headline while drawing
+      try { hero.setPointerCapture(e.pointerId); } catch (err) {}
+      hero.classList.add('is-drawing');
+      move(e);
+    }
+    function stop(e) {
+      drawing = false; last = null;
+      hero.classList.remove('is-drawing');
+      try { hero.releasePointerCapture(e.pointerId); } catch (err) {}
+    }
+    hero.addEventListener('pointerdown', start);
+    hero.addEventListener('pointermove', function (e) {
+      if (drawing || e.shiftKey) move(e);
+      else last = null;
+    });
+    hero.addEventListener('pointerup', stop);
+    hero.addEventListener('pointercancel', stop);
+    hero.addEventListener('pointerleave', function () { if (!drawing) last = null; });
     // the fog slowly creeps back
     setInterval(function () {
       if (!mctx || document.hidden) return;
