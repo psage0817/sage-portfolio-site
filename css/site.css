@@ -5,8 +5,8 @@
 
 /* the sticky note's handwriting: put the font file in /fonts with one of these names */
 @font-face {
-  font-family: 'Le Jardin du Bonheur';
-  src: local('Le Jardin du Bonheur'), local('LeJardinduBonheur'),
+  font-family: 'Le Jardin Du Bonheur';
+  src: local('Le Jardin Du Bonheur'), local('LeJardinDuBonheur'),
        url('../fonts/LeJardinDuBonheur.woff2') format('woff2'),
        url('../fonts/LeJardinDuBonheur.ttf') format('truetype'),
        url('../fonts/LeJardinDuBonheur.otf') format('opentype');
@@ -242,7 +242,7 @@ input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius
   height: 1.35em; overflow: hidden; white-space: nowrap;
   transition: width .7s cubic-bezier(.2, .7, .2, 1);
 }
-.rot .w { display: inline-block; white-space: nowrap; font-weight:550;}
+.rot .w { display: inline-block; white-space: nowrap; font-weight:50;}
 .rot.is-live .w {
   position: absolute; left: 0; top: 0;
   transition: transform .7s cubic-bezier(.2, .7, .2, 1), opacity .55s ease;
