@@ -266,7 +266,7 @@
       f.setTransform(dpr, 0, 0, dpr, 0, 0);
       var L = light; painted = L;
       var base = mix('#2B3554', '#E3E9F1', L), hi = mix('#3E4A70', '#FFFFFF', L), lo = mix('#1E2640', '#C4CEDC', L);
-      f.fillStyle = 'rgba(' + rgb(base) + ',' + (0.8 + 0.06 * L).toFixed(2) + ')';
+      f.fillStyle = 'rgba(' + rgb(base) + ',' + (0.45 + 0.06 * L).toFixed(2) + ')';
       f.fillRect(0, 0, w, h);
       var r = rng(11);
       for (var i = 0; i < 34; i++) {

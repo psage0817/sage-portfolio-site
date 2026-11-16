@@ -170,7 +170,7 @@ input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius
   position: relative; overflow: hidden;
   height: clamp(560px, 88vh, 800px);
   border-radius: 0 0 8px 8px;
-  background: linear-gradient(180deg, var(--sky-top, #4C88D4) 0%, var(--sky-bottom, #A8CCEA) 82%);
+  background: linear-gradient(180deg, var(--sky-top, #4C88D4) 0%, var(--sky-bottom, #A8CCEA) 86%);
   color: var(--hero-ink);
   touch-action: pan-y;
 }
@@ -242,7 +242,7 @@ input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius
   height: 1.35em; overflow: hidden; white-space: nowrap;
   transition: width .7s cubic-bezier(.2, .7, .2, 1);
 }
-.rot .w { display: inline-block; white-space: nowrap; }
+.rot .w { display: inline-block; white-space: nowrap; font-weight:550;}
 .rot.is-live .w {
   position: absolute; left: 0; top: 0;
   transition: transform .7s cubic-bezier(.2, .7, .2, 1), opacity .55s ease;
