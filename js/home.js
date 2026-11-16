@@ -19,8 +19,8 @@
      - hovering the line pauses it, and nothing moves for people who
        ask their system for reduced motion */
   var WORDS = {
-    adj: ['human-centered', 'research-led', 'type-loving'],
-    tail: ['based in st. louis and san diego', 'working across ux, web and type', 'leading teams from research to final design']
+    adj: ['human centered', 'coffee addicted', 'animal loving', 'music obsessed'],
+    tail: ['is based in st. louis and san diego', 'has too many tabs open', 'loooves to sing', 'always takes the scenic route']
   };
   var HOLD = 5000;
   var OFFSET = 2500;
