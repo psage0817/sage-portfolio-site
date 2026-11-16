@@ -1,88 +1,76 @@
-/* invetty.js: behaviour for the case study page
-   1 process rail · 2 chat bubbles on the screens · 3 journey map zoom · 4 count-up numbers · 5 the two videos */
-(()=>{
-'use strict';
-const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
-const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const fine=matchMedia('(hover:hover) and (pointer:fine)').matches;
-const touchOnly=matchMedia('(hover:none)').matches;
+/* invetty.js
+   - before/after pairs: hover (or tap) the screens and the testing chat plays
+   - the process list on the left follows where you are
+   - the journey map zooms under your cursor
+   - the flow videos can be paused
+*/
+(function () {
+  'use strict';
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* ---------- 1. the process rail: appears after the header, marks the section you're in ---------- */
-const rail=$('#rail'),rlinks=$$('#rail a'),hero=$('#top');
-if(rail&&window.Fog){
-  const secs=rlinks.map(a=>document.getElementById(a.dataset.sec));
-  let last=-1e9;
-  (function loop(){
-    requestAnimationFrame(loop);
-    const y=Fog.y;if(Math.abs(y-last)<.5)return;last=y;
-    rail.classList.toggle('show',y>hero.offsetHeight*.55);
-    let cur=0;
-    secs.forEach((s,i)=>{if(s&&Fog.pageTop(s)<=y+innerHeight*.4)cur=i});
-    rlinks.forEach((a,i)=>a.classList.toggle('on',i===cur));
-  })();
-}
-
-/* ---------- 2. before/after screens: hover (or focus, or tap) and the chat bubbles arrive ---------- */
-$$('.pair').forEach(pair=>{
-  const scr=$('.screens',pair);let t=0;
-  const on=()=>{clearTimeout(t);pair.classList.add('on')};
-  const off=()=>{t=setTimeout(()=>pair.classList.remove('on'),180)};
-  scr.addEventListener('pointerenter',e=>{if(e.pointerType!=='touch')on()});
-  scr.addEventListener('pointerleave',e=>{if(e.pointerType!=='touch')off()});
-  scr.addEventListener('focus',on);
-  scr.addEventListener('blur',off);
-  scr.addEventListener('click',()=>{if(touchOnly)pair.classList.toggle('on')});
-});
-
-/* ---------- 3. journey map: hover to zoom in and look around ---------- */
-const jm=$('#jmap');
-if(jm&&fine&&!RM){
-  jm.addEventListener('pointerenter',()=>jm.classList.add('zoomed'));
-  jm.addEventListener('pointerleave',()=>jm.classList.remove('zoomed'));
-  jm.addEventListener('pointermove',e=>{
-    const r=jm.getBoundingClientRect();
-    jm.style.setProperty('--ox',((e.clientX-r.left)/r.width*100).toFixed(1)+'%');
-    jm.style.setProperty('--oy',((e.clientY-r.top)/r.height*100).toFixed(1)+'%');
+  /* ---------- chat pairs ---------- */
+  document.querySelectorAll('.pair').forEach(function (pair) {
+    var shots = pair.querySelector('.pair-shots');
+    var pinned = false;
+    function show(on) { pair.classList.toggle('is-talking', on); shots.setAttribute('aria-expanded', String(on)); }
+    shots.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') show(true); });
+    shots.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse' && !pinned) show(false); });
+    shots.addEventListener('focus', function () { show(true); });
+    shots.addEventListener('blur', function () { if (!pinned) show(false); });
+    shots.addEventListener('click', function () { pinned = !pinned; show(pinned || shots.matches(':hover')); });
   });
-}else if(jm){jm.style.cursor='default';const h=$('.zhint',jm);h&&h.remove()}
 
-/* ---------- 4. the three numbers count up when they come into view ---------- */
-const counts=$$('.count');
-if(counts.length&&!RM&&'IntersectionObserver'in window){
-  counts.forEach(c=>{c.textContent='0'});
-  const io=new IntersectionObserver(es=>es.forEach(e=>{
-    if(!e.isIntersecting)return;
-    io.unobserve(e.target);
-    const el=e.target,to=+el.dataset.to,t0=performance.now(),dur=1100;
-    (function step(now){
-      const p=Math.min(1,(now-t0)/dur),eased=1-Math.pow(1-p,3);
-      el.textContent=Math.round(to*eased);
-      if(p<1)requestAnimationFrame(step);
-    })(t0);
-  }),{threshold:.6});
-  counts.forEach(c=>io.observe(c));
-}
+  /* ---------- process rail ---------- */
+  var links = document.querySelectorAll('.rail a[href^="#"]');
+  var sections = Array.prototype.map.call(links, function (a) { return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+  if ('IntersectionObserver' in window && sections.length) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        links.forEach(function (a) {
+          var on = a.getAttribute('href') === '#' + en.target.id;
+          if (on) a.setAttribute('aria-current', 'step'); else a.removeAttribute('aria-current');
+        });
+      });
+    }, { rootMargin: '-35% 0px -60% 0px' });
+    sections.forEach(function (s) { io.observe(s); });
+  }
 
-/* ---------- 5. the two videos start together when you scroll to them and stay in sync ---------- */
-const fin=$('#final'),vids=[$('#vA'),$('#vB')].filter(Boolean),btn=$('#vctl');
-if(fin&&vids.length){
-  let inView=false,userPaused=RM;               // reduced motion: wait for the viewer to press play
-  const label=btn&&btn.querySelector('span');
-  const sync=()=>{
-    fin.classList.toggle('paused',userPaused);
-    if(btn){btn.setAttribute('aria-label',userPaused?'Play the videos':'Pause the videos');label.textContent=userPaused?'play':'pause'}
-  };
-  const playAll=()=>{
-    if(userPaused||!inView)return;
-    vids.forEach(v=>{const p=v.play();if(p&&p.catch)p.catch(()=>{})});
-  };
-  const pauseAll=()=>vids.forEach(v=>v.pause());
-  // the shorter video waits on its last frame; when both have finished, both restart together
-  vids.forEach(v=>v.addEventListener('ended',()=>{
-    if(vids.every(x=>x.ended)){vids.forEach(x=>{x.currentTime=0});playAll()}
-  }));
-  new IntersectionObserver(([e])=>{inView=e.isIntersecting;inView?playAll():pauseAll()},{threshold:.35}).observe(fin);
-  if(btn)btn.addEventListener('click',()=>{userPaused=!userPaused;sync();userPaused?pauseAll():playAll()});
-  sync();
-}
+  /* ---------- journey map zoom ---------- */
+  var map = document.querySelector('.journey');
+  if (map) {
+    var img = map.querySelector('img');
+    var lens = map.querySelector('.lens');
+    var ZOOM = 2.6;
+    function place(e) {
+      var r = img.getBoundingClientRect();
+      var x = e.clientX - r.left, y = e.clientY - r.top;
+      if (x < 0 || y < 0 || x > r.width || y > r.height) { lens.hidden = true; return; }
+      lens.hidden = false;
+      var lw = lens.offsetWidth, lh = lens.offsetHeight;
+      lens.style.left = Math.min(Math.max(x - lw / 2, 0), r.width - lw) + 'px';
+      lens.style.top = Math.min(Math.max(y - lh / 2, 0), r.height - lh) + 'px';
+      lens.style.backgroundSize = (r.width * ZOOM) + 'px ' + (r.height * ZOOM) + 'px';
+      lens.style.backgroundPosition = (-(x * ZOOM - lw / 2)) + 'px ' + (-(y * ZOOM - lh / 2)) + 'px';
+    }
+    lens.style.backgroundImage = 'url("' + (img.currentSrc || img.src) + '")';
+    map.addEventListener('pointermove', function (e) { if (e.pointerType === 'mouse') place(e); });
+    map.addEventListener('pointerleave', function () { lens.hidden = true; });
+  }
+
+  /* ---------- videos ---------- */
+  document.querySelectorAll('.flow').forEach(function (fig) {
+    var v = fig.querySelector('video');
+    var btn = fig.querySelector('.flow-toggle');
+    function sync() {
+      var playing = !v.paused;
+      btn.setAttribute('aria-label', (playing ? 'Pause ' : 'Play ') + fig.getAttribute('data-name'));
+      btn.classList.toggle('is-paused', !playing);
+    }
+    if (reduce) { v.removeAttribute('autoplay'); v.pause(); }
+    btn.addEventListener('click', function () { if (v.paused) v.play(); else v.pause(); });
+    v.addEventListener('play', sync);
+    v.addEventListener('pause', sync);
+    sync();
+  });
 })();

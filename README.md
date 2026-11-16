@@ -1,19 +1,23 @@
 # Sage Park portfolio
 
-
 ```
-index.html      home page
+index.html      home: the window, selected work, contact + record player
 invetty.html    invetty case study
-about.html      blank on purpose, waiting for your Figma layout
-css/            site.css (shared + home), case.css (case study)
-js/             fog.js (sky, frost, drawing, title, smooth scroll), ui.js (hover effects),
-                home.js, invetty.js, player.js (vinyl player)
-img/ video/     the screens, journey map, logo and the two videos
+about.html      simple shell, waiting for your about layout
+css/site.css    shared styles + home (day/night colours, fonts at the top)
+css/case.css    the case study, in invetty's Ubuntu + DM Sans and indigo/beige
+js/sky.js       coin-flip city, live time, skyline, fog drawing, time slider, day/night page
+js/home.js      rotating subtitle words (edit the lists at the top) + filters
+js/invetty.js   before/after chat bubbles, process list, journey map zoom, video pause
+js/player.js    your existing Spotify player (unchanged)
+img/ video/     screens, journey map, flow videos + poster frames
 ```
+
 things to edit
-- **Playlist:** `js/player.js`, top of the file. Paste your Spotify playlist URI into `PLAYLIST_URI`
-  (and fill `PLAYLIST_NAME`, `SONG_COUNT`, plus `TRACKS` if you want the skip buttons to work).
-  Change the "[playlist name]" text in `index.html` and `invetty.html` too.
-- **LinkedIn / Instagram:** `index.html`, the two `[linkedin]` / `[instagram]` buttons (`href="#"`).
-- **Other projects:** in `index.html` each card except invetty has `data-soon`, which shows a.
-- **A new case study:** copy `invetty.html`, change the text and images, and link a card to it.
+
+- **Rotating words:** `js/home.js`, the `WORDS` lists at the top. `HOLD` and `OFFSET` set the timing.
+- **Fonts:** put Alte Haas Grotesk files in `fonts/` (file names are in `css/site.css`). If Ashton comes from Adobe Fonts, paste the web project `<link>` into each page's `<head>`.
+- **Force a city while testing:** add `?city=sd` or `?city=stl` to the URL.
+- **Other projects:** in `index.html`, swap each card's `.ph` placeholder for an `<img>`, set its `href`, and remove `aria-disabled="true"`.
+- **Phase bar:** in `invetty.html`, set each `flex` value to the weeks each phase took.
+- **Playlist:** `js/player.js`, as before.
