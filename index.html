@@ -60,7 +60,14 @@
       <span aria-hidden="true">i’m a <span class="rot" data-rotate="adj"><span class="w">human centered</span></span> designer who <span class="rot" data-rotate="tail"><span class="w">is based in st. louis and san diego</span></span></span>
     </p>
   </div>
-  <p class="hint">draw on the window, or hold <kbd>shift</kbd> to fog it up</p>
+  <!-- the hint, as a sticky note taped to the glass; it peels off after the first stroke -->
+  <div class="note-spot" data-note>
+    <span class="note-tape" aria-hidden="true"></span>
+    <div class="note" role="note">
+      <p><span class="for-mouse">click and drag</span><span class="for-touch">drag a finger</span> to draw on the window</p>
+      <p class="for-mouse">hold <span class="squiggle">shift</span> to fog it back up</p>
+    </div>
+  </div>
 </header>
 
 <main>

@@ -289,7 +289,7 @@
     }
     // "hi", written in the fog with a fingertip, so people know they can draw
     function writeHi() {
-      var s = Math.max(1.4, h / 260), ox = w * (w < 600 ? 0.58 : 0.64), oy = h * 0.16;
+      var s = Math.max(1.4, h / 260), ox = w * (w < 600 ? 0.64 : 0.64), oy = h * 0.16;
       [[[0, 0], [0, 64]], [[0, 40], [5, 32], [13, 28], [21, 31], [24, 40], [24, 64]], [[40, 30], [40, 64]]].forEach(function (st) {
         for (var i = 1; i < st.length; i++) line(ox + st[i - 1][0] * s, oy + st[i - 1][1] * s, ox + st[i][0] * s, oy + st[i][1] * s, 9 * s / 1.6, true, 0.95);
       });
@@ -328,10 +328,25 @@
       if (y < 0 || y > h) { last = null; return; }
       var l = last || { x: x, y: y };
       if (e.shiftKey) line(l.x, l.y, x, y, 80, false, 0.2);
-      else line(l.x, l.y, x, y, 44, true, 0.7);
+      else {
+        line(l.x, l.y, x, y, 44, true, 0.7);
+        drawn += Math.hypot(x - l.x, y - l.y);
+        if (drawn > 140) peelNote();
+      }
       last = { x: x, y: y };
       schedule();
     }
+    // the sticky note: once they've drawn a real stroke, it has done its job
+    var note = document.querySelector('[data-note]');
+    var drawn = 0, peeled = false;
+    function peelNote() {
+      if (peeled || !note) return;
+      peeled = true;
+      note.classList.add('is-lift');
+      setTimeout(function () { note.classList.add('is-fall'); }, 260);
+      setTimeout(function () { note.classList.add('is-gone'); }, 2400);
+    }
+
     // press and drag to wipe the glass; hold shift while moving to fog it back up
     var drawing = false;
     function start(e) {
