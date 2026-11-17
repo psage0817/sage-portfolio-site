@@ -18,13 +18,14 @@
      illustration for that city; if a photo is missing, that city keeps the illustration.
      - day: required for the photo to be used. It's colour-graded through the day, so one photo
        becomes golden near sunset and moonlit at night.
+     - sunset: optional. If it's there, the day photo crossfades into it from about 5 to 6pm.
      - night: optional. If it's there, the window crossfades to it after dusk.
      - focus: which part of the photo to keep in view when the window crops it, from 0 to 1
        (0.5, 0.6 keeps the centre, slightly below the middle).
      Use photos at least 2400px wide so the view through the beads stays sharp. */
   var PHOTOS = {
-    sd:  { day: 'img/sky/sd-day.jpg',  night: 'img/sky/sd-night.jpg',  focus: [0.5, 0.6] },
-    stl: { day: 'img/sky/stl-day.jpg', night: 'img/sky/stl-night.jpg', focus: [0.5, 0.6] }
+    sd:  { day: 'img/sky/sd-day.jpg',  sunset: 'img/sky/sd-sunset.jpg',  night: 'img/sky/sd-night.jpg',  focus: [0.5, 0.6] },
+    stl: { day: 'img/sky/stl-day.jpg', sunset: 'img/sky/stl-sunset.jpg', night: 'img/sky/stl-night.jpg', focus: [0.5, 0.6] }
   };
 
   // how much haze softens the san diego coast's colours in daylight (0 = none, 1 = all sky)
@@ -420,10 +421,11 @@
   function applyPhotos() {
     var want = state.city, cfg = PHOTOS[want];
     if (!cfg) return;
-    Promise.all([loadImg(cfg.day), loadImg(cfg.night)]).then(function (got) {
+    Promise.all([loadImg(cfg.day), loadImg(cfg.night), loadImg(cfg.sunset)]).then(function (got) {
       if (state.city !== want || typeof fog === 'undefined') return;   // the city changed while loading
-      var day = got[0], night = got[1];
-      var p = day ? { day: day, night: night, fx: cfg.focus[0], fy: cfg.focus[1] } : null;
+      var day = got[0], night = got[1], sunset = got[2];
+      photoHas = { night: !!night, sunset: !!sunset };
+      var p = day ? { day: day, night: night, sunset: sunset, fx: cfg.focus[0], fy: cfg.focus[1] } : null;
       fog.setPhotos(p);
       // without the condensation layer, show the photo plainly behind the flat fog instead of the drawing
       plainPhoto = !!day && !fog.hasGlass();
@@ -488,7 +490,7 @@
     return [SKY[0][1], SKY[0][2]];
   }
 
-  var photoGrade = null, photoFallbackFilter = '';
+  var photoGrade = null, photoFallbackFilter = '', photoHas = { night: false, sunset: false };
   var timeEls = document.querySelectorAll('[data-time]');
   var tzEls = document.querySelectorAll('[data-tz]');
   var range = document.getElementById('sky-time');
@@ -504,7 +506,20 @@
     // full daytime frost from 7:00 to 17:30, night frost from 18:00 to 6:30
     var dayness = Math.min(1, Math.max(0, (t - 6.5) / 0.5)) * Math.min(1, Math.max(0, (18 - t) / 0.5));
     var gr = gradeAt(t);
-    photoGrade = { a: rgb01(gr[0]), sa: gr[1], b: rgb01(mix('#C9D2EA', '#FFFFFF', 0.5)), sb: 0.95, n: nightness(t) };
+    // which photos are blended, and how each is graded, through the evening:
+    // day -> (5 to 6pm) sunset -> (6:35 to 7:45pm) night; without a sunset photo, day -> night as before
+    var nightGrade = rgb01(mix('#C9D2EA', '#FFFFFF', 0.5));
+    var fade = function (a, b) { var k = Math.min(1, Math.max(0, (t - a) / (b - a))); return k * k * (3 - 2 * k); };
+    if (photoHas.sunset && t >= 16.9 && t < 18.6) {
+      photoGrade = { pair: ['day', 'sunset'], a: rgb01(gr[0]), sa: gr[1], b: [1, 1, 1], sb: 1, n: fade(16.9, 17.95) };
+    } else if (photoHas.sunset && t >= 18.6 && t < 21) {
+      // the sunset dims and cools as it fades into the night photo (or into darkness, without one)
+      var dim = fade(18.6, 20.2);
+      photoGrade = { pair: ['sunset', photoHas.night ? 'night' : 'sunset'], a: rgb01(mix('#FFFFFF', '#59618C', dim)), sa: 1 - 0.35 * dim,
+                     b: nightGrade, sb: 0.95, n: photoHas.night ? fade(18.6, 19.75) : 0 };
+    } else {
+      photoGrade = { pair: ['day', photoHas.night ? 'night' : 'day'], a: rgb01(gr[0]), sa: gr[1], b: nightGrade, sb: 0.95, n: photoHas.night ? nightness(t) : 0 };
+    }
     photoFallbackFilter = 'brightness(' + (0.35 + 0.65 * light).toFixed(2) + ') saturate(' + gr[1].toFixed(2) + ')';
     FOG = FOG_NIGHT + (FOG_DAY - FOG_NIGHT) * dayness;
     var sky = skyAt(t);
