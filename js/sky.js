@@ -14,7 +14,11 @@
   var COAST_LIFT_WIDE = 95;
 
   // how thick the fog on the glass is, from 0 (clear) to 1 (solid)
-  var FOG = 0.92;
+  // how thick the frost on the glass is, from 0 (clear) to 1 (solid):
+  // FOG_DAY from 7am to 5:30pm, FOG_NIGHT the rest of the time, fading between them over half an hour
+  var FOG_DAY = 0.6;
+  var FOG_NIGHT = 0.92;
+  var FOG = FOG_NIGHT;
   var COAST_LIFT_TALL = 165;
 
   var CITIES = {
@@ -423,6 +427,9 @@
     var city = CITIES[state.city];
     var minutes = state.live ? localMinutes(city.tz) : state.scrub;
     var t = minutes / 60;
+    // full daytime frost from 7:00 to 17:30, night frost from 18:00 to 6:30
+    var dayness = Math.min(1, Math.max(0, (t - 6.5) / 0.5)) * Math.min(1, Math.max(0, (18 - t) / 0.5));
+    FOG = FOG_NIGHT + (FOG_DAY - FOG_NIGHT) * dayness;
     var sky = skyAt(t);
     var alt = Math.sin(Math.PI * (t - 6) / 12);
     light = Math.max(0, Math.min(1, (alt + 0.12) / 0.45));
