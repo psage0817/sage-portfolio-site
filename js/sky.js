@@ -12,6 +12,9 @@
   // how far the san diego coast is raised in the window, in drawing units (the window is 540 tall):
   // a little on wide screens, more on tall phone screens, so the headline always sits on sand
   var COAST_LIFT_WIDE = 95;
+
+  // how thick the fog on the glass is, from 0 (clear) to 1 (solid)
+  var FOG = 0.92;
   var COAST_LIFT_TALL = 165;
 
   var CITIES = {
@@ -480,7 +483,41 @@
   /* ---------- the fog ---------- */
   var fog = (function () {
     var canvas = hero.querySelector('.sky-fog');
-    var ctx, fogC, mask, mctx, w = 0, h = 0, dpr = 1, last = null, painted = -1, raf = 0;
+    var ctx, fogC, mask, mctx, w = 0, h = 0, dpr = 1, ms = 1, last = null, painted = -1, raf = 0;
+
+    // condensation drawn with WebGL (js/glass.js). Without WebGL, or for people who prefer
+    // reduced motion, the flat fog below is used instead and everything else works the same.
+    var glass = null;
+    if (!reduceMotion && window.SPGlass) {
+      glass = window.SPGlass.create({
+        hero: hero,
+        // a sliding bead clears a trail behind it, just like a finger would
+        clearAt: function (x0, y0, r, x1, y1) { if (mctx) { line(x0, y0, x1, y1, r, true, 0.55); schedule(); } },
+        onFail: function () { useFlatFog(); },
+        isClear: function (x, y) {
+          if (!mctx) return false;
+          var d = mctx.getImageData(Math.round(x * ms), Math.round(y * ms), 1, 1).data;
+          return d[3] > 30;
+        }
+      });
+      if (glass) {
+        canvas.parentNode.insertBefore(glass.canvas, canvas);
+        hero.classList.add('has-glass');
+        // the drawing surface stays on top to catch strokes, but shows nothing while the glass is drawing
+        canvas.style.opacity = '0';
+      }
+    }
+    console.info(glass ? 'window: condensation (WebGL) is on'
+      : 'window: using the flat fog, because ' + (reduceMotion ? 'this device asks for reduced motion' : !window.SPGlass ? 'js/glass.js is not loaded' : 'WebGL is not available here'));
+    function useFlatFog() {
+      if (!glass) return;
+      glass.canvas.remove(); glass = null; hero.classList.remove('has-glass'); canvas.style.opacity = '';
+      if (fogC) paintFog();
+      schedule();
+    }
+    function glassLight() {
+      if (glass) glass.lightChanged(light, FOG + 0.06 * light, mix('#2B3554', '#E3E9F1', light), mix('#FFD3A0', '#FFF7E6', light));
+    }
 
     function paintFog() {
       var f = fogC.getContext('2d');
@@ -488,7 +525,7 @@
       f.setTransform(dpr, 0, 0, dpr, 0, 0);
       var L = light; painted = L;
       var base = mix('#2B3554', '#E3E9F1', L), hi = mix('#3E4A70', '#FFFFFF', L), lo = mix('#1E2640', '#C4CEDC', L);
-      f.fillStyle = 'rgba(' + rgb(base) + ',' + (0.65 + 0.06 * L).toFixed(2) + ')';
+      f.fillStyle = 'rgba(' + rgb(base) + ',' + (FOG + 0.06 * L).toFixed(2) + ')';
       f.fillRect(0, 0, w, h);
       var r = rng(11);
       for (var i = 0; i < 34; i++) {
@@ -520,12 +557,13 @@
     function render() {
       raf = 0;
       if (!ctx) return;
+      if (glass) { glass.maskChanged(mask); return; }
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.globalCompositeOperation = 'source-over';
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(fogC, 0, 0);
       ctx.globalCompositeOperation = 'destination-out';
-      ctx.drawImage(mask, 0, 0);
+      ctx.drawImage(mask, 0, 0, canvas.width, canvas.height);
       ctx.globalCompositeOperation = 'source-over';
     }
     function schedule() { if (!raf) raf = requestAnimationFrame(render); }
@@ -539,9 +577,13 @@
       canvas.width = W; canvas.height = H;
       ctx = canvas.getContext('2d');
       fogC = document.createElement('canvas'); fogC.width = W; fogC.height = H;
-      mask = document.createElement('canvas'); mask.width = W; mask.height = H;
-      mctx = mask.getContext('2d'); mctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      paintFog(); writeHi(); render();
+      // the map of where the glass has been wiped; soft-edged, so it doesn't need full resolution
+      ms = glass ? 0.5 : dpr;
+      mask = document.createElement('canvas'); mask.width = Math.round(w * ms); mask.height = Math.round(h * ms);
+      mctx = mask.getContext('2d', { willReadFrequently: true }); mctx.setTransform(ms, 0, 0, ms, 0, 0);
+      paintFog(); writeHi();
+      if (glass) { glass.resize(w, h); glassLight(); }
+      render();
     }
     function move(e) {
       if (!ctx) return;
@@ -554,6 +596,8 @@
         line(l.x, l.y, x, y, 44, true, 0.7);
         drawn += Math.hypot(x - l.x, y - l.y);
         if (drawn > 140) peelNote();
+        var lp = strokePts[strokePts.length - 1];
+        if (!lp || Math.hypot(x - lp.x, y - lp.y) > 18) strokePts.push({ x: x, y: y });
       }
       last = { x: x, y: y };
       schedule();
@@ -569,18 +613,46 @@
       setTimeout(function () { note.classList.add('is-gone'); }, 2400);
     }
 
+    // drips: the water a stroke pushes aside gathers along its lower edge and, after a moment, runs down
+    var strokePts = [];
+    function scheduleDrips(pts) {
+      if (pts.length < 2) return;
+      var length = 0;
+      for (var i = 1; i < pts.length; i++) length += Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y);
+      var n = Math.max(1, Math.min(4, Math.round(length / 170)));
+      for (var k = 0; k < n; k++) {
+        var p = pts[Math.floor((k + 0.2 + Math.random() * 0.6) / n * (pts.length - 1))];
+        var x = p.x + (Math.random() - 0.5) * 14, y = p.y + 34 + Math.random() * 8;   // just below the wiped band
+        setTimeout(function (x, y) { return function () { dripFrom(x, y); }; }(x, y), 1100 + k * 450 + Math.random() * 1500);
+      }
+    }
+    function dripFrom(x, y) {
+      if (y > h - 20) return;
+      if (glass) { glass.drip(x, y); return; }
+      // flat fog: no drop to draw, but the drip still cuts a clear trail as it runs
+      var run = 70 + Math.random() * 150, dur = 1500 + Math.random() * 1500, wob = (Math.random() - 0.5) * 8, t0 = performance.now(), prevY = y;
+      (function step(now) {
+        var f = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - f, 2.2);
+        var cy = y + run * e, cx = x + wob * Math.sin(e * 3);
+        line(cx, prevY, cx, cy, 6 - 2 * f, true, 0.6); prevY = cy; schedule();
+        if (f < 1) requestAnimationFrame(step);
+      })(t0);
+    }
+
     // press and drag to wipe the glass; hold shift while moving to fog it back up
     var drawing = false;
     function start(e) {
       if (e.button !== 0) return;
       if (e.target.closest('.nav, .time-panel, a, button, input, label')) return;
-      drawing = true; last = null;
+      drawing = true; last = null; strokePts = [];
       if (e.pointerType === 'mouse') e.preventDefault(); // don't select the headline while drawing
       try { hero.setPointerCapture(e.pointerId); } catch (err) {}
       hero.classList.add('is-drawing');
       move(e);
     }
     function stop(e) {
+      if (drawing) scheduleDrips(strokePts);
+      strokePts = [];
       drawing = false; last = null;
       hero.classList.remove('is-drawing');
       try { hero.releasePointerCapture(e.pointerId); } catch (err) {}
@@ -593,19 +665,22 @@
     hero.addEventListener('pointerup', stop);
     hero.addEventListener('pointercancel', stop);
     hero.addEventListener('pointerleave', function () { if (!drawing) last = null; });
-    // the fog slowly creeps back
+    // the fog slowly creeps back: clear for about the first 10 seconds, fogged again by about 30
     setInterval(function () {
       if (!mctx || document.hidden) return;
       mctx.globalCompositeOperation = 'destination-out';
-      mctx.fillStyle = 'rgba(0,0,0,0.008)';
+      mctx.fillStyle = 'rgba(0,0,0,0.018)';
       mctx.fillRect(0, 0, w, h);
       schedule();
-    }, 120);
+    }, 500);
     if ('ResizeObserver' in window) new ResizeObserver(init).observe(canvas);
     else window.addEventListener('resize', init);
     return {
       init: init,
-      retint: function () { if (fogC && Math.abs(light - painted) > 0.1) { paintFog(); schedule(); } }
+      retint: function () {
+        glassLight();
+        if (fogC && Math.abs(light - painted) > 0.1) { paintFog(); schedule(); }
+      }
     };
   })();
 
@@ -654,7 +729,7 @@
   var lastLift = coastLift();
   window.addEventListener('resize', function () {
     var l = coastLift();
-    if (l !== lastLift) { lastLift = l; drawCity(); }
+    if (l !== lastLift) { lastLift = l; drawCity(); paint(); }
   });
   requestAnimationFrame(fog.init);
   setInterval(function () { if (state.live && !document.hidden) paint(); }, 15000);
