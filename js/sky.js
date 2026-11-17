@@ -14,6 +14,19 @@
   var COAST_LIFT_WIDE = 95;
 
   // how thick the fog on the glass is, from 0 (clear) to 1 (solid)
+  /* Photos behind the glass. Put them in img/sky/ with these names and they replace the
+     illustration for that city; if a photo is missing, that city keeps the illustration.
+     - day: required for the photo to be used. It's colour-graded through the day, so one photo
+       becomes golden near sunset and moonlit at night.
+     - night: optional. If it's there, the window crossfades to it after dusk.
+     - focus: which part of the photo to keep in view when the window crops it, from 0 to 1
+       (0.5, 0.6 keeps the centre, slightly below the middle).
+     Use photos at least 2400px wide so the view through the beads stays sharp. */
+  var PHOTOS = {
+    sd:  { day: 'img/sky/sd-day.jpg',  night: 'img/sky/sd-night.jpg',  focus: [0.5, 0.6] },
+    stl: { day: 'img/sky/stl-day.jpg', night: 'img/sky/stl-night.jpg', focus: [0.5, 0.6] }
+  };
+
   // how much haze softens the san diego coast's colours in daylight (0 = none, 1 = all sky)
   var COAST_HAZE = 0.28;
 
@@ -385,6 +398,45 @@
       b.setAttribute('aria-pressed', String(b.getAttribute('data-pick-city') === state.city));
     });
     hero.setAttribute('data-city', state.city);
+    if (photoCity !== state.city) { photoCity = state.city; applyPhotos(); }
+  }
+
+  /* ---------- photos ---------- */
+  var photoCity = null, plainPhoto = false, photoLoads = {};
+  function loadImg(src) {
+    if (!photoLoads[src]) {
+      photoLoads[src] = new Promise(function (resolve) {
+        var im = new Image();
+        im.onload = function () {
+          var done = function () { resolve(im); };
+          if (im.decode) im.decode().then(done, done); else done();
+        };
+        im.onerror = function () { resolve(null); };
+        im.src = src;
+      });
+    }
+    return photoLoads[src];
+  }
+  function applyPhotos() {
+    var want = state.city, cfg = PHOTOS[want];
+    if (!cfg) return;
+    Promise.all([loadImg(cfg.day), loadImg(cfg.night)]).then(function (got) {
+      if (state.city !== want || typeof fog === 'undefined') return;   // the city changed while loading
+      var day = got[0], night = got[1];
+      var p = day ? { day: day, night: night, fx: cfg.focus[0], fy: cfg.focus[1] } : null;
+      fog.setPhotos(p);
+      // without the condensation layer, show the photo plainly behind the flat fog instead of the drawing
+      plainPhoto = !!day && !fog.hasGlass();
+      var view = hero.querySelector('.sky-view');
+      view.style.backgroundImage = plainPhoto ? 'url("' + cfg.day + '")' : '';
+      view.style.backgroundSize = plainPhoto ? 'cover' : '';
+      view.style.backgroundPosition = plainPhoto ? (cfg.focus[0] * 100) + '% ' + (cfg.focus[1] * 100) + '%' : '';
+      if (!plainPhoto) view.style.filter = '';
+      [heroSvg, hero.querySelector('.sky-sun'), hero.querySelector('.sky-moon')].forEach(function (el) {
+        if (el) el.style.visibility = plainPhoto ? 'hidden' : '';
+      });
+      paint();
+    });
   }
 
   /* ---------- time ---------- */
@@ -407,6 +459,24 @@
     var h = Math.floor(min / 60) % 24, m = min % 60, h12 = h % 12 || 12;
     return h12 + ':' + String(m).padStart(2, '0') + ' ' + (h < 12 ? 'am' : 'pm');
   }
+  // how a daytime photo is graded through the day: [hour, colour to multiply by, saturation]
+  var GRADE = [[0,'#2B375C',.5],[4.5,'#34406A',.55],[5.75,'#8C84A6',.72],[6.5,'#E9B596',.9],[7.5,'#FAE5CF',.98],[9,'#FFFFFF',1],[16,'#FFFFFF',1],[17.25,'#FFE5C2',1.06],[18.25,'#EBB59A',1.02],[19,'#9A7F9C',.84],[19.75,'#4D557E',.66],[21,'#2B375C',.5],[24,'#2B375C',.5]];
+  function gradeAt(t) {
+    for (var i = 0; i < GRADE.length - 1; i++) {
+      if (t >= GRADE[i][0] && t <= GRADE[i + 1][0]) {
+        var u = (t - GRADE[i][0]) / (GRADE[i + 1][0] - GRADE[i][0]);
+        return [mix(GRADE[i][1], GRADE[i + 1][1], u), GRADE[i][2] + (GRADE[i + 1][2] - GRADE[i][2]) * u];
+      }
+    }
+    return [GRADE[0][1], GRADE[0][2]];
+  }
+  // how far into the night photo we are: fully night 19:45 to 5:15, crossfading around dusk and dawn
+  function nightness(t) {
+    var a = Math.min(1, Math.max(0, (t - 18.6) / 1.15)), b = Math.min(1, Math.max(0, (6.4 - t) / 1.15));
+    return Math.max(a, b);
+  }
+  function rgb01(h) { return hx(h).map(function (v) { return v / 255; }); }
+
   var SKY = [[0,'#0B1020','#1C2540'],[5,'#121A33','#343A60'],[6,'#36406C','#D99A7C'],[7.5,'#6B98CF','#F0CDA6'],[10,'#4C88D4','#A8CCEA'],[15,'#4783D0','#B4D3EB'],[17.5,'#5A7DBD','#EDB98E'],[18.75,'#3A4576','#E5875E'],[19.75,'#1E2546','#57486C'],[21,'#0E142A','#222B4B'],[24,'#0B1020','#1C2540']];
   function skyAt(t) {
     for (var i = 0; i < SKY.length - 1; i++) {
@@ -418,6 +488,7 @@
     return [SKY[0][1], SKY[0][2]];
   }
 
+  var photoGrade = null, photoFallbackFilter = '';
   var timeEls = document.querySelectorAll('[data-time]');
   var tzEls = document.querySelectorAll('[data-tz]');
   var range = document.getElementById('sky-time');
@@ -432,6 +503,9 @@
     var t = minutes / 60;
     // full daytime frost from 7:00 to 17:30, night frost from 18:00 to 6:30
     var dayness = Math.min(1, Math.max(0, (t - 6.5) / 0.5)) * Math.min(1, Math.max(0, (18 - t) / 0.5));
+    var gr = gradeAt(t);
+    photoGrade = { a: rgb01(gr[0]), sa: gr[1], b: rgb01(mix('#C9D2EA', '#FFFFFF', 0.5)), sb: 0.95, n: nightness(t) };
+    photoFallbackFilter = 'brightness(' + (0.35 + 0.65 * light).toFixed(2) + ') saturate(' + gr[1].toFixed(2) + ')';
     FOG = FOG_NIGHT + (FOG_DAY - FOG_NIGHT) * dayness;
     var sky = skyAt(t);
     // san diego's sky is a little softer, like a day with some coastal haze
@@ -479,6 +553,7 @@
     hero.classList.toggle('is-night-sky', !showSun);
 
     root.setAttribute('data-theme', day ? 'day' : 'night');
+    if (plainPhoto) hero.querySelector('.sky-view').style.filter = photoFallbackFilter;
 
     var label = fmt(minutes);
     timeEls.forEach(function (el) { el.textContent = label; });
@@ -530,7 +605,7 @@
       schedule();
     }
     function glassLight() {
-      if (glass) glass.lightChanged(light, FOG + 0.06 * light, mix('#2B3554', '#E3E9F1', light), mix('#FFD3A0', '#FFF7E6', light));
+      if (glass) glass.lightChanged(light, FOG + 0.06 * light, mix('#2B3554', '#E3E9F1', light), mix('#FFD3A0', '#FFF7E6', light), photoGrade);
     }
 
     function paintFog() {
@@ -691,6 +766,9 @@
     else window.addEventListener('resize', init);
     return {
       init: init,
+      // returns true if the condensation is now showing the photos
+      setPhotos: function (p) { return glass ? glass.setPhotos(p) : false; },
+      hasGlass: function () { return !!glass; },
       retint: function () {
         glassLight();
         if (fogC && Math.abs(light - painted) > 0.1) { paintFog(); schedule(); }
