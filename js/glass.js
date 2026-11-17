@@ -31,6 +31,10 @@
     'uniform vec4 uCalm;',
     'varying vec2 vUv;',
     // the scene behind the glass, colour-graded for the time of day; with a night photo it crossfades to that
+    // smooth noise worked out on the spot, so it never repeats or shows seams
+    'float hash2(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }',
+    'float vnoise(vec2 p) { vec2 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f);',
+    '  return mix(mix(hash2(i), hash2(i + vec2(1., 0.)), f.x), mix(hash2(i + vec2(0., 1.)), hash2(i + vec2(1., 1.)), f.x), f.y); }',
     'vec3 grade(vec3 c, vec3 mul, float sat) { float l = dot(c, vec3(.299, .587, .114)); return mix(vec3(l), c, sat) * mul; }',
     'vec3 sceneSharp(vec2 p) { return mix(grade(texture2D(uScene, p).rgb, uGradeA, uSatA), grade(texture2D(uScene2, p).rgb, uGradeB, uSatB), uNightMix); }',
     'vec3 sceneSoft(vec2 p) { return mix(grade(texture2D(uBlur, p).rgb, uGradeA, uSatA), grade(texture2D(uBlur2, p).rgb, uGradeB, uSatB), uNightMix); }',
@@ -54,7 +58,7 @@
     '  float kc = uRes.y / 800.;',
     '  vec2 cIn = min(px - uCalm.xy, uCalm.zw - px);',
     '  float sd = min(cIn.x, cIn.y) >= 0. ? min(cIn.x, cIn.y) : -length(max(-cIn, 0.));',
-    '  float wander = (texture2D(uNoise, uv * vec2(uAspect, 1.) * 2.3).r - .5) * 150. * kc;',
+    '  float wander = (vnoise(px / (230. * kc)) * .65 + vnoise(px / (85. * kc) + 7.3) * .35 - .5) * 150. * kc;',
     '  float calm = smoothstep(-230. * kc, 70. * kc, sd + wander) * step(1., uCalm.z - uCalm.x);',
     '  cov *= 1. - calm * .55;',
     // beads that are alive: creeping, growing, running. w holds stretch (whole part) and opacity (fraction)
@@ -762,7 +766,9 @@
     function measureCalm() {
       var h1 = hero.querySelector('.hero-text h1'), sub2 = hero.querySelector('.hero-text .sub');
       if (!h1) { calmBox = [0, 0, 0, 0]; return; }
-      var hr = hero.getBoundingClientRect(), a = h1.getBoundingClientRect(), b = sub2 ? sub2.getBoundingClientRect() : a;
+      // measure the words themselves, not their boxes: the headline's box runs the full width of the window
+      function textRect(el) { var rg = document.createRange(); rg.selectNodeContents(el); return rg.getBoundingClientRect(); }
+      var hr = hero.getBoundingClientRect(), a = textRect(h1), b = sub2 ? textRect(sub2) : a;
       calmBox = [Math.min(a.left, b.left) - hr.left - 24, Math.min(a.top, b.top) - hr.top - 18,
                  Math.max(a.right, b.right) - hr.left + 40, Math.max(a.bottom, b.bottom) - hr.top + 18];
     }
