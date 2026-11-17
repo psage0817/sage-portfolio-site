@@ -14,9 +14,12 @@
   var COAST_LIFT_WIDE = 95;
 
   // how thick the fog on the glass is, from 0 (clear) to 1 (solid)
+  // how much haze softens the san diego coast's colours in daylight (0 = none, 1 = all sky)
+  var COAST_HAZE = 0.4;
+
   // how thick the frost on the glass is, from 0 (clear) to 1 (solid):
   // FOG_DAY from 7am to 5:30pm, FOG_NIGHT the rest of the time, fading between them over half an hour
-  var FOG_DAY = 0.6;
+  var FOG_DAY = 0.5;
   var FOG_NIGHT = 0.92;
   var FOG = FOG_NIGHT;
   var COAST_LIFT_TALL = 165;
@@ -431,6 +434,8 @@
     var dayness = Math.min(1, Math.max(0, (t - 6.5) / 0.5)) * Math.min(1, Math.max(0, (18 - t) / 0.5));
     FOG = FOG_NIGHT + (FOG_DAY - FOG_NIGHT) * dayness;
     var sky = skyAt(t);
+    // san diego's sky is a little softer, like a day with some coastal haze
+    if (state.city === 'sd') sky = [mix(sky[0], '#A9B9C9', 0.28), mix(sky[1], '#D3DAE0', 0.25)];
     var alt = Math.sin(Math.PI * (t - 6) / 12);
     light = Math.max(0, Math.min(1, (alt + 0.12) / 0.45));
     var day = light > 0.45;
@@ -445,21 +450,23 @@
     st.setProperty('--sk-near', near);
     st.setProperty('--sk-arch', mix('#7C869C', '#D3D9E0', light));
     st.setProperty('--sk-water', mix(sky[1], near, 0.5));
-    st.setProperty('--sk-ocean', mix(sky[1], '#2C6699', 0.55));
-    st.setProperty('--sk-cliff', mix('#3B3650', '#D9B488', light));
-    st.setProperty('--sk-gully', mix('#2A263D', '#B78E64', light));
-    st.setProperty('--sk-pine', mix('#121722', '#495A45', light));
-    st.setProperty('--sk-sand', mix('#2E3045', '#E8D3AE', light));
-    st.setProperty('--sk-wet', mix('#262A40', '#C9B48F', light));
+    // the san diego coast in one soft, hazy light: muted colours that all lean toward the sky,
+    // so they belong together (raise COAST_HAZE for more haze, lower it for crisper colour)
+    function coast(nightHex, dayHex) { var c = mix(nightHex, dayHex, light); return mix(c, sky[1], COAST_HAZE * light); }
+    st.setProperty('--sk-ocean', coast('#1B2A44', '#47657C'));
+    st.setProperty('--sk-ocean-far', mix(sky[1], '#7D93A6', 0.45));
+    st.setProperty('--sk-ocean-near', coast('#17233A', '#3A566B'));
+    st.setProperty('--sk-cliff', coast('#3B3650', '#BBA58C'));
+    st.setProperty('--sk-cliff-top', coast('#4A4560', '#D3C1A8'));
+    st.setProperty('--sk-gully', coast('#2A263D', '#9C8670'));
+    st.setProperty('--sk-pine', coast('#121722', '#3F4A4E'));
+    st.setProperty('--sk-pine-lite', coast('#1B2331', '#56625F'));
+    st.setProperty('--sk-scrub', coast('#161C24', '#727565'));
+    st.setProperty('--sk-scrub-dark', coast('#10151C', '#585C52'));
+    st.setProperty('--sk-sand', coast('#2E3045', '#DCD1BF'));
+    st.setProperty('--sk-sand-deep', coast('#262838', '#CBBEA9'));
+    st.setProperty('--sk-wet', coast('#262A40', '#BDB2A2'));
     st.setProperty('--sk-foam-op', (0.3 + 0.4 * light).toFixed(2));
-    st.setProperty('--sky-bottom', sky[1]);
-    st.setProperty('--sk-ocean-far', mix(sky[1], '#5E86A8', 0.45));
-    st.setProperty('--sk-ocean-near', mix('#17233A', '#245E80', light));
-    st.setProperty('--sk-cliff-top', mix('#4A4560', '#EBCEA3', light));
-    st.setProperty('--sk-sand-deep', mix('#262838', '#D9BF95', light));
-    st.setProperty('--sk-scrub', mix('#161C24', '#7C7D5C', light));
-    st.setProperty('--sk-scrub-dark', mix('#10151C', '#596142', light));
-    st.setProperty('--sk-pine-lite', mix('#1B2331', '#5F7552', light));
     st.setProperty('--sk-refl', mix('#FFFFFF', '#FFD69A', 1 - light));
     st.setProperty('--sk-refl-op', (0.2 + 0.55 * (1 - light)).toFixed(2));
     st.setProperty('--sk-lit-op', ((1 - light) * 0.95).toFixed(2));
