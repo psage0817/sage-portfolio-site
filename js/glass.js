@@ -50,9 +50,13 @@
     '  float keep = clamp(1. - clear + edge * .95, 0., 1.);',
     '  cov *= keep;',
     // behind the headline the condensation has settled more evenly: fewer, smaller beads and a smoother fog
+    // a rounded, soft-edged area whose outline wanders like the rest of the fog, so it never reads as a shape
+    '  float kc = uRes.y / 800.;',
     '  vec2 cIn = min(px - uCalm.xy, uCalm.zw - px);',
-    '  float calm = smoothstep(-90., 50., min(cIn.x, cIn.y)) * step(1., uCalm.z - uCalm.x);',
-    '  cov *= 1. - calm * .78;',
+    '  float sd = min(cIn.x, cIn.y) >= 0. ? min(cIn.x, cIn.y) : -length(max(-cIn, 0.));',
+    '  float wander = (texture2D(uNoise, uv * vec2(uAspect, 1.) * 2.3).r - .5) * 150. * kc;',
+    '  float calm = smoothstep(-230. * kc, 70. * kc, sd + wander) * step(1., uCalm.z - uCalm.x);',
+    '  cov *= 1. - calm * .55;',
     // beads that are alive: creeping, growing, running. w holds stretch (whole part) and opacity (fraction)
     '  for (int i = 0; i < NDROPS; i++) {',
     '    vec4 d = uDrops[i];',
@@ -84,7 +88,7 @@
     '  float rimDark = mix(.55, lk.r, has);',
     '  float rimWide = mix(.5, lk.g, has);',
     '  float fogAmt = clamp(uFog * (1. - clear) * (1. - trail * .6) * (.94 + .14 * mott + .06 * mott2), 0., 1.);',
-    '  fogAmt = max(fogAmt, calm * .9 * (1. - clear));',
+    '  fogAmt = max(fogAmt, calm * .72 * (1. - clear));',
     '  vec3 sharp = sceneSharp(uv);',
     '  vec3 soft = sceneSoft(uv);',
     '  float grain = texture2D(uNoise, uv * vec2(uAspect, 1.) * 38.).r - .5;',
