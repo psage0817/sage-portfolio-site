@@ -34,7 +34,7 @@
   // how thick the frost on the glass is, from 0 (clear) to 1 (solid):
   // FOG_DAY from 7am to 5:30pm, FOG_NIGHT the rest of the time, fading between them over half an hour
   var FOG_DAY = 0.5;
-  var FOG_NIGHT = 0.92;
+  var FOG_NIGHT = 0.8;
   var FOG = FOG_NIGHT;
   var COAST_LIFT_TALL = 165;
 
