@@ -168,7 +168,8 @@ input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius
 /* ---------- the window ---------- */
 .window {
   position: relative; overflow: hidden;
-  height: clamp(560px, 88vh, 800px);
+  height: clamp(520px, calc(100vh - 190px), 820px);
+  height: clamp(520px, calc(100svh - 190px), 820px);
   border-radius: 0 0 8px 8px;
   background: linear-gradient(180deg, var(--sky-top, #4C88D4) 0%, var(--sky-bottom, #A8CCEA) 86%);
   color: var(--hero-ink);
@@ -279,7 +280,7 @@ input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius
 .rot .w.is-leaving { transform: translateY(-100%); opacity: 0; }
 
 /* ---------- selected work ---------- */
-.work { padding: clamp(88px, 10vw, 128px) 0 0; }
+.work { padding: 44px 0 0; }
 .work-head {
   display: flex; align-items: flex-end; justify-content: space-between; gap: 16px 32px; flex-wrap: wrap;
 }

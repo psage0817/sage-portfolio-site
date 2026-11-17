@@ -15,7 +15,7 @@
 
   // how thick the fog on the glass is, from 0 (clear) to 1 (solid)
   // how much haze softens the san diego coast's colours in daylight (0 = none, 1 = all sky)
-  var COAST_HAZE = 0.4;
+  var COAST_HAZE = 0.28;
 
   // how thick the frost on the glass is, from 0 (clear) to 1 (solid):
   // FOG_DAY from 7am to 5:30pm, FOG_NIGHT the rest of the time, fading between them over half an hour
@@ -483,7 +483,7 @@
     var label = fmt(minutes);
     timeEls.forEach(function (el) { el.textContent = label; });
     tzEls.forEach(function (el) { el.textContent = tzAbbr(city.tz); });
-    if (sunIcon) { sunIcon.hidden = !showSun; moonIcon.hidden = showSun; }
+    if (sunIcon) { sunIcon.toggleAttribute('hidden', !showSun); moonIcon.toggleAttribute('hidden', showSun); }   // svg icons need the attribute, not the property
     if (range && document.activeElement !== range) range.value = minutes;
     if (range) range.setAttribute('aria-valuetext', label);
     if (nowBtn) nowBtn.hidden = state.live;
