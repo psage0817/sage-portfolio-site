@@ -21,7 +21,7 @@
 
   var FRAG = [
     'precision PRECISION float;',
-    'uniform sampler2D uScene, uBlur, uScene2, uBlur2, uBeads, uMask, uNoise, uTrail;',
+    'uniform sampler2D uScene, uBlur, uScene2, uBlur2, uBeads, uMask, uNoise, uTrail, uWater;',
     'uniform vec2 uRes;',
     'uniform float uFog, uLight, uAspect, uBeadR, uMagnify, uNightMix, uSatA, uSatB, uFogMix;',
     'uniform vec3 uFogCol, uHi, uGradeA, uGradeB;',
@@ -45,19 +45,21 @@
     'vec2 view(vec2 p) { return (p - .5) * uZoom + .5 + uShift; }',
     // ---------- the live view (san diego photos only) ----------
     // photo coordinates run 0..1 across the 3200 x 1800 photo; the shoreline is traced from it
+    // the water's edge, traced off the san diego photos: where the wet sand starts (photo coordinates)
     'float shoreY(float x) {',
-    '  if (x < .275) return mix(.904, .852, x / .275);',
-    '  if (x < .344) return mix(.852, .853, (x - .275) / .069);',
-    '  if (x < .506) return mix(.853, .794, (x - .344) / .162);',
-    '  if (x < .631) return mix(.794, .733, (x - .506) / .125);',
-    '  if (x < .706) return mix(.733, .672, (x - .631) / .075);',
-    '  if (x < .756) return mix(.672, .611, (x - .706) / .05);',
-    '  if (x < .775) return mix(.611, .556, (x - .756) / .019);',
-    '  if (x < .833) return mix(.556, .503, (x - .775) / .058);',
-    '  if (x < .942) return mix(.503, .453, (x - .833) / .109);',
-    '  return mix(.453, .444, (x - .942) / .058);',
+    '  if (x < 0.12500) return mix(0.9444, 0.9111, (x - 0.00000) / 0.12500);',
+    '  if (x < 0.21875) return mix(0.9111, 0.8611, (x - 0.12500) / 0.09375);',
+    '  if (x < 0.28125) return mix(0.8611, 0.8417, (x - 0.21875) / 0.06250);',
+    '  if (x < 0.34375) return mix(0.8417, 0.8111, (x - 0.28125) / 0.06250);',
+    '  if (x < 0.43750) return mix(0.8111, 0.7667, (x - 0.34375) / 0.09375);',
+    '  if (x < 0.50000) return mix(0.7667, 0.7361, (x - 0.43750) / 0.06250);',
+    '  if (x < 0.58437) return mix(0.7361, 0.6861, (x - 0.50000) / 0.08437);',
+    '  if (x < 0.67188) return mix(0.6861, 0.6528, (x - 0.58437) / 0.08750);',
+    '  if (x < 0.75000) return mix(0.6528, 0.6222, (x - 0.67188) / 0.07812);',
+    '  if (x < 0.81250) return mix(0.6222, 0.5944, (x - 0.75000) / 0.06250);',
+    '  if (x < 1.00000) return mix(0.5944, 0.5833, (x - 0.81250) / 0.18750);',
+    '  return 0.5833;',
     '}',
-    'float waterAt(vec2 q) { return smoothstep(.431, .442, q.y) * (1. - smoothstep(-.022, -.004, q.y - shoreY(q.x))); }',
     // the train: a Pacific Surfliner on the real rails, in perspective. Lengths are in metres, s runs back from the north end.
     // from the north end: cab car, three coaches, a champagne coach, then the Charger locomotive at the south end
     'const float CAR = 25.9;',
@@ -277,7 +279,9 @@
     '  gOcean = false; gTone = 1.; gF0 = .02; gRy0 = 0.; gW = 0.; gFoam = 0.; gSheet = 0.; gWet = 0.; gGl = 0.; gF = .02; gRy = 0.; gBody = 0.; gShade = 1.; gSandFoam = 0.;',
     '  float sy = shoreY(q.x);',
     // the water, plus a strip of beach the waves run up onto
-    '  if (q.y < OHZ + .002 || q.y > sy + .045) return;',
+    '  if (q.y < OHZ + .002 || q.y > sy + .09) return;',
+    '  float wm = texture2D(uWater, q).r;',
+    '  if (wm < .004) return;',
     '  gOcean = true;',
     '  float t = uTime;',
     '  vec2 w = toWorld(q);',
@@ -354,7 +358,7 @@
     '  float up = smoothstep(.0, .18, ph0) * (1. - smoothstep(.22, .75, ph0));',
     '  float w0 = floor(t / T + bend);',
     '  float run = mix(2.5, 11., pow(hash1(vec2(w0, 5.5)), 1.3)) * up;',
-    '  float onSand = (1. - smoothstep(-.5, .5, d)) * (1. - smoothstep(.74, .78, q.x));',
+    '  float onSand = 1. - smoothstep(-.5, .5, d);',
     '  float sheet = smoothstep(-run - .4, -run + .6, d) * onSand;',
     '  gSheet = sheet * (1. - smoothstep(1.5, 3., -d) * .2);',
     '  float edge = (1. - smoothstep(.0, .55, abs(d + run))) * onSand * smoothstep(.0, .3, up);',
@@ -362,6 +366,8 @@
     '  gWet = smoothstep(-11.5, -1., d) * onSand * (1. - sheet);',
     // in the sand strip, only the swash and the wet sand change the photo
     '  if (d < 0.) { gW = 0.; }',
+    // nothing is drawn over the cliff, the bushes or the people: they stay in front of the water
+    '  gW *= wm; gSheet *= wm; gWet *= wm; gSandFoam *= wm;',
     '  gW *= 1. - smoothstep(-.4, .4, -d) * 0.;',
     '}',
     'vec3 photo(sampler2D t, sampler2D tb, vec2 p, out float glow) {',
@@ -656,7 +662,7 @@
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
     var aPos = gl.getAttribLocation(prog, 'aPos'); gl.enableVertexAttribArray(aPos); gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
     var U = {};
-    ['uScene', 'uBlur', 'uScene2', 'uBlur2', 'uBeadR', 'uMagnify', 'uNightMix', 'uSatA', 'uSatB', 'uGradeA', 'uGradeB', 'uFogMix', 'uCalm', 'uBeads', 'uMask', 'uNoise', 'uTrail', 'uLightPos', 'uRes', 'uFog', 'uLight', 'uAspect', 'uFogCol', 'uHi', 'uDrops', 'uShift', 'uZoom', 'uOpen', 'uTime', 'uLive', 'uTrainU', 'uTrainOn', 'uTrainDir', 'uPhoto'].forEach(function (k) { U[k] = gl.getUniformLocation(prog, k); });
+    ['uScene', 'uBlur', 'uScene2', 'uBlur2', 'uBeadR', 'uMagnify', 'uNightMix', 'uSatA', 'uSatB', 'uGradeA', 'uGradeB', 'uFogMix', 'uCalm', 'uBeads', 'uMask', 'uNoise', 'uTrail', 'uLightPos', 'uRes', 'uFog', 'uLight', 'uAspect', 'uFogCol', 'uHi', 'uDrops', 'uShift', 'uZoom', 'uOpen', 'uTime', 'uLive', 'uTrainU', 'uTrainOn', 'uTrainDir', 'uPhoto', 'uWater'].forEach(function (k) { U[k] = gl.getUniformLocation(prog, k); });
 
     function texture(unit, repeat) {
       var t = gl.createTexture(); gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, t);
@@ -670,6 +676,10 @@
     var T = { scene: texture(0), blur: texture(1), beads: texture(2), mask: texture(3), noise: texture(4, true), trail: texture(5), scene2: texture(6), blur2: texture(7) };
     gl.uniform1i(U.uScene, 0); gl.uniform1i(U.uBlur, 1); gl.uniform1i(U.uBeads, 2); gl.uniform1i(U.uMask, 3); gl.uniform1i(U.uNoise, 4); gl.uniform1i(U.uTrail, 5);
     gl.uniform1i(U.uScene2, 6); gl.uniform1i(U.uBlur2, 7);
+    // the live view's water mask needs a ninth texture; nearly every device has 16, but without one the photo just stays still
+    var canLive = (gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS) || 8) > 8;
+    T.water = canLive ? texture(8) : null;
+    if (canLive) gl.uniform1i(U.uWater, 8);
     // until a photo or a time of day says otherwise: no grading, no night photo
     gl.uniform3f(U.uGradeA, 1, 1, 1); gl.uniform3f(U.uGradeB, 1, 1, 1);
     gl.uniform1f(U.uSatA, 1); gl.uniform1f(U.uSatB, 1); gl.uniform1f(U.uNightMix, 0); gl.uniform1f(U.uFogMix, 0.8);
@@ -1243,7 +1253,8 @@
       // photos: { day: Image, night: Image or null, fx, fy } or null for the illustration
       setPhotos: function (p) {
         photos = p; photoDrawn = false;
-        live = !!(p && p.live);
+        live = !!(p && p.live && p.water && T.water);
+        if (live) upload(8, T.water, p.water);
         gl.uniform1f(U.uLive, live ? 1 : 0);
         if (p) { drawPhotos(); photoRect(); } else { sceneNow(); }
         return !!photos;
