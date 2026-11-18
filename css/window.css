@@ -1,0 +1,222 @@
+/* window.css: the window concept (window.html).
+   The window from my room: a dark bronze frame round one big pane of glass, the roller
+   shade in its cassette with the nav on the fabric, the cord loop and weight on the right,
+   and the white sill. At night the room is lit by a warm lamp somewhere behind you.
+   Loaded after site.css. */
+
+.win-concept {
+  --bg: #F2EDE6;            /* the wall */
+  --surface: #FBF8F3;
+  --ph: #E6DFD5;
+  --ph-ink: #5B5048;
+  --line: #DDD4C8;
+
+  --bronze: #463A35;
+  --bronze-hi: #66574F;
+  --bronze-lo: #2B2320;
+  --fabric: #F5F1EA;
+  --fabric-thread: .07;
+  --sill: #FFFFFF;
+
+  --side: clamp(12px, 2.2vw, 32px);   /* wall either side of the window */
+  --band: 86px;                        /* shade fabric above the glass, where the nav sits */
+  --frame: 14px;                       /* outer frame */
+  --stile: 10px;                       /* sash frame inside it */
+  --glass-h: clamp(460px, calc(100svh - var(--band) - 128px), 900px);
+  --drop: 0px;                         /* how far the shade is pulled down over the glass */
+  --pull: 0px;                         /* how far the cord is being pulled */
+}
+.win-concept[data-theme="night"] {
+  /* a white wall at night, lit by a warm lamp somewhere behind you */
+  --bg: #1F1D21;
+  --surface: #29262B;
+  --ink: #F2EAE1;
+  --muted: #BCB2A8;
+  --line: #37333A;
+  --ph: #2C292F;
+  --ph-ink: #CFC5BA;
+  --lift: rgba(0, 0, 0, 0.45);
+  --glass: rgba(44, 40, 46, 0.45);
+  --glass-strong: rgba(36, 33, 38, 0.92);
+  --glass-line: rgba(255, 236, 210, 0.16);
+  --hero-ink: #FFF8EE;
+  --hero-muted: #D9C9B4;
+  --fabric: #4E474A;
+  --fabric-thread: .1;
+  --sill: #3A363A;
+  --bronze: #2C2421;
+  --bronze-hi: #4A3E38;
+  --bronze-lo: #191412;
+  /* the contact section and footer go warm with the room */
+  --night: #19181C;
+  --night-deep: #131216;
+  --night-card: #262328;
+  --night-muted: #C9C0B6;
+  --lamp: rgba(255, 180, 105, 0.17);
+}
+/* the lamp: brightest low on the left, falling off across the wall; it stays put as you scroll */
+.win-concept[data-theme="night"] body {
+  background:
+    radial-gradient(1100px 900px at 6% 78%, var(--lamp), rgba(255, 178, 100, 0) 72%) fixed,
+    var(--bg);
+}
+.win-concept .room { background: transparent; }
+/* the shade picks up the same lamp from the left */
+.win-concept[data-theme="night"] .shade::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(90deg, rgba(255, 196, 130, 0.16), rgba(255, 196, 130, 0) 70%);
+}
+[data-theme="night"] .time-cities button[aria-pressed="true"] { color: #1F1D21; }
+
+.room {
+  position: relative; overflow-x: clip;
+  padding: calc(var(--band) + 2px) var(--side) 0;
+}
+
+/* ---------- the shade ---------- */
+.shade-box {
+  position: absolute; z-index: 9; top: 0; left: calc(var(--side) - 12px); right: calc(var(--side) - 12px);
+  height: 26px; border-radius: 0 0 13px 13px;
+  /* a rolled cassette: lit from the room above */
+  background: linear-gradient(180deg, #5C5450 0%, #3B3532 34%, #262120 74%, #191615 100%);
+  box-shadow: 0 6px 12px -6px rgba(30, 22, 18, 0.45);
+}
+.cap { position: absolute; top: 0; bottom: 0; width: 7px; border-radius: 0 0 4px 4px; background: linear-gradient(180deg, #6A625D, #2A2523); }
+.cap-l { left: 0; } .cap-r { right: 0; }
+
+.shade {
+  position: absolute; z-index: 8; top: 12px; left: calc(var(--side) - 4px); right: calc(var(--side) - 4px);
+  height: calc(var(--band) - 10px + var(--drop));
+  background-color: var(--fabric);
+  /* woven fabric: fine horizontal threads and a little slub, anchored to the hem so it moves as it unrolls */
+  background-image:
+    url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3  0 0 0 0 .26  0 0 0 0 .2  1 0 0 0 -.45'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23w)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3  0 0 0 0 .26  0 0 0 0 .2  .5 0 0 0 -.2'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-position: 0 100%, 0 100%;
+  background-blend-mode: multiply;
+  box-shadow: 0 10px 18px -10px rgba(40, 28, 20, 0.35);
+  transition: height .9s cubic-bezier(.5, 0, .2, 1), background-color .6s ease;
+}
+.shade::before {
+  /* the threads are faint: blend the texture back toward the fabric colour */
+  content: ""; position: absolute; inset: 0; background: var(--fabric); opacity: calc(1 - var(--fabric-thread) * 6); pointer-events: none;
+}
+.shade.is-moving, .room.is-pulling .shade { transition: background-color .6s ease; }
+.win-arrive .shade { height: calc(var(--band) - 10px + var(--frame) + var(--glass-h)); }
+
+.shade .nav {
+  position: absolute; inset: 0 0 auto; height: calc(var(--band) - 28px);
+  padding: 0 clamp(16px, 3vw, 44px);
+  color: var(--ink);
+}
+.shade .time-chip { background: rgba(255, 255, 255, 0.6); -webkit-backdrop-filter: none; backdrop-filter: none; }
+[data-theme="night"] .shade .time-chip { background: rgba(255, 255, 255, 0.08); }
+.shade .time-panel { color: var(--hero-ink); }
+
+.hem {
+  position: absolute; left: -7px; right: -7px; bottom: -2px; height: 16px; border-radius: 8px;
+  background: linear-gradient(180deg, #5A524E 0%, #393331 40%, #221E1D 100%);
+  box-shadow: 0 4px 8px -3px rgba(20, 14, 10, 0.5);
+}
+.hem span {
+  position: absolute; right: 58px; top: 50%; transform: translateY(-50%);
+  font-size: 8px; line-height: 1; letter-spacing: .04em; color: rgba(255, 255, 255, 0.5);
+}
+
+/* ---------- the frame and glass ---------- */
+.frame {
+  position: relative; z-index: 2;
+  padding: var(--frame);
+  border-radius: 2px;
+  background: var(--bronze);
+  box-shadow:
+    inset 1px 1px 0 var(--bronze-hi), inset -1px -1px 0 var(--bronze-lo),
+    0 22px 34px -24px rgba(40, 28, 20, 0.55);
+  transition: background-color .6s ease;
+}
+.pane {
+  position: relative; height: var(--glass-h); overflow: hidden;
+  background: #1B1F2B;
+  box-shadow: inset 0 0 0 1px var(--bronze-lo);
+}
+.win-concept .window {
+  height: 100%; border-radius: 0;
+}
+/* the sash frame, all the way round the glass */
+.pane::after {
+  content: ""; position: absolute; z-index: 6; inset: 0; pointer-events: none;
+  box-shadow:
+    inset 0 0 0 var(--stile) var(--bronze),
+    inset 0 0 0 calc(var(--stile) + 1px) var(--bronze-lo),
+    inset 0 calc(var(--stile) + 10px) 14px -10px rgba(0, 0, 0, 0.45);
+}
+
+/* the headline is on the glass, low on the left */
+.win-concept .hero-text { z-index: 4; left: clamp(28px, 4vw, 56px); bottom: clamp(44px, 7vh, 72px); }
+.win-concept .note-spot { top: 13%; }
+
+/* after dark, the room shows in the glass: the ceiling lights, like the photo of my window at night */
+.reflection {
+  position: absolute; z-index: 3; left: 0; right: 0; top: 0; height: 60%; pointer-events: none;
+  opacity: 0; transition: opacity 1.2s ease; mix-blend-mode: screen;
+  transform: translate(var(--rx, 0px), var(--ry, 0px));
+}
+[data-theme="night"] .reflection { opacity: 1; }
+.reflection i { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 238, 205, 0.7), rgba(255, 220, 170, 0.18) 55%, rgba(255, 220, 170, 0) 100%); }
+.reflection i:nth-child(1) { left: 66%; top: 18%; width: 120px; height: 44px; }
+.reflection i:nth-child(2) { left: 56%; top: 66%; width: 70px; height: 24px; opacity: .8; }
+.reflection i:nth-child(3) { left: 23%; top: 34%; width: 64px; height: 18px; opacity: .45; }
+
+/* ---------- the sill ---------- */
+.sill {
+  position: relative; z-index: 1; height: 20px; margin: 0 -12px;
+  background: var(--sill);
+  border-radius: 0 0 2px 2px;
+  box-shadow: inset 0 -1px 0 rgba(120, 100, 80, 0.12), 0 10px 14px -8px rgba(40, 28, 20, 0.32);
+  transition: background-color .6s ease;
+}
+
+/* ---------- the cord loop and weight ---------- */
+.cords {
+  position: absolute; z-index: 10; top: 22px; right: calc(var(--side) + 2px);
+  width: 22px; height: calc(var(--band) + var(--glass-h) * .62 + var(--pull));
+  transform-origin: 50% 0;
+}
+.room.is-swaying .cords { animation: sway 2.6s cubic-bezier(.3, .6, .4, 1); }
+@keyframes sway {
+  0% { transform: rotate(0); } 18% { transform: rotate(2.4deg); } 38% { transform: rotate(-1.6deg); }
+  58% { transform: rotate(1deg); } 78% { transform: rotate(-.4deg); } 100% { transform: rotate(0); }
+}
+.cord { position: absolute; top: 0; bottom: 34px; width: 2px; border-radius: 1px; background: #191615; }
+.cord-a { left: 7px; } .cord-b { left: 13px; }
+.weight {
+  position: absolute; left: -2px; bottom: 0; width: 26px; height: 42px; padding: 0; border: 0; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #4A4542 0%, #1D1A19 55%, #100E0D 100%);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.35);
+  cursor: grab; touch-action: none;
+  transition: transform .2s ease;
+}
+/* a 44px tap area round the small weight */
+.weight::before { content: ""; position: absolute; inset: -10px -9px; }
+.weight span { position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; border: 1.5px solid rgba(255, 255, 255, 0.45); }
+.weight:hover { transform: scale(1.06); }
+.weight:active { cursor: grabbing; }
+.weight:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+.room:not(.is-pulling) .cords { transition: height .55s cubic-bezier(.3, 1.6, .5, 1); }
+
+/* ---------- the rest of the page sits on the wall ---------- */
+.win-concept .work { padding-top: 34px; }
+.win-concept .card-media::after { background: rgba(242, 237, 230, 0.3); }
+[data-theme="night"].win-concept .card-media::after { background: rgba(31, 29, 33, 0.3); }
+
+@media (max-width: 640px) {
+  .win-concept { --band: 70px; --frame: 9px; --stile: 7px; --glass-h: clamp(440px, calc(100svh - var(--band) - 104px), 720px); }
+  .shade .nav { height: calc(var(--band) - 26px); }
+  .cords { right: calc(var(--side) - 4px); }
+  .win-concept .hero-text { left: 22px; right: 22px; bottom: 40px; }
+  .win-concept .note-spot { top: 9%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .room.is-swaying .cords { animation: none; }
+}
+
