@@ -8,8 +8,7 @@
   font-family: 'Le Jardin Du Bonheur';
   src: local('Le Jardin Du Bonheur'), local('LeJardinDuBonheur'),
        url('../fonts/LeJardinDuBonheur.woff2') format('woff2'),
-       url('../fonts/LeJardinDuBonheur.ttf') format('truetype'),
-       url('../fonts/LeJardinDuBonheur.otf') format('opentype');
+       url('../fonts/LeJardinDuBonheur.ttf') format('truetype');
   font-display: swap;
 }
 @font-face {
