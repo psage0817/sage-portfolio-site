@@ -217,8 +217,6 @@
 
 /* ---------- the rest of the page sits on the wall ---------- */
 .win-concept .work { padding-top: 48px; }
-.win-concept .card-media::after { background: rgba(242, 237, 230, 0.3); }
-[data-theme="night"].win-concept .card-media::after { background: rgba(31, 29, 33, 0.3); }
 
 @media (max-width: 640px) {
   .win-concept { --band: 70px; --frame: 9px; --stile: 7px; --glass-h: clamp(330px, calc(100svh - var(--band) - 250px), 680px); }

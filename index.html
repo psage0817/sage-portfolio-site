@@ -9,6 +9,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Beth+Ellen&display=swap" rel="stylesheet">
 <!-- if Ashton comes from Adobe Fonts, paste your web project's <link> here -->
+<!-- Satoshi, the body typeface, from Fontshare (free for personal and commercial use) -->
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/site.css">
 <link rel="stylesheet" href="css/window.css">
 <script>
@@ -114,58 +116,53 @@
       </div>
     </div>
 
-    <div class="work-grid">
-      <!-- invetty: same size as the others; on hover a short description opens below it -->
-      <div class="card-wrap" data-cat="ux" style="view-transition-name: card-invetty">
-        <a class="card" href="invetty.html">
-          <div class="card-media"><img src="img/invetty-screens.webp" alt="Four invetty screens: the invitation, the dietary questionnaire, the celiac introduction and the host’s celiac alert" width="1700" height="820"></div>
-          <div class="card-title"><h3>invetty</h3><span>2026</span></div>
-          <p class="card-tags">ux design, case study</p>
-          <div class="card-more">
-            <div>
-              <p>an app that lets event guests share dietary needs privately, so people with celiac disease stop vetting every shared meal on their own</p>
-              <span class="card-go">read the case study</span>
-            </div>
-          </div>
-        </a>
-      </div>
-
-      <!-- the rest: swap each .ph for an <img> when the project is ready, and set its href -->
-      <div class="card-wrap" data-cat="web" style="view-transition-name: card-km">
-        <a class="card" href="#" aria-disabled="true">
-          <div class="card-media"><div class="ph">[kishimoto mendo homepage]</div></div>
-          <div class="card-title"><h3>kishimoto mendo</h3><span>[year]</span></div>
-          <p class="card-tags">web design</p>
-        </a>
-      </div>
-      <div class="card-wrap" data-cat="ux" style="view-transition-name: card-softspot">
-        <a class="card" href="#" aria-disabled="true">
-          <div class="card-media"><div class="ph">[softspot key screens]</div></div>
-          <div class="card-title"><h3>softspot</h3><span>[year]</span></div>
-          <p class="card-tags">ux design, designathon</p>
-        </a>
-      </div>
-      <div class="card-wrap" data-cat="brand" style="view-transition-name: card-strike">
-        <a class="card" href="#" aria-disabled="true">
-          <div class="card-media"><div class="ph">[spread from strike magazine]</div></div>
-          <div class="card-title"><h3>strike magazine stl</h3><span>[year]</span></div>
-          <p class="card-tags">art direction, editorial design</p>
-        </a>
-      </div>
-      <div class="card-wrap" data-cat="brand" style="view-transition-name: card-social">
-        <a class="card" href="#" aria-disabled="true">
-          <div class="card-media"><div class="ph">[grid of three posts]</div></div>
-          <div class="card-title"><h3>social media marketing</h3><span>[year]</span></div>
-          <p class="card-tags">pr &amp; marketing, graphic design</p>
-        </a>
-      </div>
-      <div class="card-wrap" data-cat="type" style="view-transition-name: card-type">
-        <a class="card" href="#" aria-disabled="true">
-          <div class="card-media"><div class="ph">[specimen from the type collection]</div></div>
-          <div class="card-title"><h3>type collection</h3><span>[year]</span></div>
-          <p class="card-tags">typography</p>
-        </a>
-      </div>
+    <!-- one spread per project, sides swapping each time. For a new project, copy a spread:
+         swap the [placeholder] for an <img>, set the href, and remove aria-disabled -->
+    <div class="spreads" data-work>
+      <a class="spread" href="invetty.html" data-cat="ux" style="view-transition-name: card-invetty">
+        <span class="spread-pic"><span class="spread-media"><img src="img/invetty-screens.webp" alt="Four invetty screens: the invitation, the dietary questionnaire, the celiac introduction and the host’s celiac alert" width="1700" height="820"></span></span>
+        <div class="spread-text">
+          <h3>invetty</h3>
+          <p class="spread-what">an app that lets event guests share dietary needs privately, so people with celiac disease stop vetting every shared meal on their own</p>
+          <dl class="spread-facts"><dt>role</dt><dd>led a team of four</dd><dt>year</dt><dd>2026</dd><dt>tools</dt><dd>FigJam, Figma</dd><dt>type</dt><dd>ux design, case study</dd></dl>
+          <span class="spread-go">read the case study</span>
+        </div>
+      </a>
+      <a class="spread" href="#" aria-disabled="true" data-cat="ux" style="view-transition-name: card-softspot">
+        <span class="spread-pic"><span class="spread-media"><span class="ph">[softspot key screens]</span></span></span>
+        <div class="spread-text">
+          <h3>softspot</h3>
+          <p class="spread-what">ux design, designathon</p>
+        </div>
+      </a>
+      <a class="spread" href="#" aria-disabled="true" data-cat="web" style="view-transition-name: card-km">
+        <span class="spread-pic"><span class="spread-media"><span class="ph">[kishimoto mendo homepage]</span></span></span>
+        <div class="spread-text">
+          <h3>kishimoto mendo</h3>
+          <p class="spread-what">web design</p>
+        </div>
+      </a>
+      <a class="spread" href="#" aria-disabled="true" data-cat="brand" style="view-transition-name: card-strike">
+        <span class="spread-pic"><span class="spread-media"><span class="ph">[spread from strike magazine]</span></span></span>
+        <div class="spread-text">
+          <h3>strike magazine stl</h3>
+          <p class="spread-what">art direction, editorial design</p>
+        </div>
+      </a>
+      <a class="spread" href="#" aria-disabled="true" data-cat="brand" style="view-transition-name: card-social">
+        <span class="spread-pic"><span class="spread-media"><span class="ph">[grid of three posts]</span></span></span>
+        <div class="spread-text">
+          <h3>social media marketing</h3>
+          <p class="spread-what">pr &amp; marketing, graphic design</p>
+        </div>
+      </a>
+      <a class="spread" href="#" aria-disabled="true" data-cat="type" style="view-transition-name: card-type">
+        <span class="spread-pic"><span class="spread-media"><span class="ph">[specimen from the type collection]</span></span></span>
+        <div class="spread-text">
+          <h3>type collection</h3>
+          <p class="spread-what">typography</p>
+        </div>
+      </a>
     </div>
   </section>
 
