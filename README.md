@@ -13,7 +13,7 @@ css/site.css      the old styles, still used by about.html
 js/glass.js       the window glass: condensation, the live San Diego ocean and the train
 js/sky.js         coin-flip city, live time, photos, fog drawing, day/night page
 js/home.js        the opening time-lapse, play/pause, city buttons, time slider, rotating words, filters
-js/invetty.js     side menu, seek bar and floating bar, before/after wipes, journey map zoom, videos
+js/invetty.js     the two flow videos at the top, side menu and floating bar, before/after wipes, journey map zoom
 js/startmenu.js   the start menu and the sticky menu bar (each page lists its items above the script)
 js/sayhi.js       the paint window and the "let's say hi" handwriting
 js/aero.js        toast, day/night carried to other pages, sliding segment, things arriving on scroll
