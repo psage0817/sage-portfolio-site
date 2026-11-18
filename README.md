@@ -5,8 +5,10 @@ index.html      home: the window, selected work, contact + record player
 invetty.html    invetty case study
 about.html      simple shell, waiting for your about layout
 css/site.css    shared styles + home (day/night colours, fonts at the top)
+css/window.css  the window on the home page: frame, shade, cord, lamp-lit night
 css/case.css    the case study, in invetty's Ubuntu + DM Sans and indigo/beige
 js/sky.js       coin-flip city, live time, skyline, fog drawing, time slider, day/night page
+js/window.js    the shade rolling up, pulling the cord, the view shifting with the cursor
 js/home.js      rotating subtitle words (edit the lists at the top) + filters
 js/invetty.js   before/after chat bubbles, process list, journey map zoom, video pause
 js/player.js    your existing Spotify player (unchanged)
