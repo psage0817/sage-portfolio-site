@@ -270,7 +270,7 @@
     'float hash1(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }',
     'float noise2(vec2 p) { vec2 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f);',
     '  return mix(mix(hash1(i), hash1(i + vec2(1., 0.)), f.x), mix(hash1(i + vec2(0., 1.)), hash1(i + vec2(1., 1.)), f.x), f.y); }',
-    'float fbm(vec2 p) { float a = .5, s = 0.; for (int i = 0; i < 4; i++) { s += a * noise2(p); p = p * 2.03 + 17.1; a *= .5; } return s; }',
+    'float fbm(vec2 p) { float a = .5, s = 0.; for (int i = 0; i < NOCT; i++) { s += a * noise2(p); p = p * 2.03 + 17.1; a *= .5; } return s; }',
     // metres along the beach (X) and out from the camera (Z) for a point in the photo
     'vec2 toWorld(vec2 q) { float z = OH * OF / max((q.y - OHZ) * .5625, 1e-4); return vec2((q.x - .5) * z / OF, z); }',
     // the swell: crest at ph = 0, the steep face on the beach side (ph near 1), a long gentle back
@@ -304,7 +304,7 @@
     '  float slope = (swellH(fract((d + dd) / lam + t / T + bend)) - swellH(ph)) / dd * amp;',
     // ---- wind ripples: a few travelling waves in different directions, faded out where they'd be smaller than a pixel ----
     '  vec2 g = vec2(0.);',
-    '  for (int i = 0; i < 12; i++) {',
+    '  for (int i = 0; i < NRIP; i++) {',
     '    float fi = float(i);',
     '    float wl = .55 * pow(1.32, fi);',                                     // 0.55 m up to about 12 m
     '    float an = -1.57 + (hash1(vec2(fi, 3.7)) - .5) * 3.;',              // mostly coming in from the sea
@@ -652,7 +652,10 @@
     var maxVec = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS) || 16;
     var NDROPS = maxVec >= 64 ? 24 : 8;
     var hp = gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT);
-    var frag = FRAG.replace(/NDROPS/g, String(NDROPS)).replace('PRECISION', hp && hp.precision > 0 ? 'highp' : 'mediump');
+    // phones (a touch screen as the main pointer) get a lighter ocean: fewer ripple layers and less foam detail
+    var PHONE = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+    var frag = FRAG.replace(/NDROPS/g, String(NDROPS)).replace('PRECISION', hp && hp.precision > 0 ? 'highp' : 'mediump')
+      .replace(/NRIP/g, PHONE ? '6' : '12').replace(/NOCT/g, PHONE ? '3' : '4');
     var vs = shader(gl.VERTEX_SHADER, VERT), fs = shader(gl.FRAGMENT_SHADER, frag);
     if (!vs || !fs) return null;
     var prog = gl.createProgram(); gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
@@ -1233,11 +1236,12 @@
     // check for new sliding drops a few times a second, even when nothing else is happening
     setInterval(function () { if (!document.hidden) schedule(); }, 400);
 
+    function dprFor() { return PHONE && live ? 1 : Math.min(window.devicePixelRatio || 1, 2); }
     return {
       canvas: canvas,
       resize: function (w, h) {
         W = Math.round(w); H = Math.round(h);
-        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        dpr = dprFor();
         canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
         maskSmall.width = Math.max(16, Math.round(W / 3)); maskSmall.height = Math.max(16, Math.round(H / 3));
         drops = []; creepers = [];
@@ -1255,6 +1259,8 @@
         photos = p; photoDrawn = false;
         live = !!(p && p.live && p.water && T.water);
         if (live) upload(8, T.water, p.water);
+        // the live view on a phone draws at 1x: a quarter of the pixels, so drawing on the glass keeps up with a finger
+        if (W && dprFor() !== dpr) this.resize(W, H);
         gl.uniform1f(U.uLive, live ? 1 : 0);
         if (p) { drawPhotos(); photoRect(); } else { sceneNow(); }
         return !!photos;

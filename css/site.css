@@ -315,7 +315,7 @@ h1, h2, h3, .wordmark { font-family: var(--display); }
 .spread-media .ph { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; font-size: 14px; color: var(--ph-ink); }
 .spread:hover .spread-pic, .spread:focus-visible .spread-pic { transform: translateY(-2px); box-shadow: 0 24px 30px -20px rgba(40, 28, 20, 0.5); }
 .spread:hover .spread-media img, .spread:focus-visible .spread-media img { transform: scale(1.03); }
-.spread-text { min-width: 0; padding-bottom: 6px; position: relative; clip-path: inset(-600px -300px 0 -300px); }  /* the light starts at the shelf */
+.spread-text { min-width: 0; padding-bottom: 6px; position: relative; clip-path: inset(-600px -300px -8px -300px); }  /* the light reaches just under the shelf's front edge */
 /* every project stands on its own white shelf, like the sill under the window: the cover and the text both sit on it */
 .shelf {
   grid-column: 1 / -1; order: 3; display: block; position: relative; height: 14px; margin: 0 -12px;
@@ -346,7 +346,7 @@ h1, h2, h3, .wordmark { font-family: var(--display); }
    By day a pastel LED in the project's colour; after dark, warm white. */
 .spread-text > *:not(.spot) { position: relative; z-index: 1; }
 .spot {
-  position: absolute; z-index: 0; bottom: 0; height: calc(100% + 60px); min-height: clamp(240px, 24vw, 330px);
+  position: absolute; z-index: 0; bottom: -8px; height: calc(100% + 68px); min-height: clamp(240px, 24vw, 330px);
   width: calc(100% + 12px); pointer-events: none; opacity: 0;
   /* the cone (--cone, below): a straight edge from the lamp to the peak, then one even curve down to the shelf */
   -webkit-mask: var(--cone) 0 0 / 100% 100% no-repeat;
@@ -472,7 +472,7 @@ h1, h2, h3, .wordmark { font-family: var(--display); }
   /* on a phone the words all sit under their covers, so every lamp is at the bottom left */
   /* on a phone: one half-circle of light rising from the middle of the shelf, the same for every project */
   .spread:nth-child(odd) .spot, .spread:nth-child(even) .spot {
-    --ax: 50%; left: -12px; right: -12px; bottom: -20px; width: auto; height: auto; min-height: 0; aspect-ratio: 2 / 1;  /* down across the row gap, onto the shelf */
+    --ax: 50%; left: -12px; right: -12px; bottom: -28px; width: auto; height: auto; min-height: 0; aspect-ratio: 2 / 1;  /* down across the row gap, just under the shelf's front edge */
     -webkit-mask: radial-gradient(50% 100% at 50% 100%, #000 99%, transparent 100%);
             mask: radial-gradient(50% 100% at 50% 100%, #000 99%, transparent 100%);
     background: radial-gradient(50% 100% at 50% 100%,
@@ -481,6 +481,7 @@ h1, h2, h3, .wordmark { font-family: var(--display); }
       transparent 96%);
   }
   .spread:nth-child(even) .spread-pic { order: 0; }
+  .spread-text { clip-path: inset(-600px -300px -28px -300px); }
   .deck { transform: scale(.85); transform-origin: left center; margin-right: -40px; }
   .foot-inner { grid-template-columns: minmax(0, 1fr); }
   .foot .back { justify-self: start; }
