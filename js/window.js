@@ -1,7 +1,6 @@
 /* window.js: the window concept (window.html)
    - on arrival the shade is down and rolls up, then the cord sways once as it settles
    - pull the cord's weight down to lower the shade; click it to send the shade back up
-   - lift the lower sash by its bottom rail: the strip below it has no glass, only the screen
    - the view behind the glass shifts a little as the cursor moves, like moving your head
      at a real window; the reflections of the room's lights move the other way
    Every control also works from the keyboard (arrow keys, Enter). */
@@ -14,17 +13,14 @@
   var shade = room.querySelector('[data-shade]');
   var pane = room.querySelector('.pane');
   var weight = room.querySelector('[data-weight]');
-  var lift = room.querySelector('[data-lift]');
   var reflection = room.querySelector('.reflection');
   var view = room.querySelector('.sky-view');
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  var drop = 0, open = 0;
+  var drop = 0;
 
   function glassH() { return pane.getBoundingClientRect().height; }
   function maxDrop() { return glassH() + parseFloat(getComputedStyle(root).getPropertyValue('--frame')) || glassH(); }
-  // fully open, the lower sash's bottom rail meets the upper sash's rail, as on a real single-hung window
-  function maxOpen() { return glassH() * 0.5 - 30; }
 
   /* ---------- the shade ---------- */
   function setDrop(px, animate) {
@@ -87,50 +83,6 @@
     else if (e.key === 'Enter' || e.key === ' ') { setDrop(drop > 0 ? 0 : maxDrop() * 0.62, true); e.preventDefault(); }
   });
 
-  /* ---------- the lower sash ---------- */
-  function setOpen(px) {
-    open = Math.max(0, Math.min(maxOpen(), px));
-    room.style.setProperty('--open', open + 'px');
-    room.classList.toggle('is-open', open > 0.5);
-    lift.setAttribute('aria-valuenow', String(Math.round(open / maxOpen() * 100)));
-    pushView();
-  }
-  var liftStart = null, openAtStart = 0;
-  lift.addEventListener('pointerdown', function (e) {
-    cancelAnimationFrame(anim);
-    liftStart = e.clientY; openAtStart = open;
-    lift.setPointerCapture(e.pointerId);
-    e.preventDefault(); e.stopPropagation();
-  });
-  lift.addEventListener('pointermove', function (e) {
-    if (liftStart === null) return;
-    setOpen(openAtStart + (liftStart - e.clientY));
-    e.stopPropagation();
-  });
-  // let go and the sash settles: all the way up if it was lifted past a third, otherwise shut
-  var anim = 0;
-  function slideOpen(to) {
-    cancelAnimationFrame(anim);
-    var from = open, t0 = performance.now(), dur = reduceMotion ? 1 : 420;
-    (function step(now) {
-      var k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
-      setOpen(from + (to - from) * e);
-      if (k < 1) anim = requestAnimationFrame(step);
-    })(t0);
-  }
-  function drop_lift() {
-    if (liftStart === null) return;
-    liftStart = null;
-    slideOpen(open > maxOpen() / 3 ? maxOpen() : 0);
-  }
-  lift.addEventListener('pointerup', drop_lift);
-  lift.addEventListener('pointercancel', drop_lift);
-  lift.addEventListener('keydown', function (e) {
-    if (e.key === 'ArrowUp' || e.key === 'End') { slideOpen(maxOpen()); e.preventDefault(); }
-    else if (e.key === 'ArrowDown' || e.key === 'Home') { slideOpen(0); e.preventDefault(); }
-    else if (e.key === 'Enter' || e.key === ' ') { slideOpen(open > 0 ? 0 : maxOpen()); e.preventDefault(); }
-  });
-
   /* ---------- looking through the glass ---------- */
   // the view sits far behind the glass, so it moves a little against the cursor; the zoom keeps its edges out of sight
   var ZOOM = 0.96, SHIFT_X = 0.016, SHIFT_Y = 0.01;
@@ -138,7 +90,7 @@
   function pushView() {
     var g = window.SPGlass && window.SPGlass.live;
     if (g && g.setView && !(g.failed && g.failed())) {
-      g.setView(cur[0], cur[1], reduceMotion ? 1 : ZOOM, open);
+      g.setView(cur[0], cur[1], reduceMotion ? 1 : ZOOM, 0);
     } else if (view && !reduceMotion) {
       var r = pane.getBoundingClientRect();
       view.style.transform = 'translate(' + (-cur[0] * r.width).toFixed(1) + 'px,' + (-cur[1] * r.height).toFixed(1) + 'px) scale(1.04)';
@@ -175,6 +127,5 @@
 
   window.addEventListener('resize', function () {
     if (drop > maxDrop()) setDrop(maxDrop(), false);
-    if (open > maxOpen()) setOpen(maxOpen());
   });
 })();
