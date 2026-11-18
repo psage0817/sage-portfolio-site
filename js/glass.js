@@ -266,7 +266,7 @@
     'const float OH = 22.;',
     'const float OF = .85;',
     'const float OHZ = .428;',
-    'float gTone, gW, gF, gRy, gGl, gFoam, gSheet, gWet, gBody, gShade, gSandFoam, gF0, gRy0; bool gOcean;',
+    'float gTone, gW, gF, gRy, gGl, gFoam, gSheet, gWet, gBody, gShade, gSandFoam, gF0, gRy0, gDetail; bool gOcean;',
     'float hash1(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }',
     'float noise2(vec2 p) { vec2 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f);',
     '  return mix(mix(hash1(i), hash1(i + vec2(1., 0.)), f.x), mix(hash1(i + vec2(0., 1.)), hash1(i + vec2(1., 1.)), f.x), f.y); }',
@@ -276,7 +276,7 @@
     // the swell: crest at ph = 0, the steep face on the beach side (ph near 1), a long gentle back
     'float swellH(float ph) { return max(smoothstep(.84, 1., ph) * (1. - smoothstep(.995, 1., ph) * 0.), 1. - smoothstep(.0, .55, ph)); }',
     'void oceanAt(vec2 q) {',
-    '  gOcean = false; gTone = 1.; gF0 = .02; gRy0 = 0.; gW = 0.; gFoam = 0.; gSheet = 0.; gWet = 0.; gGl = 0.; gF = .02; gRy = 0.; gBody = 0.; gShade = 1.; gSandFoam = 0.;',
+    '  gOcean = false; gTone = 1.; gF0 = .02; gRy0 = 0.; gW = 0.; gFoam = 0.; gSheet = 0.; gWet = 0.; gGl = 0.; gF = .02; gRy = 0.; gBody = 0.; gShade = 1.; gSandFoam = 0.; gDetail = 1.;',
     '  float sy = shoreY(q.x);',
     // the water, plus a strip of beach the waves run up onto
     '  if (q.y < OHZ + .002 || q.y > sy + .09) return;',
@@ -303,7 +303,7 @@
     '  float dd = .6;',
     '  float slope = (swellH(fract((d + dd) / lam + t / T + bend)) - swellH(ph)) / dd * amp;',
     // ---- wind ripples: a few travelling waves in different directions, faded out where they'd be smaller than a pixel ----
-    '  vec2 g = vec2(0.);',
+    '  vec2 g = vec2(0.); float vis = 0.;',
     '  for (int i = 0; i < NRIP; i++) {',
     '    float fi = float(i);',
     '    float wl = .55 * pow(1.32, fi);',                                     // 0.55 m up to about 12 m
@@ -312,8 +312,10 @@
     '    float k = 6.2832 / wl;',
     '    float fade = smoothstep(2. * fp, 7. * fp, wl);',
     '    float ph2 = k * dot(dir, vec2(X, Z)) + t * sqrt(9.8 * k) + hash1(vec2(fi, 9.1)) * 6.2832;',
-    '    g += dir * (.07 * cos(ph2) * fade);',
+    '    g += dir * (.07 * cos(ph2) * fade); vis += fade;',
     '  }',
+    // how much ripple detail is left out here: far away it fades to nothing and the photo itself has to carry the texture
+    '  gDetail = vis / float(NRIP);',
     // the surface normal: ripples plus the swell's slope (which faces the beach on the front of each wave)
     '  vec3 n = normalize(vec3(-g.x * .9, 1., -g.y * .9 - slope));',
     // ---- light: the sky reflected (Fresnel), the water's own colour, a glitter path towards the sun or moon ----
@@ -384,7 +386,9 @@
     '    vec3 refl = mix(skyH * 1.04, skyZ, gRy);',
     '    vec3 wcol = mix(body, refl, clamp(gF * 1.15, 0., 1.)) + skyH * gGl;',
     '    vec3 flat0 = mix(body / max(gShade, .01), mix(skyH * 1.04, skyZ, gRy0), clamp(gF0 * 1.15, 0., 1.));',
-    '    vec3 here = texture2D(tb, p).rgb;',
+    // the photo's own light under the waves: blurred close in, where the drawn ripples carry the texture,
+    // sharp further out, where they're too small to see (otherwise that band of water turns to a smear)
+    '    vec3 here = mix(texture2D(t, p).rgb, texture2D(tb, p).rgb, smoothstep(.2, .65, gDetail));',
     '    wcol *= mix(vec3(1.), here / max(flat0, vec3(.02)), .8);',
     '    float lum = dot(skyH, vec3(.3, .59, .11));',
     '    vec3 foamC = vec3(.93, .96, 1.) * (.62 + .5 * lum) * mix(.5, 1., clamp(uLight * 1.5, 0., 1.));',
