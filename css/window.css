@@ -22,7 +22,7 @@
   --band: 86px;                        /* shade fabric above the glass, where the nav sits */
   --frame: 14px;                       /* outer frame */
   --stile: 10px;                       /* sash frame inside it */
-  --glass-h: clamp(460px, calc(100svh - var(--band) - 128px), 900px);
+  --glass-h: clamp(360px, calc(100svh - var(--band) - 300px), 760px);   /* leaves room for the headline under it */
   --drop: 0px;                         /* how far the shade is pulled down over the glass */
   --pull: 0px;                         /* how far the cord is being pulled */
 }
@@ -151,8 +151,6 @@
     inset 0 calc(var(--stile) + 10px) 14px -10px rgba(0, 0, 0, 0.45);
 }
 
-/* the headline is on the glass, low on the left */
-.win-concept .hero-text { z-index: 4; left: clamp(28px, 4vw, 56px); bottom: clamp(44px, 7vh, 72px); }
 .win-concept .note-spot { top: 13%; }
 
 /* after dark, the room shows in the glass: the ceiling lights, like the photo of my window at night */
@@ -175,6 +173,21 @@
   box-shadow: inset 0 -1px 0 rgba(120, 100, 80, 0.12), 0 10px 14px -8px rgba(40, 28, 20, 0.32);
   transition: background-color .6s ease;
 }
+
+/* ---------- the headline, on the wall under the window ---------- */
+/* plain type on the same left edge as "selected work"; by day it's the bronze of the frame */
+.wall-text {
+  width: min(var(--wrap), 100% - 2 * var(--gutter)); margin: 0 auto; padding: 30px 0 0;
+}
+.wall-text .hero-text { position: static; color: var(--bronze); transition: color .6s ease; }
+.wall-text .hero-text h1 { opacity: 1; font-size: clamp(52px, 6.6vw, 104px); line-height: .98; }
+.wall-text .sub { margin-top: 14px; font-size: clamp(17px, 1.5vw, 22px); color: #85766D; transition: color .6s ease; }
+.wall-text .sub .w { color: var(--bronze); }
+/* after dark the bronze would disappear into the wall, so it takes the room's light text colour */
+[data-theme="night"] .wall-text .hero-text, [data-theme="night"] .wall-text .sub .w { color: var(--ink); }
+[data-theme="night"] .wall-text .sub { color: var(--muted); }
+/* a second sill under the headline closes off the top of the page */
+.sill-lower { margin-top: 30px; }
 
 /* ---------- the cord loop and weight ---------- */
 .cords {
@@ -205,15 +218,14 @@
 .room:not(.is-pulling) .cords { transition: height .55s cubic-bezier(.3, 1.6, .5, 1); }
 
 /* ---------- the rest of the page sits on the wall ---------- */
-.win-concept .work { padding-top: 34px; }
+.win-concept .work { padding-top: 48px; }
 .win-concept .card-media::after { background: rgba(242, 237, 230, 0.3); }
 [data-theme="night"].win-concept .card-media::after { background: rgba(31, 29, 33, 0.3); }
 
 @media (max-width: 640px) {
-  .win-concept { --band: 70px; --frame: 9px; --stile: 7px; --glass-h: clamp(440px, calc(100svh - var(--band) - 104px), 720px); }
+  .win-concept { --band: 70px; --frame: 9px; --stile: 7px; --glass-h: clamp(340px, calc(100svh - var(--band) - 290px), 620px); }
   .shade .nav { height: calc(var(--band) - 26px); }
   .cords { right: calc(var(--side) - 4px); }
-  .win-concept .hero-text { left: 22px; right: 22px; bottom: 40px; }
   .win-concept .note-spot { top: 9%; }
 }
 @media (prefers-reduced-motion: reduce) {
