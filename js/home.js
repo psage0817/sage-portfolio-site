@@ -48,6 +48,20 @@
   var h1 = document.querySelector('.hero-copy h1');
   h1.innerHTML = h1.textContent.split(' ').map(function (w, i) { return '<span class="w" style="--i:' + i + '">' + w + '</span>'; }).join(' ');
   var nowBtn = document.querySelector('[data-now]'), lapseOn = false;
+
+  /* the hint: a new message on the glass. ok or the x closes it (drawing a stroke closes it too, in sky.js) */
+  var msg = document.querySelector('.msg'), msgClosed = false;
+  if (msg) {
+    // clicks on the message don't draw on the glass behind it
+    msg.addEventListener('pointerdown', function (e) { e.stopPropagation(); });
+    msg.querySelectorAll('[data-msg-close]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        msgClosed = true; msg.classList.add('is-fall');
+        setTimeout(function () { msg.classList.add('is-gone'); }, 240);
+      });
+    });
+    msg.addEventListener('keydown', function (e) { if (e.key === 'Escape') msg.querySelector('.msg-ok').click(); });
+  }
   function lapse(dur) {
     nowBtn.click();
     var target = Number(range.value), start = target - 540, t0 = 0;
@@ -63,24 +77,31 @@
     }
     requestAnimationFrame(step);
   }
-  function endLapse(toNow) { if (!lapseOn) return; lapseOn = false; heroP.classList.remove('lapsing'); if (toNow) nowBtn.click(); }
+  function endLapse(toNow) {
+    if (!lapseOn) return;
+    lapseOn = false; heroP.classList.remove('lapsing');
+    if (toNow) nowBtn.click();
+    // the hint pops up like a notification the moment the day lands on now
+    if (msg && msg.classList.contains('later')) {
+      setTimeout(function () {
+        msg.classList.remove('later'); msg.classList.add('pop');
+        msg.addEventListener('animationend', function () { msg.classList.remove('pop'); }, { once: true });
+      }, toNow ? 120 : 0);
+    }
+  }
   range.addEventListener('pointerdown', function () { endLapse(false); });
   range.addEventListener('keydown', function () { endLapse(false); });
   document.querySelector('[data-sky]').addEventListener('pointerdown', function () { endLapse(true); });
   function intro() {
-    if (reduce) return;
+    // with reduced motion there's no opening: the message is simply there
+    if (reduce) { if (msg) msg.classList.remove('later'); return; }
     endLapse(false);
     root.classList.remove('opening'); void heroP.offsetWidth;
-    root.classList.add('opening', 'screen-off');
+    root.classList.add('opening');
+    if (msg && !msgClosed) msg.classList.add('later');
     clearTimeout(window.__openT); window.__openT = setTimeout(function () { root.classList.remove('opening'); }, 2600);
-    var t0 = performance.now(), c = document.querySelector('[data-sky]').getAttribute('data-city') || 'sd';
-    // the screen stays off until this city's photos are in, so the day never plays over a half-loaded view
-    function load(src) { return new Promise(function (ok) { var im = new Image(); im.onload = im.onerror = function () { ok(); }; im.src = src; }); }
-    var ready = Promise.all(['day', 'sunset', 'night'].map(function (k) { return load('img/sky/' + c + '-' + k + '.jpg'); }));
-    var cap = new Promise(function (ok) { setTimeout(ok, 5000); });
-    Promise.race([ready, cap]).then(function () {
-      setTimeout(function () { root.classList.remove('screen-off'); lapse(3600); }, Math.max(350, 900 - (performance.now() - t0)));
-    });
+    // the day starts playing as the window opens
+    setTimeout(function () { lapse(3600); }, 350);
   }
   window.SPIntro = function () { window.scrollTo(0, 0); intro(); };
 
