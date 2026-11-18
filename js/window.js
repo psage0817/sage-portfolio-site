@@ -1,4 +1,4 @@
-/* window.js: the window concept (window.html)
+/* window.js: the window on the home page (index.html)
    - on arrival the shade is down and rolls up, then the cord sways once as it settles
    - pull the cord's weight down to lower the shade; click it to send the shade back up
    - the view behind the glass shifts a little as the cursor moves, like moving your head

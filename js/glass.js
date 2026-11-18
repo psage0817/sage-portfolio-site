@@ -29,7 +29,7 @@
     'uniform vec2 uLightPos;',
     // a calm patch of glass behind the headline: (left, top, right, bottom) in pixels
     'uniform vec4 uCalm;',
-    // window.html: the view shifts a little as the cursor moves (uShift, uZoom), and an open sash has no glass (uOpen, from the bottom)
+    // the home page: the view shifts a little as the cursor moves (uShift, uZoom), and an open sash has no glass (uOpen, from the bottom)
     'uniform vec2 uShift;',
     'uniform float uZoom, uOpen;',
     'varying vec2 vUv;',
@@ -867,7 +867,7 @@
         schedule();
       },
       failed: function () { return failed; },
-      // window.html: shift the view behind the glass (in parts of the window), zoom it, and open the lower sash (css px)
+      // the home page: shift the view behind the glass (in parts of the window), zoom it, and open the lower sash (css px)
       setView: function (sx, sy, zoom, openPx) {
         gl.uniform2f(U.uShift, sx, sy); gl.uniform1f(U.uZoom, zoom); gl.uniform1f(U.uOpen, openPx * dpr);
         schedule();
