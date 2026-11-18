@@ -1,4 +1,4 @@
-/* player.js: the vinyl player (the big one on the home page and the small chip on the case study).
+/* player.js: the record player in the "now playing" window at the bottom of every page.
 
    TO CONNECT YOUR PLAYLIST
    1. In Spotify: right-click your playlist > Share > Copy Spotify URI. Paste it as PLAYLIST_URI below.
@@ -15,13 +15,14 @@ const TRACKS=[];                // e.g. ['spotify:track:...', 'spotify:track:...
 const PLAYLIST_NAME='[playlist name]';
 const SONG_COUNT='[n]';
 
-const views=[...document.querySelectorAll('.player,.mini')];
+const views=[...document.querySelectorAll('.np')];
 if(!views.length)return;
 let ctrl=null,loading=false,state='idle',trackIdx=0;
 
-const set=s=>{state=s;views.forEach(v=>v.dataset.state=s)};
-const progress=p=>views.forEach(v=>{const b=v.querySelector('.pl-bar i');if(b)b.style.width=Math.max(0,Math.min(1,p))*100+'%'});
-const toast=m=>window.sp&&window.sp.toast(m);
+const set=s=>{state=s;views.forEach(v=>{v.dataset.state=s;v.classList.toggle('playing',s==='playing');v.querySelectorAll('[data-record]').forEach(b=>b.setAttribute('aria-pressed',String(s==='playing')))})};
+const mmss=ms=>{const t=Math.max(0,Math.floor((ms||0)/1000));return Math.floor(t/60)+':'+String(t%60).padStart(2,'0')};
+const progress=(p,pos,dur)=>views.forEach(v=>{const b=v.querySelector('.pl-bar i');if(b)b.style.width=Math.max(0,Math.min(1,p))*100+'%';const a=v.querySelector('[data-pl-time]');if(a&&pos!=null)a.textContent=mmss(pos);const z=v.querySelector('[data-pl-dur]');if(z&&dur)z.textContent=mmss(dur)});
+const toast=m=>window.SP&&window.SP.toast(m);
 
 // Spotify loads only when someone presses play (no third-party scripts until then)
 function load(then){
@@ -34,7 +35,7 @@ function load(then){
       c.addListener('ready',()=>then&&then());
       c.addListener('playback_update',e=>{
         const d=e.data||{};set(d.isPaused?'paused':'playing');
-        progress(d.duration?d.position/d.duration:0);
+        progress(d.duration?d.position/d.duration:0,d.position,d.duration);
       });
     });
   };
@@ -57,10 +58,10 @@ function skip(dir){
 }
 
 views.forEach(v=>{
-  v.querySelectorAll('.pl-name,.m-txt strong').forEach(n=>n.textContent=PLAYLIST_NAME);
-  v.querySelectorAll('.pl-count').forEach(n=>n.textContent=`${SONG_COUNT} songs · made for this site`);
-  v.querySelectorAll('.pl-play').forEach(b=>b.addEventListener('click',toggle));
-  const sk=v.querySelectorAll('.pl-sk');
+  v.querySelectorAll('.pl-name').forEach(n=>n.textContent=PLAYLIST_NAME);
+  v.querySelectorAll('.pl-sub').forEach(n=>n.textContent=`${SONG_COUNT} songs · made for this site`);
+  v.querySelectorAll('[data-record]').forEach(b=>b.addEventListener('click',toggle));
+  const sk=v.querySelectorAll('[data-juke] .orb:not(.big)');
   if(sk[0])sk[0].addEventListener('click',()=>skip(-1));
   if(sk[1])sk[1].addEventListener('click',()=>skip(1));
   if(!TRACKS.length)sk.forEach(b=>{b.style.opacity='.5';b.title='skip buttons turn on once the song list is added'});

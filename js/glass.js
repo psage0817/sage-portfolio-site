@@ -1189,7 +1189,7 @@
 
     /* ---------- drawing ---------- */
     // if anything goes wrong while drawing, hand back to the flat fog rather than freezing
-    var lastLive = 0;
+    var lastLive = 0, pauseT = 0, pauseOff = 0;
     function draw(now) {
       raf = 0;
       if (failed || !W) return;
@@ -1218,10 +1218,13 @@
       gl.uniform3fv(U.uFogCol, fogCol);
       gl.uniform3fv(U.uHi, hi);
       if (live && photoDrawn) {
-        gl.uniform1f(U.uTime, (tnow / 1000) % 3600);
-        trainStep(tnow);
+        // the play/pause button holds the waves and the train still (window.SPGlassPaused)
+        if (window.SPGlassPaused) { if (!pauseT) pauseT = tnow; } else if (pauseT) { pauseOff += tnow - pauseT; pauseT = 0; }
+        var tt = (pauseT || tnow) - pauseOff;
+        gl.uniform1f(U.uTime, (tt / 1000) % 3600);
+        trainStep(tt);
         // keep the waves going while the window is on screen
-        if (onScreen) moving = true;
+        if (onScreen && !pauseT) moving = true;
       }
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
