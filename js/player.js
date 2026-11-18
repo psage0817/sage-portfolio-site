@@ -10,10 +10,10 @@
    Visitors who aren't logged in to Spotify hear 30-second previews. */
 (()=>{
 'use strict';
-const PLAYLIST_URI='';          // e.g. 'spotify:playlist:37i9dQZF1DXcBWIGoYBM5M'
-const TRACKS=[];                // e.g. ['spotify:track:...', 'spotify:track:...']
-const PLAYLIST_NAME='[playlist name]';
-const SONG_COUNT='[n]';
+const PLAYLIST_URI='https://open.spotify.com/playlist/3pZaGmMg3EJnSGUQdhoiOf?si=_JIUerj-R5SgQRLim0lylA';          // e.g. 'spotify:playlist:37i9dQZF1DXcBWIGoYBM5M'
+const TRACKS= ['https://open.spotify.com/track/1efF91lBrpztvLSEEB6wPB?si=4e445be7b9864266]','https://open.spotify.com/track/7zkLpY72g6lKQbiHDqri1S?si=93ff1e2fdce34778','https://open.spotify.com/track/26qigRagi9CRNhbGYajKOS?si=d555c8b093464961','https://open.spotify.com/track/6a3PAfOxDpgBv0ZdJuH5Eo?si=e25f068d900b4e71','https://open.spotify.com/track/4VwkODja7853Fz1FWzp126?si=d66db80b386745ca','https://open.spotify.com/track/4BE1OloRc9xwjyqA4wFFuN?si=5d26be211f314eee','https://open.spotify.com/track/5yxghrFKJbU7pcaUFEv1Sg?si=d2548374b6da49de','https://open.spotify.com/track/4s5B70nF4StXSaCwP6C0AU?si=96c6707459d240ce','https://open.spotify.com/track/02KRPJcx4TJFLCXt9qwEUE?si=1632e53522524a6e','https://open.spotify.com/track/4W6yulge3h7FSy0zGFrNKs?si=1557794b03ba4507','https://open.spotify.com/track/0QltPqkR4dnhbINyBOU5SY?si=6bd0120510104c0f','https://open.spotify.com/track/1Pu3xgGv05MYxJzHROokRJ?si=d4ec869f910b40ca','https://open.spotify.com/track/6Ql76QUTIXajTh9cVjrAZl?si=208911c373da4312','https://open.spotify.com/track/55pBIZO1cqoldeqpp5WR7H?si=65d5e9ba06d34c43','https://open.spotify.com/track/1a19jsjG2DvbN1fVJonKUU?si=ac999d2f0c414f76','https://open.spotify.com/track/4D2DFuqs2PwLiHbcf6CX47?si=843fa6386bed402d','https://open.spotify.com/track/24rDDbSlFY9OHrlJb48CRh?si=ddb5ab8ecf714a96','https://open.spotify.com/track/6dGsBRuavumBs5BghcXF3D?si=61078a26fc5a492e','https://open.spotify.com/track/46wDG6evLn2iPoQ0F8CUWk?si=0770c56ed6a34887','https://open.spotify.com/track/5SmXEPnevlRjBPWBG7oKIi?si=b0357c09c2f2407e','https://open.spotify.com/track/3RwWW7KeVhHGayYJgUL5eZ?si=12507673380645c2']                // e.g. ['spotify:track:...', 'spotify:track:...']
+const PLAYLIST_NAME='[s.park record]';
+const SONG_COUNT='[21]';
 
 const views=[...document.querySelectorAll('.np')];
 if(!views.length)return;
