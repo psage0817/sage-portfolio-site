@@ -24,7 +24,8 @@
        (0.5, 0.6 keeps the centre, slightly below the middle).
      Use photos at least 2400px wide so the view through the beads stays sharp. */
   var PHOTOS = {
-    sd:  { day: 'img/sky/sd-day.jpg',  sunset: 'img/sky/sd-sunset.jpg',  night: 'img/sky/sd-night.jpg',  focus: [0.5, 0.6] },
+    // san diego sits low in the window so the tracks show: that's where the train runs
+    sd:  { day: 'img/sky/sd-day.jpg',  sunset: 'img/sky/sd-sunset.jpg',  night: 'img/sky/sd-night.jpg',  focus: [0.5, 0.92] },
     stl: { day: 'img/sky/stl-day.jpg', sunset: 'img/sky/stl-sunset.jpg', night: 'img/sky/stl-night.jpg', focus: [0.5, 0.6] }
   };
 
@@ -425,7 +426,8 @@
       if (state.city !== want || typeof fog === 'undefined') return;   // the city changed while loading
       var day = got[0], night = got[1], sunset = got[2];
       photoHas = { night: !!night, sunset: !!sunset };
-      var p = day ? { day: day, night: night, sunset: sunset, fx: cfg.focus[0], fy: cfg.focus[1] } : null;
+      // live: the san diego view gets moving waves and the train (js/glass.js)
+      var p = day ? { day: day, night: night, sunset: sunset, fx: cfg.focus[0], fy: cfg.focus[1], live: want === 'sd' } : null;
       fog.setPhotos(p);
       // without the condensation layer, show the photo plainly behind the flat fog instead of the drawing
       plainPhoto = !!day && !fog.hasGlass();

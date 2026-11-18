@@ -32,6 +32,9 @@
     // the home page: the view shifts a little as the cursor moves (uShift, uZoom), and an open sash has no glass (uOpen, from the bottom)
     'uniform vec2 uShift;',
     'uniform float uZoom, uOpen;',
+    // the live san diego view: time, where the photo sits in the window, and the train
+    'uniform float uTime, uLive, uTrainU, uTrainOn, uTrainDir;',
+    'uniform vec4 uPhoto;',
     'varying vec2 vUv;',
     // the scene behind the glass, colour-graded for the time of day; with a night photo it crossfades to that
     // smooth noise worked out on the spot, so it never repeats or shows seams
@@ -40,8 +43,360 @@
     '  return mix(mix(hash2(i), hash2(i + vec2(1., 0.)), f.x), mix(hash2(i + vec2(0., 1.)), hash2(i + vec2(1., 1.)), f.x), f.y); }',
     'vec3 grade(vec3 c, vec3 mul, float sat) { float l = dot(c, vec3(.299, .587, .114)); return mix(vec3(l), c, sat) * mul; }',
     'vec2 view(vec2 p) { return (p - .5) * uZoom + .5 + uShift; }',
-    'vec3 sceneSharp(vec2 p) { p = view(p); return mix(grade(texture2D(uScene, p).rgb, uGradeA, uSatA), grade(texture2D(uScene2, p).rgb, uGradeB, uSatB), uNightMix); }',
-    'vec3 sceneSoft(vec2 p) { p = view(p); return mix(grade(texture2D(uBlur, p).rgb, uGradeA, uSatA), grade(texture2D(uBlur2, p).rgb, uGradeB, uSatB), uNightMix); }',
+    // ---------- the live view (san diego photos only) ----------
+    // photo coordinates run 0..1 across the 3200 x 1800 photo; the shoreline is traced from it
+    'float shoreY(float x) {',
+    '  if (x < .275) return mix(.904, .852, x / .275);',
+    '  if (x < .344) return mix(.852, .853, (x - .275) / .069);',
+    '  if (x < .506) return mix(.853, .794, (x - .344) / .162);',
+    '  if (x < .631) return mix(.794, .733, (x - .506) / .125);',
+    '  if (x < .706) return mix(.733, .672, (x - .631) / .075);',
+    '  if (x < .756) return mix(.672, .611, (x - .706) / .05);',
+    '  if (x < .775) return mix(.611, .556, (x - .756) / .019);',
+    '  if (x < .833) return mix(.556, .503, (x - .775) / .058);',
+    '  if (x < .942) return mix(.503, .453, (x - .833) / .109);',
+    '  return mix(.453, .444, (x - .942) / .058);',
+    '}',
+    'float waterAt(vec2 q) { return smoothstep(.431, .442, q.y) * (1. - smoothstep(-.022, -.004, q.y - shoreY(q.x))); }',
+    // the train: a Pacific Surfliner on the real rails, in perspective. Lengths are in metres, s runs back from the north end.
+    // from the north end: cab car, three coaches, a champagne coach, then the Charger locomotive at the south end
+    'const float CAR = 25.9;',
+    'const float LEN = 151.4;',
+    'const float TS = .74;',
+    'vec4 gTr; float gGlow; bool gUse;',
+    'float bnd(float x, float a, float b, float e) { return smoothstep(a - e, a + e, x) * (1. - smoothstep(b - e, b + e, x)); }',
+    // the rails, measured off the photo (photo pixels): the gap between them straight down the screen, and the train's near side at rail height
+    'float vgAt(float x) { return 144.08 - .0306 * x; }',
+    'float baseAt(float x) { float vg = vgAt(x); return (1800. - .3584 * (x - 1275.) + 1790. - .3278 * (x - 985.)) * .5 + 1.5 * .657 * TS * vg * .922; }',
+    'float uAt(float x) { return 36.8 * log(114.1 / vgAt(x)); }',
+    'float xAtU(float u) { return (144.08 - 114.1 * exp(-u / 36.8)) / .0306; }',
+    // how tall the body is at s: bi-levels 4.85 m, the locomotive 4.25 m with its nose sloping down
+    'float topAt(float s) {',
+    '  if (s > 5. * CAR) { float t = 4.25; if (s > LEN - 3.4) t = mix(4.25, 3.05, smoothstep(LEN - 3.4, LEN - .6, s)); return t; }',
+    '  if (s < 2.6) return mix(3.9, 4.85, smoothstep(.2, 2.6, s));',
+    '  return 4.85;',
+    '}',
+    // glass: dark, with the sky reflected in its top half (and lit from inside after dark)
+    'vec3 glassCol(float k) { return mix(vec3(.04, .055, .08), vec3(.34, .4, .5), smoothstep(.3, 1., k)); }',
+    // the near side of the train at (s, h); e is how big a screen pixel is in metres, for soft edges
+    'vec3 sideCol(float s, float h, float e, out float glow) {',
+    '  glow = 0.;',
+    '  float es = e * 1.2;',
+    '  if (s > 5. * CAR) {',
+    // the Charger: navy at the coupled end, a champagne panel with the round logo, a silver cab, a navy stripe low down
+    '    float x = s - 5. * CAR;',
+    '    vec3 c = vec3(.66, .69, .73) * (.86 + .2 * smoothstep(1.4, 4., h));',
+    '    c = mix(c, vec3(.1, .15, .36), 1. - smoothstep(4.6, 5.2, x));',
+    '    float pan = bnd(x, 6.2, 15.4, es) * bnd(h, 1.75, 3.75, e);',
+    '    c = mix(c, vec3(.69, .63, .52) * (.9 + .12 * smoothstep(1.8, 3.7, h)), pan);',
+    '    float rd = length(vec2((x - 10.9) * .9, h - 2.75));',
+    '    c = mix(c, vec3(.12, .18, .42), (1. - smoothstep(.62 - e, .62 + e, rd)) * smoothstep(.46 - e, .46 + e, rd) * pan);',
+    '    c = mix(c, vec3(.1, .14, .33), bnd(h, 1., 1.6, e));',
+    '    c = mix(c, vec3(.12, .17, .4), smoothstep(LEN - 2.2, LEN - 1.4, s) * step(2.2, h));',
+    '    float win = bnd(x, 18.9, 20.4, es) * bnd(h, 2.95, 3.6, e);',
+    '    c = mix(c, glassCol((h - 2.95) / .65), win);',
+    // louvres along the engine room
+    '    c *= 1. - .12 * bnd(h, 3.85, 4.15, e) * step(mod(x, .35), .18) * bnd(x, 5.4, 17.5, es);',
+    '    return c;',
+    '  }',
+    '  float ci = floor(s / CAR), x = s - ci * CAR;',
+    '  bool tanCar = ci > 3.5;',
+    '  vec3 champ = vec3(.67, .61, .5), blue = vec3(.11, .19, .55);',
+    // painted metal: darker low down, brighter where it reflects the sky, a pale line where the horizon reflects
+    '  vec3 c = champ * (.84 + .2 * smoothstep(1.3, 4.6, h));',
+    '  c *= 1. + .07 * bnd(h, 2.9, 3.0, e);',
+    '  if (!tanCar) c = mix(c, blue * (.88 + .22 * smoothstep(3.1, 4.5, h)), bnd(h, 3.05, 4.55, e));',
+    '  c = mix(c, vec3(.5, .52, .55), smoothstep(4.55 - e, 4.55 + e, h));',
+    '  c = mix(c, vec3(.4, .4, .4), bnd(h, 1., 1.32, e));',
+    '  c *= 1. - .25 * bnd(h, 2.96, 3.0, e * .5);',
+    // two decks of windows, with pillars between them; the doors are on the lower deck, in the middle
+    '  float wx = mod(x - .9, 1.95);',
+    '  float body = bnd(x, 1.1, CAR - 1.1, es);',
+    '  float lower = bnd(h, 1.95, 2.72, e) * bnd(wx, .28, 1.75, es) * body * (1. - bnd(x, 11.2, 14.4, es));',
+    '  float upper = bnd(h, 3.32, 4.18, e) * bnd(wx, .28, 1.75, es) * body;',
+    '  float door = bnd(x, 11.4, 14.2, es) * bnd(h, 1.05, 3.02, e);',
+    '  c = mix(c, c * .82, door);',
+    '  c *= 1. - .35 * bnd(x, 12.78, 12.82, es) * door;',
+    '  float dw = door * bnd(h, 2.05, 2.8, e) * (bnd(x, 11.7, 12.6, es) + bnd(x, 13., 13.9, es));',
+    '  c = mix(c, glassCol((h - 3.32) / .86), upper);',
+    '  c = mix(c, glassCol((h - 1.95) / .77), max(lower, dw));',
+    '  glow = max(max(upper, lower), dw) * .9;',
+    // the cab car's front windows at the north end
+    '  if (s < 3.) { float cw = bnd(s, .5, 2.4, es) * bnd(h, 3.2, 3.85, e); c = mix(c, glassCol((h - 3.2) / .65), cw); glow *= 1. - cw; }',
+    // the ends of each car: a dark gap and a rounded corner
+    '  c *= .8 + .2 * bnd(x, .5, CAR - .5, es);',
+    '  return c;',
+    '}',
+    // the roof at (s, w): w runs 0 at the near edge to 1 at the far edge
+    'vec3 roofCol(float s, float w, float e) {',
+    '  vec3 c = vec3(.4, .42, .45);',
+    '  c *= mix(1.16, .78, smoothstep(.05, 1., w));      // lit near edge, rounded away from the light',
+    '  c *= 1. - .14 * smoothstep(.35, .5, fract(w * 9.)) * smoothstep(.75, .6, fract(w * 9.));           // ribs along its length',
+    '  c *= 1. + .12 * bnd(w, .0, .06, .02);',
+    '  if (s > 5. * CAR) {',
+    '    float x = s - 5. * CAR;',
+    '    c = mix(c, vec3(.12, .17, .39) * mix(1.15, .8, w), smoothstep(LEN - 4.6, LEN - 4.2, s));',
+    '    float gr = bnd(x, 5.5, 16.5, e) * bnd(w, .22, .78, .03);',
+    '    c = mix(c, vec3(.2, .21, .23) * (1. - .3 * step(.5, fract(x * 2.6))), gr);',
+    '  } else {',
+    '    float x = mod(s, CAR);',
+    '    float ac = (bnd(x, 3., 6.2, e) + bnd(x, 19.7, 22.9, e)) * bnd(w, .2, .8, .03);',
+    '    c = mix(c, vec3(.38, .4, .43) * mix(1.2, .85, w), ac);',
+    '    c *= .75 + .25 * bnd(x, .4, CAR - .4, e);',
+    '  }',
+    '  return c;',
+    '}',
+    // the locomotive's nose, facing south (down to the left): a in 0..1 across it, h in metres
+    'vec3 noseCol(float a, float h, float e, out float glow) {',
+    '  glow = 0.;',
+    '  vec3 c = vec3(.1, .15, .36) * (.85 + .25 * smoothstep(.8, 3., h));',
+    '  c = mix(c, vec3(.62, .65, .7), bnd(h, 1.55, 2.25, e) * (1. - bnd(a, .3, .7, .02)) * .8);',
+    '  float ws = bnd(h, 2.45, 3.0, e) * bnd(a, .08, .92, .03) * (1. - bnd(a, .48, .52, .02));',
+    '  c = mix(c, glassCol((h - 2.45) / .55), ws);',
+    '  float hl = (1. - smoothstep(.06, .09, length(vec2((a - .22) * 2.6, h - 1.2) * vec2(1., 1.8)))) + (1. - smoothstep(.06, .09, length(vec2((a - .78) * 2.6, h - 1.2) * vec2(1., 1.8))));',
+    '  c = mix(c, vec3(1., .98, .9), hl); glow = hl;',
+    '  c = mix(c, vec3(.08, .08, .09), 1. - smoothstep(.6, .8, h));',
+    '  return c;',
+    '}',
+    // one look at the train from this pixel. q is in photo coordinates; uTrainU is where its north end is
+    'vec4 trainAt1(vec2 q, float U, float epx, out float glow) {',
+    '  glow = 0.;',
+    '  vec2 P = q * vec2(3200., 1800.);',
+    '  if (P.x < 250. || P.x > 3320.) return vec4(0.);',
+    '  float vg = vgAt(P.x);',
+    '  float m = .657 * TS * vg, v = .8 * TS * vg;                  // one metre across the track, and straight up, in photo pixels',
+    '  float base = baseAt(P.x);',
+    '  float e = epx / v;                                 // one screen pixel, in metres',
+    '  float s = U - uAt(P.x);',
+    '  float h = (base - P.y) / v;',
+    '  vec3 col = vec3(0.); float a = 0.;',
+    // the near side
+    '  if (s > -.2 && s < LEN + .2) {',
+    '    float top = topAt(clamp(s, 0., LEN));',
+    '    float ends = bnd(s, 0., LEN, e * 1.5);',
+    '    float gap = 0.;',
+    '    float x = mod(s, CAR);',
+    '    if (s < 5. * CAR) gap = 1. - bnd(x, .3, CAR - .3, e * 1.5);',
+    '    if (s > 5. * CAR - .3 && s < 5. * CAR + .3) gap = 1.;',
+    '    float side = bnd(h, 0., top, e) * ends;',
+    '    if (side > 0.) {',
+    '      float g;',
+    '      vec3 c = sideCol(s, h, e, g);',
+    // running gear under the body: dark, the bogies a little lighter, wheels at the bogies
+    '      float under = 1. - smoothstep(1. - e, 1. + e, h);',
+    '      float bx = s > 5. * CAR ? s - 5. * CAR : x;',
+    '      float bog = bnd(bx, 2.2, 5.1, e) + bnd(bx, s > 5. * CAR ? 15.6 : 20.8, s > 5. * CAR ? 18.6 : 23.7, e);',
+    '      vec3 gear = mix(vec3(.08, .08, .09), vec3(.16, .16, .17), bog);',
+    '      float ga = mix(smoothstep(.25, .5, h), 1., bog);',
+    '      c = mix(c, gear, under);',
+    '      float av = side * mix(1., ga, under);',
+    // the gap between cars: a dark bellows, lower than the bodies
+    '      c = mix(c, vec3(.06, .065, .075), gap);',
+    '      av *= mix(1., bnd(h, .9, 4.3, e), gap);',
+    // soft shade where the side meets the roof and the ground
+    '      c *= .9 + .1 * smoothstep(.0, .5, top - h);',
+    '      glow = g * (1. - gap) * (1. - under);',
+    '      col = c; a = av;',
+    '    }',
+    '  }',
+    // the roof, tilted away from us: solve for the point of the roof edge this pixel looks onto
+    '  if (a < .99) {',
+    '    float w = 0.;',
+    '    float xr = P.x;',
+    '    for (int i = 0; i < 2; i++) {',
+    '      float vgr = vgAt(xr);',
+    '      float yTop = baseAt(xr) - topAt(clamp(U - uAt(xr), 0., LEN)) * .8 * TS * vgr;',
+    '      w = (yTop - P.y) / (.922 * .657 * TS * vgr * 3.);',
+    '      xr = P.x + .387 * .657 * TS * vgr * 3. * w;',
+    '    }',
+    '    float sr = U - uAt(xr);',
+    '    float ra = bnd(w, 0., 1., e * .5) * bnd(sr, 0., LEN, e * 1.5);',
+    '    if (ra > 0.) {',
+    '      float x = mod(sr, CAR);',
+    '      if (sr < 5. * CAR) ra *= bnd(x, .25, CAR - .25, e * 1.5);',
+    '      vec3 rc = roofCol(sr, w, e);',
+    '      col = mix(rc, col, a); a = a + ra * (1. - a);',
+    '    }',
+    '  }',
+    // the locomotive's nose, at the south end
+    '  if (a < .99) {',
+    '    float xe = xAtU(U - LEN);',
+    '    float vge = vgAt(xe);',
+    '    float Ax = -.387 * .657 * TS * vge * 3., Ay = -.922 * .657 * TS * vge * 3.;',
+    '    float an = (P.x - xe) / Ax;',
+    '    float hn = (baseAt(xe) + an * Ay - P.y) / (.8 * TS * vge);',
+    '    float na = bnd(an, 0., 1., .02) * bnd(hn, 0., 3.05 - .25 * abs(an - .5), e);',
+    '    if (na > 0.) {',
+    '      float g;',
+    '      vec3 nc = noseCol(an, hn, e, g);',
+    '      col = mix(nc, col, a); a = a + na * (1. - a);',
+    '      glow = max(glow, g * na);',
+    '    }',
+    '  }',
+    // its shadow on the ballast, on the side away from the afternoon sun
+    '  if (a < .99 && s > 0. && s < LEN && h < 0. && h > -1.7 * m / v) {',
+    '    float sa = .3 * smoothstep(-1.7 * m / v, -.1, h);',
+    '    col = mix(vec3(0.), col, a / max(a + sa * (1. - a), 1e-4)); a = a + sa * (1. - a);',
+    '  }',
+    '  return vec4(col, a);',
+    '}',
+    // three looks a fraction of a frame apart, so the moving train blurs a little like it would in a video
+    'vec4 trainAt(vec2 q, out float glow) {',
+    '  glow = 0.;',
+    '  if (uTrainOn < .5) return vec4(0.);',
+    '  vec2 P = q * vec2(3200., 1800.);',
+    '  if (P.x < 250. || P.x > 3320. || P.y < 700.) return vec4(0.);',
+    '  float epx = 3200. / (uPhoto.z * uRes.x);',
+    '  float g1, g2, g3;',
+    '  float d = .8 * uTrainDir;',
+    '  vec4 t1 = trainAt1(q, uTrainU - d, epx, g1), t2 = trainAt1(q, uTrainU, epx, g2), t3 = trainAt1(q, uTrainU + d, epx, g3);',
+    '  vec4 t = (vec4(t1.rgb * t1.a, t1.a) + vec4(t2.rgb * t2.a, t2.a) + vec4(t3.rgb * t3.a, t3.a)) / 3.;',
+    '  glow = (g1 + g2 + g3) / 3.;',
+    '  vec3 col = t.a > 0. ? t.rgb / t.a : vec3(0.);',
+    // match the photo: a touch of its cool afternoon haze; after dark the bodies sink into the night, the windows stay lit
+    '  col = mix(col, col * vec3(.95, .98, 1.03) + vec3(.01, .015, .02), .3);',
+    '  col *= mix(.16, 1., clamp(uLight * 1.6, 0., 1.));',
+    '  glow *= 1. - clamp(uLight * 2.2, 0., 1.);',
+    '  return vec4(col, t.a);',
+    '}',
+    // ---------- the ocean: a real wave surface in perspective, replacing the still water in the photo ----------
+    // the camera sits on the bluff OH metres up; OF is its focal length in photo widths; the horizon is at OHZ in photo coordinates
+    'const float OH = 22.;',
+    'const float OF = .85;',
+    'const float OHZ = .428;',
+    'float gTone, gW, gF, gRy, gGl, gFoam, gSheet, gWet, gBody, gShade, gSandFoam, gF0, gRy0; bool gOcean;',
+    'float hash1(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }',
+    'float noise2(vec2 p) { vec2 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f);',
+    '  return mix(mix(hash1(i), hash1(i + vec2(1., 0.)), f.x), mix(hash1(i + vec2(0., 1.)), hash1(i + vec2(1., 1.)), f.x), f.y); }',
+    'float fbm(vec2 p) { float a = .5, s = 0.; for (int i = 0; i < 4; i++) { s += a * noise2(p); p = p * 2.03 + 17.1; a *= .5; } return s; }',
+    // metres along the beach (X) and out from the camera (Z) for a point in the photo
+    'vec2 toWorld(vec2 q) { float z = OH * OF / max((q.y - OHZ) * .5625, 1e-4); return vec2((q.x - .5) * z / OF, z); }',
+    // the swell: crest at ph = 0, the steep face on the beach side (ph near 1), a long gentle back
+    'float swellH(float ph) { return max(smoothstep(.84, 1., ph) * (1. - smoothstep(.995, 1., ph) * 0.), 1. - smoothstep(.0, .55, ph)); }',
+    'void oceanAt(vec2 q) {',
+    '  gOcean = false; gTone = 1.; gF0 = .02; gRy0 = 0.; gW = 0.; gFoam = 0.; gSheet = 0.; gWet = 0.; gGl = 0.; gF = .02; gRy = 0.; gBody = 0.; gShade = 1.; gSandFoam = 0.;',
+    '  float sy = shoreY(q.x);',
+    // the water, plus a strip of beach the waves run up onto
+    '  if (q.y < OHZ + .002 || q.y > sy + .045) return;',
+    '  gOcean = true;',
+    '  float t = uTime;',
+    '  vec2 w = toWorld(q);',
+    '  float Z = w.y, X = w.x;',
+    '  float Zs = OH * OF / max((sy - OHZ) * .5625, 1e-4);',
+    '  float d = Z - Zs;                                   // metres out from the water\'s edge (negative on the sand)',
+    '  float fp = Z * Z / (OH * OF * uRes.x * uPhoto.z);   // how many metres one screen pixel covers, out here',
+    // ---- the swell: sets of waves, each one bending a little along the beach ----
+    '  float T = 7.;                                        // seconds between waves',
+    '  float lam = mix(34., 62., smoothstep(0., 160., d));  // they bunch up as the water gets shallow',
+    '  float bend = .22 * (fbm(vec2(X * .012, t * .03)) - .5) + .05 * sin(X * .02);',
+    '  float phw = d / lam + t / T + bend;',
+    '  float ph = fract(phw);',
+    // every wave is different: its own size, where it breaks, how much of it breaks, how thick its foam is
+    '  float wid = floor(phw);',
+    '  float r1 = hash1(vec2(wid, 1.3)), r2 = hash1(vec2(wid, 7.7)), r3 = hash1(vec2(wid, 4.2)), r4 = hash1(vec2(wid, 2.9));',
+    '  float set = .35 + 1.15 * pow(r1, 1.4);',
+    '  float amp = 1.6 * set * smoothstep(320., 140., d) * smoothstep(-2., 18., d) * smoothstep(lam * .25, lam * .08, fp * 6.);',
+    '  float dd = .6;',
+    '  float slope = (swellH(fract((d + dd) / lam + t / T + bend)) - swellH(ph)) / dd * amp;',
+    // ---- wind ripples: a few travelling waves in different directions, faded out where they'd be smaller than a pixel ----
+    '  vec2 g = vec2(0.);',
+    '  for (int i = 0; i < 12; i++) {',
+    '    float fi = float(i);',
+    '    float wl = .55 * pow(1.32, fi);',                                     // 0.55 m up to about 12 m
+    '    float an = -1.57 + (hash1(vec2(fi, 3.7)) - .5) * 3.;',              // mostly coming in from the sea
+    '    vec2 dir = vec2(cos(an), sin(an));',
+    '    float k = 6.2832 / wl;',
+    '    float fade = smoothstep(2. * fp, 7. * fp, wl);',
+    '    float ph2 = k * dot(dir, vec2(X, Z)) + t * sqrt(9.8 * k) + hash1(vec2(fi, 9.1)) * 6.2832;',
+    '    g += dir * (.07 * cos(ph2) * fade);',
+    '  }',
+    // the surface normal: ripples plus the swell's slope (which faces the beach on the front of each wave)
+    '  vec3 n = normalize(vec3(-g.x * .9, 1., -g.y * .9 - slope));',
+    // ---- light: the sky reflected (Fresnel), the water's own colour, a glitter path towards the sun or moon ----
+    '  vec3 eye = normalize(vec3(X, -OH, Z));',
+    '  vec3 R = reflect(eye, n);',
+    '  float cosi = clamp(dot(-eye, n), 0., 1.);',
+    '  gF = .02 + .98 * pow(1. - cosi, 5.);',
+    '  vec3 R0 = reflect(eye, vec3(0., 1., 0.)); float c0 = clamp(-eye.y, 0., 1.); gF0 = .02 + .98 * pow(1. - c0, 5.); gRy0 = clamp(R0.y * 2.2, 0., 1.);',
+    '  gRy = clamp(R.y * 2.2, 0., 1.);',
+    '  vec3 L = normalize(vec3(-.094, .1 + .3 * uLight, 1.));',
+    '  gGl = pow(max(dot(R, L), 0.), 420.) * 5. + pow(max(dot(R, L), 0.), 60.) * .06;',
+    '  gBody = smoothstep(260., 20., d);',
+    // the front of an unbroken wave shows the water's body, darker and a little green; troughs a touch darker
+    '  gShade = 1. - .4 * smoothstep(.0, .45, slope) * smoothstep(-.1, .4, -slope * 0. + 1.);',
+    // ---- breaking: the wave turns to whitewater as it reaches the sandbar, then rolls in as a band of foam ----
+    '  float brkD = 55. + 95. * set + 30. * sin(X * .006 + r2 * 6.28) * r4;',
+    '  float brk = smoothstep(brkD + 25., brkD - 15., d);',
+    '  float sect = smoothstep(.38, .62, fbm(vec2(X * .012 + wid * 3.1, wid * .73)));',
+    '  brk *= mix(sect, 1., step(.62, r3)) * smoothstep(.38, .6, set);',
+    '  float kl = mix(16., 6., set), kt = mix(9., 3.5, set * r2);',
+    '  float lead = smoothstep(.0, .01, ph) * exp(-ph * kl);',
+    '  float trail = smoothstep(.0, .02, ph) * exp(-ph * kt) * (.12 + .28 * r4);',
+    '  float burst = exp(-abs(d - brkD) / (3. + 4. * set)) * exp(-ph * 7.) * smoothstep(.0, .01, ph) * set * brk;',
+    '  float r1n = hash1(vec2(wid + 1., 1.3)); float setn = .35 + 1.15 * pow(r1n, 1.4);',
+    '  float brkDn = 55. + 95. * setn;',
+    '  float lip = smoothstep(.9, .995, ph) * (1. - smoothstep(.995, 1., ph)) * smoothstep(brkDn + 45., brkDn + 10., d) * smoothstep(brkDn - 25., brkDn, d) * smoothstep(.45, .8, setn);',
+    '  vec2 fq = vec2(X * .22, (d + t * lam / T) * .32);',
+    '  fq += vec2(wid * 13.7, 0.);',
+    '  float lace = fbm(fq) * .65 + fbm(fq * 3.1 + vec2(t * .05, 0.)) * .35;',
+    '  lace = mix(lace, lace * lace * 1.6, .4 * set);',
+    '  float shoreBrk = smoothstep(26., 12., d) * smoothstep(-1., 3., d);',
+    '  float cover = clamp((lead * (1. + .6 * set) + trail) * max(brk, shoreBrk * (.5 + .5 * set)) + burst * .8 + lip * .7, 0., 1.) * .82;',
+    '  gTone = .72 + .38 * lace;',
+    // the inner surf: everything inside the break stays streaked with old foam
+    '  float inner = smoothstep(45., 6., d) * smoothstep(-1., 4., d) * .07;',
+    '  cover = max(cover, inner * (.5 + .5 * fbm(vec2(X * .15, d * .4 - t * .2))));',
+    '  gFoam = smoothstep(.1, .42, cover - (1. - lace) * .7) * smoothstep(1e-3, .05, cover) * (1. - smoothstep(.8, 3., fp));',
+    // fade the surface into the photo near the horizon, where it's too far away to make out waves
+    '  gW = smoothstep(OHZ + .004, OHZ + .045, q.y);',
+    // ---- the swash: each wave runs up the sand as a thin sheet and slides back ----
+    '  float ph0 = fract(t / T + bend + Zs * 0. );',
+    '  float up = smoothstep(.0, .18, ph0) * (1. - smoothstep(.22, .75, ph0));',
+    '  float w0 = floor(t / T + bend);',
+    '  float run = mix(2.5, 11., pow(hash1(vec2(w0, 5.5)), 1.3)) * up;',
+    '  float onSand = (1. - smoothstep(-.5, .5, d)) * (1. - smoothstep(.74, .78, q.x));',
+    '  float sheet = smoothstep(-run - .4, -run + .6, d) * onSand;',
+    '  gSheet = sheet * (1. - smoothstep(1.5, 3., -d) * .2);',
+    '  float edge = (1. - smoothstep(.0, .55, abs(d + run))) * onSand * smoothstep(.0, .3, up);',
+    '  gSandFoam = edge * (.6 + .4 * fbm(vec2(X * .5, t * .3)));',
+    '  gWet = smoothstep(-11.5, -1., d) * onSand * (1. - sheet);',
+    // in the sand strip, only the swash and the wet sand change the photo
+    '  if (d < 0.) { gW = 0.; }',
+    '  gW *= 1. - smoothstep(-.4, .4, -d) * 0.;',
+    '}',
+    'vec3 photo(sampler2D t, sampler2D tb, vec2 p, out float glow) {',
+    '  glow = 0.;',
+    '  vec3 c = texture2D(t, p).rgb;',
+    '  if (uLive < .5) return c;',
+    '  if (gUse && gOcean) {',
+    // the ocean's colours come from this photo, so it matches by day, at sunset and at night
+    '    vec3 deep = texture2D(tb, vec2(.3, .53) * uPhoto.zw + uPhoto.xy).rgb;',
+    '    vec3 shallow = texture2D(tb, vec2(.18, .78) * uPhoto.zw + uPhoto.xy).rgb;',
+    '    vec3 skyH = texture2D(tb, vec2(.5, .385) * uPhoto.zw + uPhoto.xy).rgb;',
+    '    vec3 skyZ = texture2D(tb, vec2(.5, .18) * uPhoto.zw + uPhoto.xy).rgb;',
+    '    vec3 body = mix(deep * vec3(.55, .66, .72), shallow * vec3(.62, .78, .8), gBody) * gShade;',
+    '    vec3 refl = mix(skyH * 1.04, skyZ, gRy);',
+    '    vec3 wcol = mix(body, refl, clamp(gF * 1.15, 0., 1.)) + skyH * gGl;',
+    '    vec3 flat0 = mix(body / max(gShade, .01), mix(skyH * 1.04, skyZ, gRy0), clamp(gF0 * 1.15, 0., 1.));',
+    '    vec3 here = texture2D(tb, p).rgb;',
+    '    wcol *= mix(vec3(1.), here / max(flat0, vec3(.02)), .8);',
+    '    float lum = dot(skyH, vec3(.3, .59, .11));',
+    '    vec3 foamC = vec3(.93, .96, 1.) * (.62 + .5 * lum) * mix(.5, 1., clamp(uLight * 1.5, 0., 1.));',
+    '    wcol = mix(wcol, foamC * gTone, gFoam);',
+    '    c = mix(c, wcol, gW);',
+    // on the sand: wet sand darkens and shines, the swash is a thin sheet of sky-coloured water with a foam edge
+    '    c *= 1. - .22 * gWet;',
+    '    c = mix(c, mix(c * .8, refl * .95, .55), gSheet * .85);',
+    '    c = mix(c, foamC, gSandFoam * .85);',
+    '  }',
+    '  if (gUse && gTr.a > 0.) { glow = gGlow; c = mix(c, gTr.rgb, gTr.a); }',
+    '  return c;',
+    '}',
+    // the train's lit windows and headlights are added after the grading, so they glow at night
+    'vec3 sceneSharp(vec2 p) { p = view(p); float g1, g2; vec3 a = photo(uScene, uBlur, p, g1), b = photo(uScene2, uBlur2, p, g2);',
+    '  return mix(grade(a, uGradeA, uSatA), grade(b, uGradeB, uSatB), uNightMix) + vec3(1., .82, .55) * g1 * .9; }',
+    'vec3 sceneSoft(vec2 p) { p = view(p); float g1, g2; vec3 a = photo(uBlur, uBlur, p, g1), b = photo(uBlur2, uBlur2, p, g2);',
+    '  return mix(grade(a, uGradeA, uSatA), grade(b, uGradeB, uSatB), uNightMix) + vec3(1., .82, .55) * g1 * .6; }',
     'void main(){',
     '  vec2 uv = vUv;',
     '  vec2 px = uv * uRes;',
@@ -97,6 +452,9 @@
     '  float rimWide = mix(.5, lk.g, has);',
     '  float fogAmt = clamp(uFog * (1. - clear) * (1. - trail * .6) * (.94 + .14 * mott + .06 * mott2), 0., 1.);',
     '  fogAmt = max(fogAmt, calm * .72 * (1. - clear));',
+    '  gTr = vec4(0.); gGlow = 0.; gUse = false;',
+    '  gOcean = false;',
+    '  if (uLive > .5) { vec2 tq = (view(uv) - uPhoto.xy) / uPhoto.zw; gTr = trainAt(tq, gGlow); oceanAt(tq); gUse = true; }',
     '  vec3 sharp = sceneSharp(uv);',
     '  vec3 soft = sceneSoft(uv);',
     '  float grain = texture2D(uNoise, uv * vec2(uAspect, 1.) * 38.).r - .5;',
@@ -106,7 +464,9 @@
     // squeezed more toward its edge, like a fisheye
     '  float fish = 1. + .55 * dd * dd;',
     '  vec2 look = (px - off * (1. + uMagnify * fish)) / uRes;',
+    '  bool keepUse = gUse; gUse = false;',
     '  vec3 through = mix(sceneSharp(look), sceneSoft(look), .12);',
+    '  gUse = keepUse;',
     '  vec3 drop = through * (1.04 - .08 * dd);',
     // water bends light away near the rim, so a bead has a dark ring with a thin brighter lip inside it
     // every drop has its own character: some clear and thin-rimmed, some with a heavy, dark, wide rim
@@ -296,7 +656,7 @@
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
     var aPos = gl.getAttribLocation(prog, 'aPos'); gl.enableVertexAttribArray(aPos); gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
     var U = {};
-    ['uScene', 'uBlur', 'uScene2', 'uBlur2', 'uBeadR', 'uMagnify', 'uNightMix', 'uSatA', 'uSatB', 'uGradeA', 'uGradeB', 'uFogMix', 'uCalm', 'uBeads', 'uMask', 'uNoise', 'uTrail', 'uLightPos', 'uRes', 'uFog', 'uLight', 'uAspect', 'uFogCol', 'uHi', 'uDrops', 'uShift', 'uZoom', 'uOpen'].forEach(function (k) { U[k] = gl.getUniformLocation(prog, k); });
+    ['uScene', 'uBlur', 'uScene2', 'uBlur2', 'uBeadR', 'uMagnify', 'uNightMix', 'uSatA', 'uSatB', 'uGradeA', 'uGradeB', 'uFogMix', 'uCalm', 'uBeads', 'uMask', 'uNoise', 'uTrail', 'uLightPos', 'uRes', 'uFog', 'uLight', 'uAspect', 'uFogCol', 'uHi', 'uDrops', 'uShift', 'uZoom', 'uOpen', 'uTime', 'uLive', 'uTrainU', 'uTrainOn', 'uTrainDir', 'uPhoto'].forEach(function (k) { U[k] = gl.getUniformLocation(prog, k); });
 
     function texture(unit, repeat) {
       var t = gl.createTexture(); gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, t);
@@ -316,6 +676,7 @@
     // how wide a view each bead takes in, as a multiple of its size: bigger shows a smaller, more distant world
     gl.uniform1f(U.uMagnify, 3.4);
     gl.uniform2f(U.uShift, 0, 0); gl.uniform1f(U.uZoom, 1); gl.uniform1f(U.uOpen, 0);
+    gl.uniform1f(U.uTime, 0); gl.uniform1f(U.uLive, 0); gl.uniform1f(U.uTrainU, 0); gl.uniform1f(U.uTrainOn, 0); gl.uniform1f(U.uTrainDir, 1); gl.uniform4f(U.uPhoto, 0, 0, 1, 1);
     var maxTex = gl.getParameter(gl.MAX_TEXTURE_SIZE) || 4096;
     function upload(unit, tex, source) {
       gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, tex);
@@ -329,6 +690,39 @@
     var sceneC = document.createElement('canvas'), blurC = document.createElement('canvas'), tinyC = document.createElement('canvas');
     var light = 1, fogBase = 0.65, fogCol = [0.89, 0.91, 0.94], hi = [1, 1, 1];
     var raf = 0, maskSource = null, maskDirty = false, failed = false;
+    /* ---------- the live view: waves always, a Pacific Surfliner now and then ---------- */
+    var live = false;
+    var TRAIN_SPEED = 40, TRAIN_LEN = 151.4;   // metres a second (about 90 mph, its top speed), metres
+    // add ?train to the address to have one come by straight away (for testing)
+    var trainQ = new URLSearchParams(location.search).has('train');
+    var train = { on: false, dir: 1, t0: 0, next: null };
+    function trainStep(t) {
+      if (train.next === null) train.next = t + (trainQ ? 1500 : 6000 + Math.random() * 8000);
+      if (!train.on && t >= train.next) {
+        train.on = true; train.t0 = t;
+        train.dir = 1;   // always northbound: the cab car leads and the locomotive pushes from the back
+      }
+      var u = 0;
+      if (train.on) {
+        var d = (t - train.t0) / 1000 * TRAIN_SPEED;
+        u = train.dir > 0 ? -16 + d : 37 + TRAIN_LEN - d;
+        if ((train.dir > 0 && u - TRAIN_LEN > 37) || (train.dir < 0 && u < -16)) {
+          train.on = false;
+          // the next one comes along in 25 to 70 seconds
+          train.next = t + 25000 + Math.random() * 45000;
+        }
+      }
+      gl.uniform1f(U.uTrainOn, train.on ? 1 : 0);
+      gl.uniform1f(U.uTrainU, u);
+      gl.uniform1f(U.uTrainDir, train.dir);
+    }
+    // where the photo sits in the window (it's drawn like background-size: cover)
+    function photoRect() {
+      if (!photos || !photos.day || !W) return;
+      var iw = photos.day.naturalWidth || photos.day.width, ih = photos.day.naturalHeight || photos.day.height;
+      var sc = Math.max(W / iw, H / ih), dw = iw * sc, dh = ih * sc;
+      gl.uniform4f(U.uPhoto, (W - dw) * photos.fx / W, (H - dh) * photos.fy / H, dw / W, dh / H);
+    }
 
     /* ---------- the beads ---------- */
     function makeBeads() {
@@ -782,9 +1176,12 @@
 
     /* ---------- drawing ---------- */
     // if anything goes wrong while drawing, hand back to the flat fog rather than freezing
+    var lastLive = 0;
     function draw(now) {
       raf = 0;
       if (failed || !W) return;
+      if (live && now - lastLive < 30) { raf = requestAnimationFrame(draw); return; }
+      lastLive = now;
       try { drawFrame(now); } catch (e) { failed = true; console.warn('Condensation stopped, using flat fog instead:', e); if (opts.onFail) opts.onFail(); }
     }
     function drawFrame(now) {
@@ -807,11 +1204,22 @@
       gl.uniform1f(U.uLight, light);
       gl.uniform3fv(U.uFogCol, fogCol);
       gl.uniform3fv(U.uHi, hi);
+      if (live && photoDrawn) {
+        gl.uniform1f(U.uTime, (tnow / 1000) % 3600);
+        trainStep(tnow);
+        // keep the waves going while the window is on screen
+        if (onScreen) moving = true;
+      }
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       if (moving) schedule();
     }
     function schedule() { if (!raf) raf = requestAnimationFrame(draw); }
+    // the live view stops drawing while the window is scrolled out of sight, and picks up again when it's back
+    var onScreen = true;
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (en) { onScreen = en[0].isIntersecting; if (onScreen) schedule(); }).observe(canvas);
+    }
     // check for new sliding drops a few times a second, even when nothing else is happening
     setInterval(function () { if (!document.hidden) schedule(); }, 400);
 
@@ -827,6 +1235,7 @@
         makeBeads();
         photoDrawn = false;
         sceneNow();
+        photoRect();
         maskDirty = true; schedule();
       },
       maskChanged: function (src) { maskSource = src; maskDirty = true; schedule(); },
@@ -834,7 +1243,9 @@
       // photos: { day: Image, night: Image or null, fx, fy } or null for the illustration
       setPhotos: function (p) {
         photos = p; photoDrawn = false;
-        if (p) { drawPhotos(); } else { sceneNow(); }
+        live = !!(p && p.live);
+        gl.uniform1f(U.uLive, live ? 1 : 0);
+        if (p) { drawPhotos(); photoRect(); } else { sceneNow(); }
         return !!photos;
       },
       hasPhotos: function () { return !!photos; },
