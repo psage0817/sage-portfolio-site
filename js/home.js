@@ -69,18 +69,18 @@
 
   /* ---------- filters ---------- */
   var buttons = document.querySelectorAll('[data-filter]');
-  var cards = document.querySelectorAll('.work-grid > [data-cat]');
+  var cards = document.querySelectorAll('[data-work] > [data-cat]');
 
   // counts next to each filter
   buttons.forEach(function (btn) {
     var f = btn.getAttribute('data-filter');
-    var n = f === 'all' ? cards.length : document.querySelectorAll('.work-grid > [data-cat="' + f + '"]').length;
+    var n = f === 'all' ? cards.length : document.querySelectorAll('[data-work] > [data-cat="' + f + '"]').length;
     var sup = btn.querySelector('sup');
     if (sup) sup.textContent = n;
   });
 
   // projects that aren't ready yet don't navigate anywhere
-  document.querySelectorAll('.card[aria-disabled="true"]').forEach(function (a) {
+  document.querySelectorAll('[data-work] [aria-disabled="true"], [data-work][aria-disabled="true"], .spread[aria-disabled="true"]').forEach(function (a) {
     a.addEventListener('click', function (e) { e.preventDefault(); });
   });
 
@@ -91,9 +91,23 @@
   buttons.forEach(function (btn) {
     btn.addEventListener('click', function () {
       var f = btn.getAttribute('data-filter');
-      // the grid glides into its new arrangement where the browser supports it
+      // the list glides into its new arrangement where the browser supports it
       if (document.startViewTransition && !reduce) document.startViewTransition(function () { apply(f); });
       else apply(f);
     });
   });
+
+  /* ---------- as each project scrolls into view, it rises into place and its light switches on ---------- */
+  var spreads = document.querySelectorAll('.spread');
+  if ('IntersectionObserver' in window && !reduce) {
+    document.documentElement.classList.add('reveal');
+    var lights = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add('is-lit'); lights.unobserve(en.target); }
+      });
+    }, { threshold: 0, rootMargin: '0px 0px -4% 0px' });
+    spreads.forEach(function (s) { lights.observe(s); });
+  } else {
+    spreads.forEach(function (s) { s.classList.add('is-lit'); });
+  }
 })();

@@ -29,7 +29,9 @@
 }
 
 :root {
-  --sans: 'Alte Haas Grotesk', 'AlteHaasGrotesk', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  /* body text in Satoshi (loaded from Fontshare in each page's head); headings and the wordmark stay in Alte Haas */
+  --sans: 'Satoshi', 'Alte Haas Grotesk', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --display: 'Alte Haas Grotesk', 'AlteHaasGrotesk', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --script: 'Ashton', 'P22 Ashton', 'Ashton Script', 'Beth Ellen', cursive;
   --hand: 'Le Jardin Du Bonheur', 'LeJardinDuBonheur', 'Ashton', 'P22 Ashton', 'Beth Ellen', cursive;
 
@@ -279,6 +281,7 @@ input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius
 .rot .w.is-leaving { transform: translateY(-100%); opacity: 0; }
 
 /* ---------- selected work ---------- */
+h1, h2, h3, .wordmark { font-family: var(--display); }
 .work { padding: 44px 0 0; }
 .work-head {
   display: flex; align-items: flex-end; justify-content: space-between; gap: 16px 32px; flex-wrap: wrap;
@@ -292,59 +295,97 @@ input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius
 .filters button:hover { color: var(--ink); text-decoration: underline; }
 .filters button[aria-pressed="true"] { color: var(--ink); text-decoration: underline; }
 
-.work-grid {
-  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start;
-  gap: 56px 24px; margin-top: 40px;
+/* one spread per project: the cover framed in the window's bronze on one side, its name and facts on the
+   other, swapping sides from one project to the next. Every cover shows from the start. */
+.spreads { display: grid; gap: clamp(72px, 9vw, 120px); margin-top: 56px; }
+.spreads > [hidden] { display: none; }
+.spread {
+  display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 0 clamp(28px, 4vw, 56px); align-items: end;
+  text-decoration: none; color: var(--ink);
 }
-.work-grid > [hidden] { display: none; }
-.card-wrap { position: relative; min-width: 0; }
-.card { display: block; text-decoration: none; color: var(--ink); }
-.card-media {
-  position: relative; aspect-ratio: 4 / 3; overflow: hidden;
-  border-radius: var(--pane); background: var(--ph);
+.spread:nth-child(even) { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+.spread:nth-child(even) .spread-pic { order: 2; }
+.spread-pic {
+  display: block; padding: 8px; background: var(--bronze, #463A35);
+  box-shadow: 0 18px 26px -20px rgba(40, 28, 20, 0.45);
+  transition: transform .3s cubic-bezier(.22, 1, .36, 1), box-shadow .3s ease;
 }
-.card-media img { width: 100%; height: 100%; object-fit: cover; object-position: 12% 50%; transition: transform .5s cubic-bezier(.2, .7, .2, 1); }
-.card-media .ph {
-  position: absolute; inset: 0; display: grid; place-items: center; padding: 24px;
-  text-align: center; font-size: 14px; color: var(--ph-ink);
+.spread-media { position: relative; display: block; aspect-ratio: 4 / 3; overflow: hidden; background: var(--ph); }
+.spread-media img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; transition: transform .5s cubic-bezier(.22, 1, .36, 1); }
+.spread-media .ph { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; font-size: 14px; color: var(--ph-ink); }
+.spread:hover .spread-pic, .spread:focus-visible .spread-pic { transform: translateY(-2px); box-shadow: 0 24px 30px -20px rgba(40, 28, 20, 0.5); }
+.spread:hover .spread-media img, .spread:focus-visible .spread-media img { transform: scale(1.03); }
+.spread-text { min-width: 0; padding-bottom: 6px; position: relative; clip-path: inset(-600px -300px 0 -300px); }  /* the light starts at the shelf */
+/* every project stands on its own white shelf, like the sill under the window: the cover and the text both sit on it */
+.shelf {
+  grid-column: 1 / -1; order: 3; display: block; position: relative; height: 14px; margin: 0 -12px;
+  background: var(--sill, #fff);
+  /* a darker underside edge, and the shelf's shadow falling on the wall below it */
+  box-shadow: inset 0 -2px 0 rgba(120, 100, 80, 0.18), 0 6px 8px -4px rgba(40, 28, 20, 0.35);
 }
-/* frosted until you look at it */
-.card-media::after {
-  content: ""; position: absolute; inset: 0;
-  background: rgba(236, 241, 247, 0.3);
-  -webkit-backdrop-filter: blur(12px) saturate(140%); backdrop-filter: blur(12px) saturate(140%);
-  transition: opacity .45s ease;
+.shelf::after {
+  content: ""; position: absolute; left: 2%; right: 2%; top: 100%; height: 34px; pointer-events: none;
+  background: radial-gradient(ellipse 50% 100% at 50% 0%, rgba(40, 28, 20, 0.22), rgba(40, 28, 20, 0) 100%);
 }
-.card:hover .card-media::after, .card:focus-visible .card-media::after { opacity: 0; }
-.card:hover .card-media img { transform: scale(1.03); }
-@media (hover: none) { .card-media::after { display: none; } }
-.card-title { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-top: 16px; }
-.card-title h3 { margin: 0; font-weight: 400; font-size: 21px; line-height: 1.2; }
-.card-title span { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.card-tags { margin: 4px 0 0; font-size: 14px; color: var(--muted); }
-.soon { font-size: 13px; color: var(--muted); }
+[data-theme="night"] .shelf::after { background: radial-gradient(ellipse 50% 100% at 50% 0%, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0) 100%); }
+.spread-text h3 {
+  display: inline; margin: 0; font-weight: 400; font-size: clamp(34px, 4vw, 58px); line-height: 1.04;
+  color: var(--bronze, var(--ink));
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .3s ease;
+}
+.spread:hover .spread-text h3, .spread:focus-visible .spread-text h3 { background-size: 100% 1px; }
+.spread-what { margin: 16px 0 0; max-width: 40ch; }
+.spread-facts { display: grid; grid-template-columns: auto 1fr; gap: 4px 18px; margin: 22px 0 0; font-size: 15px; }
+.spread-facts dt { color: var(--muted); }
+.spread-facts dd { margin: 0; }
+.spread-go { display: inline-block; margin-top: 22px; font-size: 15px; text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 1px; }
+[data-theme="night"] .spread-text h3 { color: var(--ink); }
 
-/* invetty opens downward in its own column: the cards beside it stay put,
-   and only the row below eases down to make room */
-.card-more {
-  display: grid; grid-template-rows: 0fr;
-  transition: grid-template-rows .45s cubic-bezier(.2, .7, .2, 1);
+/* a spotlight standing on each shelf, out of view at the outside corner. Its beam is a clean cone: two straight
+   edges from the lamp and an even arc where the light lands, brightest at the lamp and fading evenly outwards.
+   By day a pastel LED in the project's colour; after dark, warm white. */
+.spread-text > *:not(.spot) { position: relative; z-index: 1; }
+.spot {
+  position: absolute; z-index: 0; bottom: 0; height: calc(100% + 60px); min-height: clamp(240px, 24vw, 330px);
+  width: calc(100% + clamp(20px, 3vw, 48px)); pointer-events: none; opacity: 0;
+  /* the cone (--cone, below): a straight edge from the lamp to the peak, then one even curve down to the shelf */
+  -webkit-mask: var(--cone) 0 0 / 100% 100% no-repeat;
+          mask: var(--cone) 0 0 / 100% 100% no-repeat;
+  /* bright at the lamp, gone before the curved edge, so the edge dissolves instead of crossing the words */
+  background: radial-gradient(farthest-corner at var(--ax) 100%,
+    color-mix(in srgb, var(--led) 95%, transparent) 0%,
+    color-mix(in srgb, var(--led) 58%, transparent) 30%,
+    color-mix(in srgb, var(--led) 18%, transparent) 52%,
+    transparent 68%);
+  filter: blur(4px);
 }
-.card-more > div { overflow: hidden; }
-.card-more p { margin: 12px 0 0; max-width: 34ch; opacity: 0; transition: opacity .3s ease; }
-.card-go { display: inline-block; margin-top: 10px; text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 1px; opacity: 0; transition: opacity .3s ease; }
-@media (hover: hover) {
-  /* a short pause first, so passing the cursor over it doesn't move the grid */
-  .card:hover .card-more { grid-template-rows: 1fr; transition-delay: .15s; }
-  .card:hover .card-more p, .card:hover .card-go { opacity: 1; transition-delay: .3s; }
+/* text on the right of its spread: the lamp is at the bottom right, shining up and to the left */
+.spread:nth-child(odd) .spot { --ax: 100%; --cone: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M100 100 L38 0 A38 100 0 0 0 0 100 Z'/%3E%3C/svg%3E"); right: calc(-1 * clamp(20px, 3vw, 48px)); }
+/* text on the left: the lamp is at the bottom left, shining up and to the right */
+.spread:nth-child(even) .spot { --ax: 0%; --cone: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M0 100 L62 0 A38 100 0 0 1 100 100 Z'/%3E%3C/svg%3E"); left: calc(-1 * clamp(20px, 3vw, 48px)); }
+.spread.is-lit .spot { animation: spot-on .4s ease-out .15s both; }
+[data-theme="night"] .spot { --led: #FFF1DC; mix-blend-mode: screen; }
+@keyframes spot-on { 0% { opacity: 0; } 20% { opacity: var(--spot-op); } 32% { opacity: calc(var(--spot-op) * .35); } 46% { opacity: var(--spot-op); } 100% { opacity: var(--spot-op); } }
+.spot { --spot-op: .5; }
+[data-theme="night"] .spot { --spot-op: .34; }
+
+/* as a project scrolls into view, its cover rises into place, then its words, then its light switches on.
+   Without script, or with reduced motion, everything simply shows. */
+.reveal .spread-pic, .reveal .spread-text { opacity: 0; transform: translateY(28px) scale(.98); }
+.reveal .spread.is-lit .spread-pic, .reveal .spread.is-lit .spread-text {
+  opacity: 1; transform: none;
+  transition: opacity .3s ease-out, transform .42s cubic-bezier(.22, 1, .36, 1);
 }
-.card:focus-visible .card-more { grid-template-rows: 1fr; }
-.card:focus-visible .card-more p, .card:focus-visible .card-go { opacity: 1; }
-/* phones can't hover, so the description is simply shown */
-@media (hover: none) {
-  .card-more { grid-template-rows: 1fr; }
-  .card-more p, .card-go { opacity: 1; }
+.reveal .spread.is-lit .spread-text { transition-delay: .05s; }
+/* after it has arrived, the cover lifts on hover as before */
+.reveal .spread.is-lit:hover .spread-pic { transform: translateY(-2px); transition-delay: 0s; }
+@media (prefers-reduced-motion: reduce) {
+  .spread.is-lit .spot { animation: none; opacity: var(--spot-op); }
 }
+
+/* not finished yet: said plainly */
+.spread-media .ph.soon { font-family: var(--hand); font-size: clamp(24px, 2.4vw, 32px); color: var(--muted); }
+.spread-soon { display: inline-block; margin-top: 18px; font-size: 15px; color: var(--muted); }
 
 /* ---------- the lobby: contact and the record player ---------- */
 .lobby {
@@ -416,7 +457,6 @@ input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius
 
 /* ---------- smaller screens ---------- */
 @media (max-width: 1000px) {
-  .work-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .lobby-inner { grid-template-columns: minmax(0, 1fr); padding-bottom: 200px; }
 }
 @media (max-width: 640px) {
@@ -428,7 +468,11 @@ input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius
   .hero-text { bottom: 96px; }
   .note-spot { top: 100px; right: auto; left: 16px; width: 176px; }
   .note { padding: 24px 20px 22px; font-size: 18px; }
-  .work-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+  .spread, .spread:nth-child(even) { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  /* on a phone the words all sit under their covers, so every lamp is at the bottom left */
+  .spread:nth-child(odd) .spot { --ax: 0%; --cone: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M0 100 L62 0 A38 100 0 0 1 100 100 Z'/%3E%3C/svg%3E"); right: auto; left: -20px; }
+  .spot { width: calc(92% + 20px); height: calc(100% + 40px); min-height: 220px; }
+  .spread:nth-child(even) .spread-pic { order: 0; }
   .deck { transform: scale(.85); transform-origin: left center; margin-right: -40px; }
   .foot-inner { grid-template-columns: minmax(0, 1fr); }
   .foot .back { justify-self: start; }
