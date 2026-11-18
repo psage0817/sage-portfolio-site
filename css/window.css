@@ -22,7 +22,7 @@
   --band: 86px;                        /* shade fabric above the glass, where the nav sits */
   --frame: 14px;                       /* outer frame */
   --stile: 10px;                       /* sash frame inside it */
-  --glass-h: clamp(360px, calc(100svh - var(--band) - 300px), 760px);   /* leaves room for the headline under it */
+  --glass-h: clamp(400px, calc(100svh - var(--band) - 236px), 820px);   /* leaves room for the headline under it */
   --drop: 0px;                         /* how far the shade is pulled down over the glass */
   --pull: 0px;                         /* how far the cord is being pulled */
 }
@@ -177,7 +177,7 @@
 /* ---------- the headline, on the wall under the window ---------- */
 /* plain type on the same left edge as "selected work"; by day it's the bronze of the frame */
 .wall-text {
-  width: min(var(--wrap), 100% - 2 * var(--gutter)); margin: 0 auto; padding: 30px 0 0;
+  width: min(var(--wrap), 100% - 2 * var(--gutter)); margin: 0 auto; padding: 22px 0 0;
 }
 .wall-text .hero-text { position: static; color: var(--bronze); transition: color .6s ease; }
 .wall-text .hero-text h1 { opacity: 1; font-size: clamp(52px, 6.6vw, 104px); line-height: .98; }
@@ -187,7 +187,7 @@
 [data-theme="night"] .wall-text .hero-text, [data-theme="night"] .wall-text .sub .w { color: var(--ink); }
 [data-theme="night"] .wall-text .sub { color: var(--muted); }
 /* a second sill under the headline closes off the top of the page */
-.sill-lower { margin-top: 30px; }
+.sill-lower { margin-top: 24px; }
 
 /* ---------- the cord loop and weight ---------- */
 .cords {
@@ -223,7 +223,7 @@
 [data-theme="night"].win-concept .card-media::after { background: rgba(31, 29, 33, 0.3); }
 
 @media (max-width: 640px) {
-  .win-concept { --band: 70px; --frame: 9px; --stile: 7px; --glass-h: clamp(340px, calc(100svh - var(--band) - 290px), 620px); }
+  .win-concept { --band: 70px; --frame: 9px; --stile: 7px; --glass-h: clamp(330px, calc(100svh - var(--band) - 250px), 680px); }
   .shade .nav { height: calc(var(--band) - 26px); }
   .cords { right: calc(var(--side) - 4px); }
   .win-concept .note-spot { top: 9%; }
