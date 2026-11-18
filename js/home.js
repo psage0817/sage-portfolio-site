@@ -81,14 +81,20 @@
     if (!lapseOn) return;
     lapseOn = false; heroP.classList.remove('lapsing');
     if (toNow) nowBtn.click();
-    // the hint arrives once the day has played
-    if (msg) msg.classList.remove('later');
+    // the hint pops up like a notification the moment the day lands on now
+    if (msg && msg.classList.contains('later')) {
+      setTimeout(function () {
+        msg.classList.remove('later'); msg.classList.add('pop');
+        msg.addEventListener('animationend', function () { msg.classList.remove('pop'); }, { once: true });
+      }, toNow ? 120 : 0);
+    }
   }
   range.addEventListener('pointerdown', function () { endLapse(false); });
   range.addEventListener('keydown', function () { endLapse(false); });
   document.querySelector('[data-sky]').addEventListener('pointerdown', function () { endLapse(true); });
   function intro() {
-    if (reduce) return;
+    // with reduced motion there's no opening: the message is simply there
+    if (reduce) { if (msg) msg.classList.remove('later'); return; }
     endLapse(false);
     root.classList.remove('opening'); void heroP.offsetWidth;
     root.classList.add('opening');

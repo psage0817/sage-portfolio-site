@@ -217,6 +217,15 @@ button { font: inherit; color: inherit; }
   transition: opacity .3s ease, transform .45s cubic-bezier(.2, .8, .2, 1), visibility 0s;
 }
 .msg.later { opacity: 0; visibility: hidden; transform: translateY(8px) scale(.94); transition: opacity .2s ease, transform .2s ease, visibility 0s .2s; }
+/* it pops up with a bounce: overshoots, settles back, a small second bounce, then rests */
+.msg.pop { transform-origin: 50% 80%; animation: msg-pop .75s linear both; }
+@keyframes msg-pop {
+  0%   { opacity: 0; transform: translateY(18px) scale(.55); animation-timing-function: cubic-bezier(.2, .7, .3, 1); }
+  45%  { opacity: 1; transform: translateY(-6px) scale(1.07); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
+  68%  { transform: translateY(2px) scale(.97); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
+  86%  { transform: translateY(-1px) scale(1.015); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
+  100% { opacity: 1; transform: none; }
+}
 .msg.is-fall { opacity: 0; transform: scale(.94); pointer-events: none; transition: opacity .22s ease, transform .22s ease; }
 .msg.is-gone { display: none; }
 .msg-bar { display: flex; align-items: center; justify-content: space-between; height: 34px; padding: 0 5px 0 13px; font-size: 13px; font-weight: 600; color: var(--ink-on-chrome); }
