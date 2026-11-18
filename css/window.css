@@ -175,10 +175,8 @@
 }
 
 /* ---------- the headline, on the wall under the window ---------- */
-/* plain type on the same left edge as "selected work"; by day it's the bronze of the frame */
-.wall-text {
-  width: min(var(--wrap), 100% - 2 * var(--gutter)); margin: 0 auto; padding: 22px 0 0;
-}
+/* plain type lined up with the left edge of the glass, just inside the frame; by day it's the bronze of the frame */
+.wall-text { padding: 22px calc(var(--frame) + var(--stile)) 0; }
 .wall-text .hero-text { position: static; color: var(--bronze); transition: color .6s ease; }
 .wall-text .hero-text h1 { opacity: 1; font-size: clamp(52px, 6.6vw, 104px); line-height: .98; }
 .wall-text .sub { margin-top: 14px; font-size: clamp(17px, 1.5vw, 22px); color: #85766D; transition: color .6s ease; }
