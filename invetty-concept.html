@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en" class="win-concept case-concept" data-theme="day">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>invetty, by Sage Park</title>
+<meta name="description" content="invetty: an app for event goers with celiac disease. A UX design case study by Sage Park, Soha Mehta, Michael Kim and Carrie Shi.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Beth+Ellen&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css">
+<link rel="stylesheet" href="css/window.css">
+<link rel="stylesheet" href="css/case.css">
+<link rel="stylesheet" href="css/case-concept.css">
+<script>
+  // same day and night as the home page: after dark in st. louis (or ?theme=night to preview)
+  (function () {
+    var q = new URLSearchParams(location.search).get('theme');
+    var h = Number(new Intl.DateTimeFormat('en-US', { hour: 'numeric', hourCycle: 'h23', timeZone: 'America/Chicago' }).format(new Date()));
+    document.documentElement.setAttribute('data-theme', q === 'night' || q === 'day' ? q : (h >= 19 || h < 6 ? 'night' : 'day'));
+  })();
+</script>
+</head>
+<body class="case">
+
+<!-- the case study opens on the shade: the same cassette, fabric and hem bar as the home page -->
+<header class="cc-hero" id="top">
+  <div class="shade-box" aria-hidden="true"><i class="cap cap-l"></i><i class="cap cap-r"></i></div>
+  <div class="cc-shade">
+    <nav class="c-nav" aria-label="Main">
+      <div class="nav-links">
+        <a class="link" href="index.html#work">work</a>
+        <a class="link" href="about.html">about</a>
+        <a class="link" href="#contact">contact</a>
+      </div>
+      <a class="wordmark" href="index.html" aria-label="Sage Park, home">s.park</a>
+    </nav>
+    <div class="cc-print">
+      <a class="back-link link" href="index.html#work">all work</a>
+      <div class="c-title">
+        <img src="img/invetty-logo.webp" alt="The invetty app icon: a glassy lowercase i with a star for its dot" width="609" height="609">
+        <h1>invetty</h1>
+      </div>
+      <p class="c-lede">an app for event goers with celiac disease</p>
+      <p class="c-credits">I led a team of four with Soha Mehta, Michael Kim and Carrie Shi, from September 9 to November 11, 2026, working in FigJam and Figma.</p>
+    </div>
+    <div class="hem" aria-hidden="true"><span>s.park</span></div>
+  </div>
+  <!-- the four screens stand on the sill under the shade -->
+  <div class="cc-sill-shot">
+    <img class="c-hero-shot" src="img/invetty-screens.webp" alt="Four invetty screens: the invitation, the dietary questionnaire, the celiac introduction and the host’s celiac alert" width="1700" height="820">
+    <div class="cc-sill" aria-hidden="true"></div>
+  </div>
+</header>
+
+<div class="c-body">
+  <nav class="rail" aria-label="The process">
+    <ol>
+      <li><a href="#s-intro" aria-current="step">overview</a></li>
+      <li><a href="#s-research">research</a></li>
+      <li><a href="#s-define">define</a></li>
+      <li><a href="#s-ideate">ideate</a></li>
+      <li><a href="#s-iterate">iterate</a></li>
+      <li><a href="#s-outcome">outcome</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <section class="c-sec" id="s-intro" aria-label="Design question">
+      <p class="question">How can we help people with celiac disease feel less anxious and join social meals with more confidence, by giving them control over how their dietary needs are handled?</p>
+    </section>
+
+    <section class="c-sec" id="s-research" aria-labelledby="h-research">
+      <h2 id="h-research">What we needed to learn</h2>
+      <p>Eating safely with celiac disease takes work before the meal starts, and the social cost is as heavy as the physical risk. To understand both sides, we spoke with people who live with it, and with allergists and dieticians who treat patients of all ages.</p>
+      <div class="cc-stats">
+        <div><p class="stat">13</p><p>interviews in total</p></div>
+        <div><p class="stat">10</p><p>people with celiac disease</p></div>
+        <div><p class="stat">3</p><p>doctors and dieticians</p></div>
+      </div>
+      <div class="cc-cols">
+        <div><h3>Vetting falls on the person with celiac</h3><p>They question waiters, read every label, plan trips ahead, and rarely trust anyone else’s kitchen.</p></div>
+        <div><h3>The cost is social, not just physical</h3><p>Eating differently from peers feels lonely, and people read celiac as a preference or a bid for attention.</p></div>
+      </div>
+      <div class="cc-quotes">
+        <figure class="sticky" style="--tilt: -2deg"><blockquote>“There’s definitely a lot of stress and anxiety every single time I go to a new restaurant.”</blockquote><figcaption>P1, living with celiac disease</figcaption></figure>
+        <figure class="sticky blue" style="--tilt: 1.5deg"><blockquote>“Everybody is concerned about gluten contamination, everybody.”</blockquote><figcaption>P3, celiac disease specialist</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="c-sec" id="s-define" aria-labelledby="h-define">
+      <h2 id="h-define">Synthesizing the research</h2>
+      <p>[one or two lines on how you got from 13 interviews to one persona: affinity mapping, clustering, what you argued about]</p>
+      <!-- affinity wall: the notes say what the findings above say; swap in your real notes -->
+      <div class="affinity" data-affinity data-state="loose">
+        <div class="aff-board">
+          <p class="aff-label" style="--x: 2%; --y: 0%">vetting falls on them</p>
+          <p class="aff-label" style="--x: 35%; --y: 0%">the social cost</p>
+          <p class="aff-label" style="--x: 68%; --y: 0%">always on guard</p>
+          <p class="aff-note" style="--lx: 4%; --ly: 30%; --lt: -6deg; --x: 2%; --y: 12%; --t: -1deg">questions every waiter</p>
+          <p class="aff-note" style="--lx: 58%; --ly: 6%; --lt: 4deg; --x: 2%; --y: 34%; --t: 1deg">reads every label</p>
+          <p class="aff-note" style="--lx: 30%; --ly: 62%; --lt: -3deg; --x: 2%; --y: 56%; --t: -2deg">plans trips ahead</p>
+          <p class="aff-note" style="--lx: 64%; --ly: 50%; --lt: 7deg; --x: 2%; --y: 78%; --t: 1.5deg">doesn’t trust other kitchens</p>
+          <p class="aff-note pink" style="--lx: 18%; --ly: 4%; --lt: 3deg; --x: 35%; --y: 12%; --t: 1deg">eating differently feels lonely</p>
+          <p class="aff-note pink" style="--lx: 60%; --ly: 74%; --lt: -5deg; --x: 35%; --y: 34%; --t: -1.5deg">people think it’s a preference</p>
+          <p class="aff-note pink" style="--lx: 42%; --ly: 28%; --lt: 6deg; --x: 35%; --y: 56%; --t: 2deg">or a bid for attention</p>
+          <p class="aff-note blue" style="--lx: 2%; --ly: 70%; --lt: 5deg; --x: 68%; --y: 12%; --t: -1deg">“stress and anxiety every single time”</p>
+          <p class="aff-note blue" style="--lx: 62%; --ly: 26%; --lt: -4deg; --x: 68%; --y: 34%; --t: 1.5deg">“everybody is concerned about gluten contamination”</p>
+        </div>
+        <button class="aff-sort" type="button" aria-pressed="false" data-sort>sort the notes into groups</button>
+      </div>
+
+      <div class="cc-persona">
+        <div class="who">
+          <h3>Livia</h3>
+          <p class="meta">mid-20s, lives in Missouri, newly employed, diagnosed at 14</p>
+          <p class="sticky hmw" style="--tilt: -1.5deg">How might we make it easy for friends to do the quiet prep work, like sending a menu ahead, without her having to ask?</p>
+        </div>
+        <div class="story">
+          <p>Livia has just started her first corporate job. Her manager invites her to a team lunch where senior leaders will be, a hard event to miss and a real chance to make a first impression.</p>
+          <p>But she can’t order whatever is on the menu. She has little time to research the restaurant, isn’t sure its gluten-free options are truly safe, and doesn’t want to draw attention to her needs in front of new colleagues.</p>
+          <div class="cc-conflicts">
+            <p><b>Food safety</b> How can she be sure her needs are heard and her food is prepared to them?</p>
+            <p><b>Social pressure</b> Can she say what she needs without being singled out?</p>
+          </div>
+        </div>
+      </div>
+      <a class="journey" href="img/journey-map.webp" target="_blank" rel="noopener">
+        <img src="img/journey-map.webp" alt="Livia’s journey map across five steps: finding out about the lunch, contacting the restaurant, taking her seat and ordering, pretending nothing is wrong while she networks, and worrying afterwards about the impression she made. Rows cover her actions, goals, feelings, opportunities and pain points." width="2400" height="1289" loading="lazy">
+        <span class="lens" hidden></span>
+      </a>
+      <p class="journey-cap">Livia’s journey map: hover to zoom, click to open it full size</p>
+    </section>
+
+    <section class="c-sec" id="s-ideate" aria-labelledby="h-ideate">
+      <h2 id="h-ideate">The concept</h2>
+      <p>We compared three concepts and chose “What’s Not Good,” which became invetty. It scored highest, and the scores lined up with what we heard in research.</p>
+      <p>Like When’s Good, but for food: each guest gets a link and marks the foods, ingredients and preparation methods that don’t work for them, including cross-contamination, shared utensils and cooking surfaces. The host gets a filtered list that works for everyone. Answers are anonymous, so nobody has to speak up in front of the group.</p>
+      <div class="cc-cols three">
+        <div><h3>Less anxiety</h3><p>Needs are shared privately, before the event happens.</p></div>
+        <div><h3>More confidence</h3><p>The host plans a meal that works for everyone from the start.</p></div>
+        <div><h3>Better bonding</h3><p>Everyone shares the meal; nobody sits it out.</p></div>
+      </div>
+    </section>
+
+    <section class="c-sec" id="s-iterate" aria-labelledby="h-iterate">
+      <h2 id="h-iterate">Wireframing and user testing</h2>
+      <p>We started with grey wireframes and tested them with real people. After each round, the screens changed for a reason. Pull the cord to roll each wireframe up and see what replaced it.</p>
+
+      <article class="shade-pair">
+        <div class="mini" data-mini style="--up: 0">
+          <div class="mini-box" aria-hidden="true"></div>
+          <div class="mini-glass">
+            <img class="after" src="img/invitation-after.webp" alt="After: the colorized invitation with clear Maybe, Going and No buttons" width="796" height="1740" loading="lazy">
+            <div class="before"><img src="img/invitation-before.webp" alt="Before: a grey wireframe of the invitation, with a poster and three round buttons" width="796" height="1740" loading="lazy"><i class="mini-hem" aria-hidden="true"></i></div>
+          </div>
+          <button class="mini-cord" type="button" aria-label="Roll up the before screen to see the after" aria-pressed="false" aria-controls="chat-1"><i></i></button>
+          <span class="mini-tag" aria-hidden="true"><span class="t-before">before</span><span class="t-after">after</span></span>
+        </div>
+        <div>
+          <h3>Going became the obvious button</h3>
+          <div class="chat" id="chat-1">
+            <div class="stack">
+              <span class="typing" aria-hidden="true"><i></i><i></i><i></i></span>
+              <div class="msg them"><p>In testing, people got distracted by other buttons instead of tapping Going. They needed clear signs of what’s interactive and what to do next.</p></div>
+            </div>
+            <div class="msg us"><p>So we colorized the wireframe and gave Maybe, Going and No clear shapes, with Going the biggest. Now it’s the obvious tap.</p></div>
+          </div>
+        </div>
+      </article>
+      <article class="shade-pair">
+        <div class="mini" data-mini style="--up: 0">
+          <div class="mini-box" aria-hidden="true"></div>
+          <div class="mini-glass">
+            <img class="after" src="img/questionnaire-after.webp" alt="After: options grouped into prep and cleanliness, equipment and serving, with a search bar" width="796" height="1740" loading="lazy">
+            <div class="before"><img src="img/questionnaire-before.webp" alt="Before: a flat list of options to pick from" width="796" height="1740" loading="lazy"><i class="mini-hem" aria-hidden="true"></i></div>
+          </div>
+          <button class="mini-cord" type="button" aria-label="Roll up the before screen to see the after" aria-pressed="false" aria-controls="chat-2"><i></i></button>
+          <span class="mini-tag" aria-hidden="true"><span class="t-before">before</span><span class="t-after">after</span></span>
+        </div>
+        <div>
+          <h3>From a flat list to grouped choices</h3>
+          <div class="chat" id="chat-2">
+            <div class="stack">
+              <span class="typing" aria-hidden="true"><i></i><i></i><i></i></span>
+              <div class="msg them"><p>In testing, most people scrolled past the allergy options instead of reading them, and the list wasn’t specific enough about prep for celiac.</p></div>
+            </div>
+            <div class="msg us"><p>So we grouped the chips into prep and cleanliness, equipment and serving, added search, and fit in more options.</p></div>
+          </div>
+        </div>
+      </article>
+      <article class="shade-pair">
+        <div class="mini" data-mini style="--up: 0">
+          <div class="mini-box" aria-hidden="true"></div>
+          <div class="mini-glass">
+            <img class="after" src="img/home-after.webp" alt="After: the events list with a Create event button and a five-icon menu bar" width="796" height="1740" loading="lazy">
+            <div class="before"><img src="img/home-before.webp" alt="Before: the events list with a three-icon bar" width="796" height="1740" loading="lazy"><i class="mini-hem" aria-hidden="true"></i></div>
+          </div>
+          <button class="mini-cord" type="button" aria-label="Roll up the before screen to see the after" aria-pressed="false" aria-controls="chat-3"><i></i></button>
+          <span class="mini-tag" aria-hidden="true"><span class="t-before">before</span><span class="t-after">after</span></span>
+        </div>
+        <div>
+          <h3>A menu people could find their way with</h3>
+          <div class="chat" id="chat-3">
+            <div class="stack">
+              <span class="typing" aria-hidden="true"><i></i><i></i><i></i></span>
+              <div class="msg them"><p>In testing, people couldn’t reach their profile or the rest of the app, and tapped around at random.</p></div>
+            </div>
+            <div class="msg us"><p>So the three-icon bar became a five-icon menu, and Create event moved to the top of the screen.</p></div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="c-sec" id="s-outcome" aria-labelledby="h-outcome">
+      <h2 id="h-outcome">Final design</h2>
+      <p>Set in Ubuntu and DM Sans.</p>
+      <div class="final"><img src="img/invetty-final.webp" alt="Four final screens: the invitation, the celiac introduction, the filtered restaurant search and the host’s event page" width="2012" height="1000" loading="lazy"></div>
+      <div class="flows">
+        <figure class="flow" data-name="the invitee flow">
+          <div class="flow-frame">
+            <video src="video/invitee-flow.mp4" poster="img/invitee-poster.webp" autoplay muted loop playsinline preload="metadata" aria-label="Screen recording of the invitee flow: opening the invite from a group chat, RSVPing and filling in the dietary questionnaire"></video>
+            <button class="flow-toggle" type="button" aria-label="Pause the invitee flow">
+              <svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
+              <svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </div>
+          <figcaption>invitee flow</figcaption>
+        </figure>
+        <figure class="flow" data-name="the inviter flow">
+          <div class="flow-frame">
+            <video src="video/inviter-flow.mp4" poster="img/inviter-poster.webp" autoplay muted loop playsinline preload="metadata" aria-label="Screen recording of the inviter flow: reviewing guests’ needs and choosing a recommended restaurant"></video>
+            <button class="flow-toggle" type="button" aria-label="Pause the inviter flow">
+              <svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
+              <svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </div>
+          <figcaption>inviter flow</figcaption>
+        </figure>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="cc-after wrap-case">
+  <div class="cc-cols">
+    <div>
+      <h3>What I learned</h3>
+      <ul>
+        <li>We assumed the host side would be intuitive because anyone can host. It wasn’t, and we only found out by watching people use it.</li>
+        <li>The most important information has to be impossible to miss. The first tester skipped the celiac alert, so we redesigned it.</li>
+        <li>Clear structure beats a long flat list. Grouping the questionnaire made the choices easier to take in.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>What I’d do next</h3>
+      <ul>
+        <li>Test with a larger, more varied group, so the flow holds up for people outside our circle.</li>
+        <li>Support dietary restrictions beyond celiac disease.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<a class="next" href="#"><span class="k">next project</span><span>kishimoto mendo</span></a>
+
+<footer class="c-foot" id="contact">
+  <div class="wrap">
+    <div class="c-foot-top">
+      <div>
+        <p class="hi">let’s say hi</p>
+        <a class="email" href="mailto:sagespark19@gmail.com">sagespark19@gmail.com</a>
+      </div>
+      <a class="mini link" href="index.html#contact"><i aria-hidden="true"></i>my playlist, [playlist name]</a>
+    </div>
+    <div class="c-foot-bottom">
+      <span>© 2026 sage park</span>
+      <a class="link" href="#top">back to the top</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/invetty.js"></script>
+<script src="js/case-concept.js"></script>
+</body>
+</html>
