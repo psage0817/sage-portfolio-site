@@ -1,234 +1,401 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="day">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>invetty, by Sage Park</title>
 <meta name="description" content="invetty: an app for event goers with celiac disease. A UX design case study by Sage Park, Soha Mehta, Michael Kim and Carrie Shi.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Beth+Ellen&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet">
-<!-- Satoshi, the body typeface, from Fontshare (free for personal and commercial use) -->
-<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/site.css">
+<script>
+  // Apple devices get SF Pro, their system font; everything else gets Satoshi
+  try { if (/Mac|iPhone|iPad|iPod/.test(navigator.platform || '') || /iPhone|iPad|Macintosh/.test(navigator.userAgent)) document.documentElement.classList.add('apple'); } catch (e) {}
+</script>
+<script>
+  // day or night: what the window on the home page showed in the last few hours, otherwise this device's clock
+  (function () {
+    var th = null;
+    try { var o = JSON.parse(localStorage.getItem('sp-theme')); if (o && Date.now() - o.t < 6 * 3600e3) th = o.v; } catch (e) {}
+    if (!th) { var h = new Date().getHours(); th = h >= 19 || h < 6 ? 'night' : 'day'; }
+    document.documentElement.setAttribute('data-theme', th);
+  })();
+</script>
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<!-- Satoshi, from Fontshare (free for personal and commercial use) -->
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/aero.css">
 <link rel="stylesheet" href="css/case.css">
 </head>
-<body class="case">
+<body>
 
-<header class="c-hero" id="top">
-  <nav class="c-nav" aria-label="Main">
-    <div class="nav-links">
-      <a class="link" href="index.html#work">work</a>
-      <a class="link" href="about.html">about</a>
-      <a class="link" href="#contact">contact</a>
-    </div>
-    <a class="wordmark" href="index.html" aria-label="Sage Park, home">s.park</a>
-  </nav>
-
-  <a class="back-link link" href="index.html#work">all work</a>
-  <div class="c-title">
-    <img src="img/invetty-logo.webp" alt="The invetty app icon: a glassy lowercase i with a star for its dot" width="609" height="609">
-    <h1>invetty</h1>
-  </div>
-  <p class="c-lede">an app for event goers with celiac disease</p>
-  <p class="c-credits">I led a team of four with Soha Mehta, Michael Kim and Carrie Shi, from September 9 to November 11, 2026, working in FigJam and Figma.</p>
-  <img class="c-hero-shot" src="img/invetty-screens.webp" alt="Four invetty screens: the invitation, the dietary questionnaire, the celiac introduction and the host’s celiac alert" width="1700" height="820">
-</header>
-
-<div class="c-body">
-  <nav class="rail" aria-label="The process">
-    <ol>
-      <li><a href="#s-intro" aria-current="step">overview</a></li>
-      <li><a href="#s-research">research</a></li>
-      <li><a href="#s-define">define</a></li>
-      <li><a href="#s-ideate">ideate</a></li>
-      <li><a href="#s-iterate">iterate</a></li>
-      <li><a href="#s-outcome">outcome</a></li>
-    </ol>
-  </nav>
-
-  <main>
-    <section class="c-sec" id="s-intro" aria-label="Design question">
-      <p class="question">How can we help people with celiac disease feel less anxious and join social meals with more confidence, by giving them control over how their dietary needs are handled?</p>
+<div class="desk" id="top">
+  <div class="wrap">
+    <section class="case-player chrome" aria-label="invetty">
+      <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">invetty · s.park media player</span></div>
+      <div class="menubar">
+        <nav aria-label="Main"><a href="index.html#work">work</a><a href="about.html">about</a><a href="#contact">contact</a></nav>
+        <a class="back" href="index.html#work"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>all work</a>
+      </div>
+      <div class="screen case-screen">
+        <img src="img/invetty-screens.webp" alt="Four invetty screens: the invitation, the dietary questionnaire, the celiac introduction and the host’s celiac alert" width="1700" height="820">
+      </div>
+      <div class="transport">
+        <div class="seek">
+          <span class="lbl chapter" data-chapter>overview</span>
+          <label class="sr-only" for="case-seek">your place in the case study</label>
+          <input class="range" id="case-seek" type="range" min="0" max="1000" step="1" value="0" data-seek>
+          <span class="lbl" data-count>1 / 6</span>
+        </div>
+        <div class="deck">
+          <div class="btns">
+            <button class="orb" type="button" data-step="-1" aria-label="Previous part"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h2.4v14H6zM20 5v14L9.5 12z"/></svg></button>
+            <a class="orb big" href="#s-intro" aria-label="Start the case study"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></a>
+            <button class="orb" type="button" data-step="1" aria-label="Next part"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.6 5H18v14h-2.4zM4 5l10.5 7L4 19z"/></svg></button>
+          </div>
+          <div class="hero-copy">
+            <div class="title-row"><h1>invetty</h1><img src="img/invetty-logo.webp" alt="The invetty app icon: a glassy lowercase i with a star for its dot" width="609" height="609"></div>
+            <p class="sub">an app for event goers with celiac disease</p>
+          </div>
+        </div>
+      </div>
     </section>
+  </div>
+</div>
 
-    <section class="c-sec" id="s-research" aria-labelledby="h-research">
+<div class="case-layout wrap">
+<!-- the sections, as a sticky menu on the side (built by the script below) -->
+<aside class="side" aria-label="Case study sections"></aside>
+<main class="case">
+  <section class="sec" id="s-intro" data-name="overview" aria-label="Overview">
+    <div class="overview">
+      <p class="question">How can we help people with celiac disease feel less anxious and join social meals with more confidence, by giving them control over how their dietary needs are handled?</p>
+      <div class="memo">
+        <div class="memo-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2l2 2h8.8A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>ux design</div>
+        <div class="memo-body">
+          <h2 class="memo-h">invetty</h2>
+          <dl><dt>role</dt><dd>led a team of four</dd><dt>with</dt><dd>Soha Mehta, Michael Kim, Carrie Shi</dd><dt>when</dt><dd>September 9 to November 11, 2026</dd><dt>tools</dt><dd>FigJam, Figma</dd></dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="s-research" data-name="research" aria-labelledby="h-research">
+    <div class="col">
       <h2 id="h-research">What we needed to learn</h2>
       <p>Eating safely with celiac disease takes work before the meal starts, and the social cost is as heavy as the physical risk. To understand both sides, we spoke with people who live with it, and with allergists and dieticians who treat patients of all ages.</p>
-      <div class="tiles three first">
-        <div class="tile dark"><p class="stat">13</p><p>interviews in total</p></div>
-        <div class="tile"><p class="stat">10</p><p>people with celiac disease</p></div>
-        <div class="tile"><p class="stat">3</p><p>doctors and dieticians</p></div>
+    </div>
+    <p class="tally"><b>13</b> interviews in total: <b>10</b> people with celiac disease and <b>3</b> doctors and dieticians.</p>
+    <div class="memo findings">
+      <div class="memo-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2l2 2h8.8A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>findings</div>
+      <div class="memo-body">
+        <ul class="nlist">
+          <li><h3>Vetting falls on the person with celiac</h3><p>They question waiters, read every label, plan trips ahead, and rarely trust anyone else’s kitchen.</p></li>
+          <li><h3>The cost is social, not just physical</h3><p>Eating differently from peers feels lonely, and people read celiac as a preference or a bid for attention.</p></li>
+        </ul>
       </div>
-      <div class="tiles two">
-        <div class="tile"><h3>Vetting falls on the person with celiac</h3><p>They question waiters, read every label, plan trips ahead, and rarely trust anyone else’s kitchen.</p></div>
-        <div class="tile"><h3>The cost is social, not just physical</h3><p>Eating differently from peers feels lonely, and people read celiac as a preference or a bid for attention.</p></div>
-      </div>
-      <div class="tiles two">
-        <figure class="tile soft" style="margin: 0"><blockquote>“There’s definitely a lot of stress and anxiety every single time I go to a new restaurant.”</blockquote><figcaption>P1, living with celiac disease</figcaption></figure>
-        <figure class="tile soft" style="margin: 0"><blockquote>“Everybody is concerned about gluten contamination, everybody.”</blockquote><figcaption>P3, celiac disease specialist</figcaption></figure>
-      </div>
-    </section>
+    </div>
+    <div class="voices">
+      <figure class="bubble-wrap"><figcaption class="sender">P1, living with celiac disease</figcaption><blockquote class="bubble them">“There’s definitely a lot of stress and anxiety every single time I go to a new restaurant.”</blockquote></figure>
+      <figure class="bubble-wrap"><figcaption class="sender">P3, celiac disease specialist</figcaption><blockquote class="bubble them">“Everybody is concerned about gluten contamination, everybody.”</blockquote></figure>
+    </div>
+  </section>
 
-    <section class="c-sec" id="s-define" aria-labelledby="h-define">
+  <section class="sec" id="s-define" data-name="define" aria-labelledby="h-define">
+    <div class="col">
       <h2 id="h-define">Synthesizing the research</h2>
-      <p>[one or two lines on how you got from 13 interviews to one persona: affinity mapping, clustering, what you argued about]</p>
-      <div class="persona">
-        <div class="tile who">
-          <div><h3>Livia</h3><p class="meta">mid-20s, lives in Missouri, newly employed, diagnosed at 14</p></div>
-          <p class="hmw">How might we make it easy for friends to do the quiet prep work, like sending a menu ahead, without her having to ask?</p>
-        </div>
-        <div class="tile">
-          <p>Livia has just started her first corporate job. Her manager invites her to a team lunch where senior leaders will be, a hard event to miss and a real chance to make a first impression.</p>
-          <p>But she can’t order whatever is on the menu. She has little time to research the restaurant, isn’t sure its gluten-free options are truly safe, and doesn’t want to draw attention to her needs in front of new colleagues.</p>
-          <ol class="conflicts">
-            <li><span><b>Food safety:</b> how can she be sure her needs are heard and her food is prepared to them?</span></li>
-            <li><span><b>Social pressure:</b> can she say what she needs without being singled out?</span></li>
-          </ol>
-        </div>
+      <p class="todo">[one or two lines on how you got from 13 interviews to one persona: affinity mapping, clustering, what you argued about]</p>
+    </div>
+    <div class="persona">
+      <div class="memo-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2l2 2h8.8A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>persona</div>
+      <div class="who">
+        <div><h3>Livia</h3><p class="meta">mid-20s, lives in Missouri, newly employed, diagnosed at 14</p></div>
+        <p class="hmw">How might we make it easy for friends to do the quiet prep work, like sending a menu ahead, without her having to ask?</p>
       </div>
-      <a class="journey" href="img/journey-map.webp" target="_blank" rel="noopener">
-        <img src="img/journey-map.webp" alt="Livia’s journey map across five steps: finding out about the lunch, contacting the restaurant, taking her seat and ordering, pretending nothing is wrong while she networks, and worrying afterwards about the impression she made. Rows cover her actions, goals, feelings, opportunities and pain points." width="2400" height="1289" loading="lazy">
-        <span class="lens" hidden></span>
-      </a>
-      <p class="journey-cap">Livia’s journey map: hover to zoom, click to open it full size</p>
-    </section>
+      <div class="story">
+        <p>Livia has just started her first corporate job. Her manager invites her to a team lunch where senior leaders will be, a hard event to miss and a real chance to make a first impression.</p>
+        <p>But she can’t order whatever is on the menu. She has little time to research the restaurant, isn’t sure its gluten-free options are truly safe, and doesn’t want to draw attention to her needs in front of new colleagues.</p>
+        <ol class="conflicts">
+          <li><b>Food safety:</b> how can she be sure her needs are heard and her food is prepared to them?</li>
+          <li><b>Social pressure:</b> can she say what she needs without being singled out?</li>
+        </ol>
+      </div>
+    </div>
+    <div class="viewer chrome">
+      <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">livia’s journey map · s.park media player</span></div>
+      <div class="screen">
+        <a class="journey" href="img/journey-map.webp" target="_blank" rel="noopener">
+          <img src="img/journey-map.webp" alt="Livia’s journey map across five steps: finding out about the lunch, contacting the restaurant, taking her seat and ordering, pretending nothing is wrong while she networks, and worrying afterwards about the impression she made. Rows cover her actions, goals, feelings, opportunities and pain points." width="2400" height="1289">
+          <span class="lens" hidden></span>
+        </a>
+      </div>
+      <div class="statusbar"><span>hover to zoom</span><a href="img/journey-map.webp" target="_blank" rel="noopener">open full size</a></div>
+    </div>
+  </section>
 
-    <section class="c-sec" id="s-ideate" aria-labelledby="h-ideate">
+  <section class="sec" id="s-ideate" data-name="ideate" aria-labelledby="h-ideate">
+    <div class="concept">
+    <div class="col">
       <h2 id="h-ideate">The concept</h2>
       <p>We compared three concepts and chose “What’s Not Good,” which became invetty. It scored highest, and the scores lined up with what we heard in research.</p>
       <p>Like When’s Good, but for food: each guest gets a link and marks the foods, ingredients and preparation methods that don’t work for them, including cross-contamination, shared utensils and cooking surfaces. The host gets a filtered list that works for everyone. Answers are anonymous, so nobody has to speak up in front of the group.</p>
-      <div class="tiles three first">
-        <div class="tile"><h3 style="margin: 0; font-size: 20px">Less anxiety</h3><p style="color: var(--c-muted)">Needs are shared privately, before the event happens.</p></div>
-        <div class="tile"><h3 style="margin: 0; font-size: 20px">More confidence</h3><p style="color: var(--c-muted)">The host plans a meal that works for everyone from the start.</p></div>
-        <div class="tile"><h3 style="margin: 0; font-size: 20px">Better bonding</h3><p style="color: var(--c-muted)">Everyone shares the meal; nobody sits it out.</p></div>
-      </div>
-    </section>
+    </div>
+    <div class="lock" aria-label="What invetty does for a guest">
+        <div class="notif"><img src="img/invetty-logo.webp" alt="" width="38" height="38"><div><p class="n-app">invetty</p><h3>Less anxiety</h3><p>Needs are shared privately, before the event happens.</p></div></div>
+        <div class="notif"><img src="img/invetty-logo.webp" alt="" width="38" height="38"><div><p class="n-app">invetty</p><h3>More confidence</h3><p>The host plans a meal that works for everyone from the start.</p></div></div>
+        <div class="notif"><img src="img/invetty-logo.webp" alt="" width="38" height="38"><div><p class="n-app">invetty</p><h3>Better bonding</h3><p>Everyone shares the meal; nobody sits it out.</p></div></div>
+    </div>
+    </div>
+  </section>
 
-    <section class="c-sec" id="s-iterate" aria-labelledby="h-iterate">
+  <section class="sec" id="s-iterate" data-name="iterate" aria-labelledby="h-iterate">
+    <div class="col">
       <h2 id="h-iterate">Wireframing and user testing</h2>
-      <p>We started with grey wireframes and tested them with real people. After each round, the screens changed for a reason. Hover or tap the screens to hear it.</p>
-
+      <p>We started with grey wireframes and tested them with real people. After each round, the screens changed for a reason. Drag the bar under each screen to go from before to after.</p>
+    </div>
+    <div class="pairs">
       <article class="pair">
-        <button class="pair-shots" type="button" aria-expanded="false" aria-controls="chat-1">
-          <span class="sr-only">Invitation screen, before and after. Show what testing found and what we changed.</span>
-          <figure><img src="img/invitation-before.webp" alt="Before: a grey wireframe of the invitation, with a poster and three round buttons"><figcaption>before</figcaption></figure>
-          <figure><img src="img/invitation-after.webp" alt="After: the colorized invitation with clear Maybe, Going and No buttons"><figcaption>after</figcaption></figure>
-        </button>
+        <div class="pair-win chrome">
+          <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">invitation · before and after</span></div>
+          <div class="screen compare">
+            <div class="phone">
+              <img class="after" src="img/invitation-after.webp" alt="After: the colorized invitation with clear Maybe, Going and No buttons">
+              <img class="before" src="img/invitation-before.webp" alt="Before: a grey wireframe of the invitation, with a poster and three round buttons">
+              <span class="split" aria-hidden="true"></span><span class="tag b" aria-hidden="true">before</span><span class="tag a" aria-hidden="true">after</span>
+            </div>
+          </div>
+          <div class="transport"><div class="seek"><span class="lbl">before</span><input class="range" type="range" min="0" max="100" value="50" data-wipe aria-label="Wipe from the invitation before to after"><span class="lbl">after</span></div></div>
+        </div>
         <div>
           <h3>Going became the obvious button</h3>
-          <div class="chat" id="chat-1">
-            <div class="stack">
-              <span class="typing" aria-hidden="true"><i></i><i></i><i></i></span>
-              <div class="msg them"><p>In testing, people got distracted by other buttons instead of tapping Going. They needed clear signs of what’s interactive and what to do next.</p></div>
-            </div>
-            <div class="msg us"><p>So we colorized the wireframe and gave Maybe, Going and No clear shapes, with Going the biggest. Now it’s the obvious tap.</p></div>
+          <div class="chat">
+            <div><span class="sender">testing</span><div class="bubble them"><p>In testing, people got distracted by other buttons instead of tapping Going. They needed clear signs of what’s interactive and what to do next.</p></div></div>
+            <div class="row-us"><span class="sender">us</span><div class="bubble us"><p>So we colorized the wireframe and gave Maybe, Going and No clear shapes, with Going the biggest. Now it’s the obvious tap.</p></div></div>
           </div>
         </div>
       </article>
 
       <article class="pair">
-        <button class="pair-shots" type="button" aria-expanded="false" aria-controls="chat-2">
-          <span class="sr-only">Dietary questionnaire, before and after. Show what testing found and what we changed.</span>
-          <figure><img src="img/questionnaire-before.webp" alt="Before: a flat list of options to pick from"><figcaption>before</figcaption></figure>
-          <figure><img src="img/questionnaire-after.webp" alt="After: options grouped into prep and cleanliness, equipment and serving, with a search bar"><figcaption>after</figcaption></figure>
-        </button>
+        <div class="pair-win chrome">
+          <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">dietary questionnaire · before and after</span></div>
+          <div class="screen compare">
+            <div class="phone">
+              <img class="after" src="img/questionnaire-after.webp" alt="After: options grouped into prep and cleanliness, equipment and serving, with a search bar">
+              <img class="before" src="img/questionnaire-before.webp" alt="Before: a flat list of options to pick from">
+              <span class="split" aria-hidden="true"></span><span class="tag b" aria-hidden="true">before</span><span class="tag a" aria-hidden="true">after</span>
+            </div>
+          </div>
+          <div class="transport"><div class="seek"><span class="lbl">before</span><input class="range" type="range" min="0" max="100" value="50" data-wipe aria-label="Wipe from the questionnaire before to after"><span class="lbl">after</span></div></div>
+        </div>
         <div>
           <h3>From a flat list to grouped choices</h3>
-          <div class="chat" id="chat-2">
-            <div class="stack">
-              <span class="typing" aria-hidden="true"><i></i><i></i><i></i></span>
-              <div class="msg them"><p>In testing, most people scrolled past the allergy options instead of reading them, and the list wasn’t specific enough about prep for celiac.</p></div>
-            </div>
-            <div class="msg us"><p>So we grouped the chips into prep and cleanliness, equipment and serving, added search, and fit in more options.</p></div>
+          <div class="chat">
+            <div><span class="sender">testing</span><div class="bubble them"><p>In testing, most people scrolled past the allergy options instead of reading them, and the list wasn’t specific enough about prep for celiac.</p></div></div>
+            <div class="row-us"><span class="sender">us</span><div class="bubble us"><p>So we grouped the chips into prep and cleanliness, equipment and serving, added search, and fit in more options.</p></div></div>
           </div>
         </div>
       </article>
 
       <article class="pair">
-        <button class="pair-shots" type="button" aria-expanded="false" aria-controls="chat-3">
-          <span class="sr-only">Events home screen, before and after. Show what testing found and what we changed.</span>
-          <figure><img src="img/home-before.webp" alt="Before: the events list with a three-icon bar"><figcaption>before</figcaption></figure>
-          <figure><img src="img/home-after.webp" alt="After: the events list with a Create event button and a five-icon menu bar"><figcaption>after</figcaption></figure>
-        </button>
+        <div class="pair-win chrome">
+          <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">events home · before and after</span></div>
+          <div class="screen compare">
+            <div class="phone">
+              <img class="after" src="img/home-after.webp" alt="After: the events list with a Create event button and a five-icon menu bar">
+              <img class="before" src="img/home-before.webp" alt="Before: the events list with a three-icon bar">
+              <span class="split" aria-hidden="true"></span><span class="tag b" aria-hidden="true">before</span><span class="tag a" aria-hidden="true">after</span>
+            </div>
+          </div>
+          <div class="transport"><div class="seek"><span class="lbl">before</span><input class="range" type="range" min="0" max="100" value="50" data-wipe aria-label="Wipe from the events home before to after"><span class="lbl">after</span></div></div>
+        </div>
         <div>
           <h3>A menu people could find their way with</h3>
-          <div class="chat" id="chat-3">
-            <div class="stack">
-              <span class="typing" aria-hidden="true"><i></i><i></i><i></i></span>
-              <div class="msg them"><p>In testing, people couldn’t reach their profile or the rest of the app, and tapped around at random.</p></div>
-            </div>
-            <div class="msg us"><p>So the three-icon bar became a five-icon menu, and Create event moved to the top of the screen.</p></div>
+          <div class="chat">
+            <div><span class="sender">testing</span><div class="bubble them"><p>In testing, people couldn’t reach their profile or the rest of the app, and tapped around at random.</p></div></div>
+            <div class="row-us"><span class="sender">us</span><div class="bubble us"><p>So the three-icon bar became a five-icon menu, and Create event moved to the top of the screen.</p></div></div>
           </div>
         </div>
       </article>
-    </section>
+    </div>
+  </section>
 
-    <section class="c-sec" id="s-outcome" aria-labelledby="h-outcome">
+  <section class="sec" id="s-outcome" data-name="outcome" aria-labelledby="h-outcome">
+    <div class="col">
       <h2 id="h-outcome">Final design</h2>
       <p>Set in Ubuntu and DM Sans.</p>
-      <div class="final"><img src="img/invetty-final.webp" alt="Four final screens: the invitation, the celiac introduction, the filtered restaurant search and the host’s event page" width="2012" height="1000" loading="lazy"></div>
-      <div class="flows">
-        <figure class="flow" data-name="the invitee flow">
-          <div class="flow-frame">
-            <video src="video/invitee-flow.mp4" poster="img/invitee-poster.webp" autoplay muted loop playsinline preload="metadata" aria-label="Screen recording of the invitee flow: opening the invite from a group chat, RSVPing and filling in the dietary questionnaire"></video>
-            <button class="flow-toggle" type="button" aria-label="Pause the invitee flow">
-              <svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
-              <svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-            </button>
-          </div>
-          <figcaption>invitee flow</figcaption>
-        </figure>
-        <figure class="flow" data-name="the inviter flow">
-          <div class="flow-frame">
-            <video src="video/inviter-flow.mp4" poster="img/inviter-poster.webp" autoplay muted loop playsinline preload="metadata" aria-label="Screen recording of the inviter flow: reviewing guests’ needs and choosing a recommended restaurant"></video>
-            <button class="flow-toggle" type="button" aria-label="Pause the inviter flow">
-              <svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
-              <svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-            </button>
-          </div>
-          <figcaption>inviter flow</figcaption>
-        </figure>
-      </div>
-      <div class="tiles two" style="margin-top: 48px">
-        <div class="tile">
-          <h3 style="margin: 0; font-size: 20px">What I learned</h3>
+    </div>
+    <div class="viewer chrome">
+      <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">final screens · s.park media player</span></div>
+      <div class="screen final-screen"><img src="img/invetty-final.webp" alt="Four final screens: the invitation, the celiac introduction, the filtered restaurant search and the host’s event page" width="2012" height="1000" loading="lazy"></div>
+      <div class="statusbar"><span>final design</span><span>2026</span></div>
+    </div>
+    <div class="flows">
+      <figure class="flow chrome" style="margin: 0">
+        <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">invitee flow · s.park media player</span></div>
+        <div class="screen flow-screen"><video src="video/invitee-flow.mp4" poster="img/invitee-poster.webp" autoplay muted loop playsinline preload="metadata" aria-label="Screen recording of the invitee flow: opening the invite from a group chat, RSVPing and filling in the dietary questionnaire"></video></div>
+        <div class="transport">
+          <div class="seek"><span class="lbl" data-cur>0:00</span><input class="range" type="range" min="0" max="1000" value="0" data-vseek aria-label="Seek the invitee flow"><span class="lbl" data-dur>0:00</span></div>
+          <div class="deck"><div class="btns"><button class="orb big" type="button" data-vplay aria-pressed="true" aria-label="Play or pause the invitee flow"><svg class="ico-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><svg class="ico-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button><span class="name">invitee flow</span></div></div>
+        </div>
+      </figure>
+      <figure class="flow chrome" style="margin: 0">
+        <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">inviter flow · s.park media player</span></div>
+        <div class="screen flow-screen"><video src="video/inviter-flow.mp4" poster="img/inviter-poster.webp" autoplay muted loop playsinline preload="metadata" aria-label="Screen recording of the inviter flow: reviewing guests’ needs and choosing a recommended restaurant"></video></div>
+        <div class="transport">
+          <div class="seek"><span class="lbl" data-cur>0:00</span><input class="range" type="range" min="0" max="1000" value="0" data-vseek aria-label="Seek the inviter flow"><span class="lbl" data-dur>0:00</span></div>
+          <div class="deck"><div class="btns"><button class="orb big" type="button" data-vplay aria-pressed="true" aria-label="Play or pause the inviter flow"><svg class="ico-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><svg class="ico-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button><span class="name">inviter flow</span></div></div>
+        </div>
+      </figure>
+    </div>
+    <div class="reflect">
+      <div class="memo">
+        <div class="memo-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2l2 2h8.8A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>reflection</div>
+        <div class="memo-body">
+          <h3>What I learned</h3>
           <ul>
             <li>We assumed the host side would be intuitive because anyone can host. It wasn’t, and we only found out by watching people use it.</li>
             <li>The most important information has to be impossible to miss. The first tester skipped the celiac alert, so we redesigned it.</li>
             <li>Clear structure beats a long flat list. Grouping the questionnaire made the choices easier to take in.</li>
           </ul>
         </div>
-        <div class="tile">
-          <h3 style="margin: 0; font-size: 20px">What I’d do next</h3>
+      </div>
+      <div class="memo">
+        <div class="memo-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2l2 2h8.8A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>reflection</div>
+        <div class="memo-body">
+          <h3>What I’d do next</h3>
           <ul>
             <li>Test with a larger, more varied group, so the flow holds up for people outside our circle.</li>
             <li>Support dietary restrictions beyond celiac disease.</li>
           </ul>
         </div>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
+
+  <a class="next" href="index.html#work">
+    <div class="mini chrome">
+      <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">softspot</span></div>
+      <div class="mini-screen" style="margin-bottom: 10px"><img src="img/softspot-cover.webp" alt="" width="1600" height="1200"></div>
+    </div>
+    <div>
+      <h2>softspot</h2>
+      <p>next project. The case study is in progress.</p>
+      <span class="back">see all work <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </div>
+  </a>
+</main>
 </div>
 
-<a class="next" href="#"><span class="k">next project</span><span>kishimoto mendo</span></a>
-
-<footer class="c-foot" id="contact">
-  <div class="wrap">
-    <div class="c-foot-top">
-      <div>
-        <p class="hi">let’s say hi</p>
-        <a class="email" href="mailto:sagespark19@gmail.com">sagespark19@gmail.com</a>
+  <section class="lobby wrap" id="contact" aria-labelledby="hi-title">
+    <h2 class="sr-only" id="hi-title">let’s say hi</h2>
+    <div class="hi-grid">
+      <!-- a paint window: "let's say hi" is written on in my handwriting, then anyone can draw on it -->
+      <div class="paint chrome" data-paint>
+        <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">untitled · s.park paint</span></div>
+        <div class="paint-body">
+          <div class="tools" role="toolbar" aria-label="Drawing tools"><button class="tool" type="button" data-tool="pencil" aria-pressed="true" aria-label="pencil"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.2-4.6L15.6 5a2 2 0 0 1 2.8 0l.6.6a2 2 0 0 1 0 2.8L8.6 18.8z" fill="#F7C64A" stroke="#9A6B0E" stroke-width=".9" stroke-linejoin="round"/><path d="M4 20l1.2-4.6 3.4 3.4z" fill="#F1D9B5" stroke="#9A6B0E" stroke-width=".9" stroke-linejoin="round"/><path d="M4 20l.5-1.9 1.4 1.4z" fill="#2B2B2B"/><path d="M14.4 6.2l3.4 3.4" stroke="#E07B8A" stroke-width="2.4"/></svg></button><button class="tool" type="button" data-tool="brush" aria-pressed="false" aria-label="brush"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 10.5 20 4a1.4 1.4 0 0 1 2 2l-6.5 6.5z" fill="#B07A45" stroke="#6E4520" stroke-width=".8"/><path d="M12.6 11.4l2 2-1.2 1.2-2-2z" fill="#C3CCD5" stroke="#6F7C88" stroke-width=".7"/><path d="M11.2 12.8l2 2c-.6 2.9-2.8 5-6.9 5.4-.8.1-1.6-.3-1.3-.9 1.3-2.4 1.1-5.1 6.2-6.5z" fill="#1F3A93" stroke="#14275F" stroke-width=".7"/></svg></button><button class="tool" type="button" data-tool="spray" aria-pressed="false" aria-label="spray"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="9" width="8" height="12.5" rx="2" fill="#E0412F" stroke="#8E2117" stroke-width=".8"/><rect x="7.6" y="6" width="4.8" height="3.4" rx=".8" fill="#C3CCD5" stroke="#6F7C88" stroke-width=".7"/><rect x="6.6" y="12" width="6.8" height="4" fill="#fff" opacity=".85"/><g fill="#1F3A93"><circle cx="17" cy="5" r=".9"/><circle cx="19.5" cy="7" r=".9"/><circle cx="18" cy="9" r=".9"/><circle cx="20.5" cy="4" r=".7"/><circle cx="21" cy="9.6" r=".7"/></g></svg></button><button class="tool" type="button" data-tool="eraser" aria-pressed="false" aria-label="eraser"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.6 15.4 13 6a1.8 1.8 0 0 1 2.5 0l4.4 4.4a1.8 1.8 0 0 1 0 2.5L12.8 20H8.2z" fill="#F5A9BE" stroke="#A8536B" stroke-width=".9" stroke-linejoin="round"/><path d="M3.6 15.4 8.2 20h4.6l2.1-2.1-6.6-6.6z" fill="#F2F4F7" stroke="#A8536B" stroke-width=".9" stroke-linejoin="round"/><path d="M8 20h12" stroke="#7C8088" stroke-width="1" stroke-linecap="round"/></svg></button><span class="gap" aria-hidden="true"></span><button class="tool" type="button" data-act="undo" aria-label="Undo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7H15a5 5 0 0 1 0 10h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M9.5 3.5 5.8 7l3.7 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="tool" type="button" data-act="clear" aria-label="Clear the canvas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h8l4 4V20a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1z" fill="#fff" stroke="#5E7C98" stroke-width=".9"/><path d="M14 3.5v4h4" fill="#E3EAF1" stroke="#5E7C98" stroke-width=".9" stroke-linejoin="round"/><path d="m9 12 5 5m0-5-5 5" stroke="#E0412F" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>
+          <div class="paper"><canvas aria-label="A drawing canvas with “let’s say hi” handwritten on it. Draw on it with your mouse or finger."></canvas></div>
+        </div>
+        <div class="palette" role="group" aria-label="Colours"><span class="cur" aria-hidden="true"><i></i></span><div class="swatches-row"><button class="sw" type="button" data-c="#1A1A1A" aria-label="black" aria-pressed="false"></button><button class="sw" type="button" data-c="#1F3A93" aria-label="ink blue" aria-pressed="true"></button><button class="sw" type="button" data-c="#1A9FDB" aria-label="sky blue" aria-pressed="false"></button><button class="sw" type="button" data-c="#5DB83D" aria-label="green" aria-pressed="false"></button><button class="sw" type="button" data-c="#FFC93C" aria-label="yellow" aria-pressed="false"></button><button class="sw" type="button" data-c="#F2A33A" aria-label="orange" aria-pressed="false"></button><button class="sw" type="button" data-c="#E0412F" aria-label="red" aria-pressed="false"></button><button class="sw" type="button" data-c="#FFFFFF" aria-label="white" aria-pressed="false"></button><button class="sw" type="button" data-c="#7C8088" aria-label="grey" aria-pressed="false"></button><button class="sw" type="button" data-c="#8A5E34" aria-label="brown" aria-pressed="false"></button><button class="sw" type="button" data-c="#F5A9BE" aria-label="pink" aria-pressed="false"></button><button class="sw" type="button" data-c="#9DA8F5" aria-label="periwinkle" aria-pressed="false"></button><button class="sw" type="button" data-c="#9FE0C4" aria-label="mint" aria-pressed="false"></button><button class="sw" type="button" data-c="#9CD3EA" aria-label="pale blue" aria-pressed="false"></button></div></div>
+        <div class="statusbar"><span data-hint>pencil: drag to draw</span><span data-xy></span></div>
       </div>
-      <a class="mini link" href="index.html#contact"><i aria-hidden="true"></i>my playlist, [playlist name]</a>
+      <div class="hi-side">
+        <div class="memo hi-memo">
+          <div class="memo-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2l2 2h8.8A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>contact</div>
+          <div class="memo-body">
+            <a class="email" href="mailto:sagespark19@gmail.com">sagespark19@gmail.com</a>
+            <div class="cta">
+              <a class="pill primary" href="mailto:sagespark19@gmail.com">email me</a>
+              <a class="pill" href="https://www.linkedin.com/in/sage-park-422842282/" target="_blank" rel="noopener">linkedin</a>
+              <a class="pill" href="#contact">instagram</a>
+            </div>
+          </div>
+        </div>
+        <!-- my playlist, as its own little player -->
+        <div class="np chrome">
+          <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">now playing · s.park media player</span></div>
+          <div class="np-body">
+            <div class="vinyl" aria-hidden="true"><div class="rec"></div><div class="arm"></div></div>
+            <div>
+              <strong class="pl-name">[playlist name]</strong>
+              <span class="pl-sub">[n] songs · made for this site</span>
+            </div>
+          </div>
+          <div class="transport" data-juke aria-label="My playlist">
+            <div class="seek">
+              <span class="lbl" data-pl-time>0:00</span>
+              <div class="pl-bar" aria-hidden="true"><i></i></div>
+              <span class="lbl">0:30</span>
+            </div>
+            <div class="deck">
+              <div class="btns">
+                <button class="orb" type="button" aria-label="Previous song"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h2.4v14H6zM20 5v14L9.5 12z"/></svg></button>
+                <button class="orb big" type="button" data-record aria-pressed="false" aria-label="Play or pause the playlist"><svg class="ico-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><svg class="ico-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button>
+                <button class="orb" type="button" aria-label="Next song"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.6 5H18v14h-2.4zM4 5l10.5 7L4 19z"/></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="c-foot-bottom">
-      <span>© 2026 sage park</span>
-      <a class="link" href="#top">back to the top</a>
-    </div>
+  </section>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>© 2026 sage park</span>
+    <span>designed in figma, [built with claude code]</span>
+    <a href="#top">back to the top</a>
   </div>
 </footer>
 
+<!-- the dock: prev / next part and your place in the case study -->
+<div class="dock chrome" aria-label="Case study progress">
+  <div class="btns">
+    <button class="orb" type="button" data-step="-1" aria-label="Previous part"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h2.4v14H6zM20 5v14L9.5 12z"/></svg></button>
+    <button class="orb" type="button" data-step="1" aria-label="Next part"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.6 5H18v14h-2.4zM4 5l10.5 7L4 19z"/></svg></button>
+  </div>
+  <div class="info"><span><b class="chapter" data-chapter>overview</b></span><input class="range" type="range" min="0" max="1000" step="1" value="0" data-seek aria-label="Your place in the case study"></div>
+  <span class="count" data-count>1 / 6</span>
+</div>
+
+<div class="toast" role="status" aria-live="polite"></div>
+
+<script>
+  /* the start menu: what's in it on this page */
+  window.SPMenu = [
+    { label: 'work', key: 'w', icon: 'folder', sub: [
+      { label: 'invetty', icon: 'img:img/invetty-logo.webp', href: '#top', current: true },
+      { label: 'softspot', icon: 'img:img/softspot-cover.webp', disabled: true, note: 'in progress' },
+      { label: 'strike magazine stl', icon: 'folder-dim', disabled: true, note: 'coming soon' },
+      { label: 'social media marketing', icon: 'folder-dim', disabled: true, note: 'coming soon' },
+      { label: 'type collection', icon: 'folder-dim', disabled: true, note: 'coming soon' },
+      'sep',
+      { label: 'all work', icon: 'folder', href: 'index.html#work' } ] },
+    { label: 'this case study', key: 's', icon: 'doc', sub: [
+      { label: 'overview', icon: 'doc', href: '#s-intro' },
+      { label: 'research', icon: 'chat', href: '#s-research' },
+      { label: 'define', icon: 'person', href: '#s-define' },
+      { label: 'ideate', icon: 'bulb', href: '#s-ideate' },
+      { label: 'iterate', icon: 'phones', href: '#s-iterate' },
+      { label: 'outcome', icon: 'star', href: '#s-outcome' } ] },
+    { label: 'about', key: 'a', icon: 'person', href: 'about.html' },
+    { label: 'playlist', key: 'p', icon: 'music', href: '#contact' },
+    { label: 'contact', key: 'c', icon: 'mail', sub: [
+      { label: 'email me', icon: 'mail', href: 'mailto:sagespark19@gmail.com' },
+      { label: 'copy my email', icon: 'copy', action: 'copy-email' },
+      { label: 'linkedin', icon: 'case', href: 'https://www.linkedin.com/in/sage-park-422842282/', external: true },
+      { label: 'instagram', icon: 'camera', href: '#contact' } ] },
+    'sep',
+    { label: 'home', key: 'h', icon: 'home', href: 'index.html' },
+    { label: 'back to the top', key: 'b', icon: 'up', href: '#top' }
+  ];
+  window.SPMenuActions = {
+    'copy-email': function () {
+      var t = function () { if (window.SP) SP.toast('copied sagespark19@gmail.com'); };
+      try { navigator.clipboard.writeText('sagespark19@gmail.com').then(t, function () { if (window.SP) SP.toast('sagespark19@gmail.com'); }); } catch (e) {}
+    }
+  };
+</script>
+<script src="js/startmenu.js"></script>
+<script src="js/sayhi.js"></script>
+<script src="js/aero.js"></script>
 <script src="js/invetty.js"></script>
 </body>
 </html>
