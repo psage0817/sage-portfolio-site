@@ -2,8 +2,7 @@
    - the opening: the window opens, its screen switches on and the day plays up to now
    - the transport: play/pause holds the waves and the train, previous/next swap the city,
      the seek bar is the time of day; the clock in the menu bar opens the same slider
-   - minimize and full screen in the title bar, the rotating words, the work filters,
-     and the record player (the playlist isn't connected yet) */
+   - minimize and full screen in the title bar, the rotating words, the work filters */
 (function () {
   'use strict';
   var root = document.documentElement;
@@ -124,18 +123,5 @@
       projs.forEach(function (p) { p.hidden = f !== 'all' && p.getAttribute('data-cat') !== f; });
     });
   });
-
-  /* the record player (the playlist isn't connected yet, same as the live site) */
-  var rec = document.querySelector('[data-record]'), juke = document.querySelector('[data-juke]'), bar = document.querySelector('.pl-bar i'), plTime = document.querySelector('[data-pl-time]'), barT = 0, sec = 0;
-  rec.addEventListener('click', function () {
-    var on = rec.getAttribute('aria-pressed') !== 'true';
-    rec.setAttribute('aria-pressed', String(on)); juke.classList.toggle('playing', on);
-    clearInterval(barT);
-    if (on) {
-      toast('my playlist is coming soon');
-      barT = setInterval(function () { sec = (sec + 0.25) % 30; bar.style.width = (sec / 30 * 100) + '%'; plTime.textContent = '0:' + String(Math.floor(sec)).padStart(2, '0'); }, 250);
-    }
-  });
-  juke.querySelectorAll('.orb:not(.big)').forEach(function (b) { b.addEventListener('click', function () { toast('my playlist is coming soon'); }); });
 
 })();

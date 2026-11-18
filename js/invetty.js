@@ -1,8 +1,7 @@
 /* invetty.js: the invetty case study.
    - the side menu of sections, the seek bar and the floating bar: your place in the case study
    - before/after wipes (drag the bar, or hover the screen with a mouse)
-   - the journey map zooms under your cursor; the flow videos play, pause and seek
-   - the record player (the playlist isn't connected yet) */
+   - the journey map zooms under your cursor; the flow videos play, pause and seek */
 (function () {
   'use strict';
   var root = document.documentElement;
@@ -123,16 +122,4 @@
     sync();
   });
 
-  /* ---------- the record player ---------- */
-  var rec = document.querySelector('[data-record]');
-  if (rec) {
-    var juke = document.querySelector('[data-juke]'), bar = juke.querySelector('.pl-bar i'), plTime = juke.querySelector('[data-pl-time]'), barT = 0, sec = 0;
-    rec.addEventListener('click', function () {
-      var on = rec.getAttribute('aria-pressed') !== 'true';
-      rec.setAttribute('aria-pressed', String(on)); juke.classList.toggle('playing', on);
-      clearInterval(barT);
-      if (on) { toast('my playlist is coming soon'); barT = setInterval(function () { sec = (sec + 0.25) % 30; bar.style.width = (sec / 30 * 100) + '%'; plTime.textContent = '0:' + String(Math.floor(sec)).padStart(2, '0'); }, 250); }
-    });
-    juke.querySelectorAll('.orb:not(.big)').forEach(function (b) { b.addEventListener('click', function () { toast('my playlist is coming soon'); }); });
-  }
 })();
