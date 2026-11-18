@@ -34,21 +34,21 @@
         <nav aria-label="Main"><a href="index.html#work">work</a><a href="about.html">about</a><a href="#contact">contact</a></nav>
         <a class="back" href="index.html#work"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>all work</a>
       </div>
-      <div class="screen case-screen">
-        <img src="img/invetty-screens.webp" alt="Four invetty screens: the invitation, the dietary questionnaire, the celiac introduction and the host’s celiac alert" width="1700" height="820">
+      <!-- the two flows, side by side; the controls below play them and have nothing to do with scrolling -->
+      <div class="screen case-screen" data-duo>
+        <figure class="duo-v"><video src="video/invitee-flow.mp4" poster="img/invitee-poster.webp" autoplay muted loop playsinline preload="auto" aria-label="Screen recording of the invitee flow: opening the invite from a group chat, RSVPing and filling in the dietary questionnaire"></video><figcaption>invitee flow</figcaption></figure>
+        <figure class="duo-v"><video src="video/inviter-flow.mp4" poster="img/inviter-poster.webp" autoplay muted loop playsinline preload="auto" aria-label="Screen recording of the inviter flow: reviewing guests’ needs and choosing a recommended restaurant"></video><figcaption>inviter flow</figcaption></figure>
       </div>
       <div class="transport">
         <div class="seek">
-          <span class="lbl chapter" data-chapter>overview</span>
-          <label class="sr-only" for="case-seek">your place in the case study</label>
-          <input class="range" id="case-seek" type="range" min="0" max="1000" step="1" value="0" data-seek>
-          <span class="lbl" data-count>1 / 6</span>
+          <span class="lbl" data-duo-cur>0:00</span>
+          <input class="range" type="range" min="0" max="1000" step="1" value="0" data-duo-seek aria-label="Seek the two flow videos">
+          <span class="lbl" data-duo-dur>0:00</span>
         </div>
         <div class="deck">
           <div class="btns">
-            <button class="orb" type="button" data-step="-1" aria-label="Previous part"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h2.4v14H6zM20 5v14L9.5 12z"/></svg></button>
-            <a class="orb big" href="#s-intro" aria-label="Start the case study"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></a>
-            <button class="orb" type="button" data-step="1" aria-label="Next part"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.6 5H18v14h-2.4zM4 5l10.5 7L4 19z"/></svg></button>
+            <button class="orb" type="button" data-duo-restart aria-label="Play both flows from the start"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h2.4v14H6zM20 5v14L9.5 12z"/></svg></button>
+            <button class="orb big" type="button" data-duo-play aria-pressed="true" aria-label="Play or pause the flow videos"><svg class="ico-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><svg class="ico-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button>
           </div>
           <div class="hero-copy">
             <div class="title-row"><h1>invetty</h1><img src="img/invetty-logo.webp" alt="The invetty app icon: a glassy lowercase i with a star for its dot" width="609" height="609"></div>
@@ -226,24 +226,6 @@
       <div class="screen final-screen"><img src="img/invetty-final.webp" alt="Four final screens: the invitation, the celiac introduction, the filtered restaurant search and the host’s event page" width="2012" height="1000" loading="lazy"></div>
       <div class="statusbar"><span>final design</span><span>2026</span></div>
     </div>
-    <div class="flows">
-      <figure class="flow chrome" style="margin: 0">
-        <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">invitee flow · s.park media player</span></div>
-        <div class="screen flow-screen"><video src="video/invitee-flow.mp4" poster="img/invitee-poster.webp" autoplay muted loop playsinline preload="metadata" aria-label="Screen recording of the invitee flow: opening the invite from a group chat, RSVPing and filling in the dietary questionnaire"></video></div>
-        <div class="transport">
-          <div class="seek"><span class="lbl" data-cur>0:00</span><input class="range" type="range" min="0" max="1000" value="0" data-vseek aria-label="Seek the invitee flow"><span class="lbl" data-dur>0:00</span></div>
-          <div class="deck"><div class="btns"><button class="orb big" type="button" data-vplay aria-pressed="true" aria-label="Play or pause the invitee flow"><svg class="ico-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><svg class="ico-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button><span class="name">invitee flow</span></div></div>
-        </div>
-      </figure>
-      <figure class="flow chrome" style="margin: 0">
-        <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">inviter flow · s.park media player</span></div>
-        <div class="screen flow-screen"><video src="video/inviter-flow.mp4" poster="img/inviter-poster.webp" autoplay muted loop playsinline preload="metadata" aria-label="Screen recording of the inviter flow: reviewing guests’ needs and choosing a recommended restaurant"></video></div>
-        <div class="transport">
-          <div class="seek"><span class="lbl" data-cur>0:00</span><input class="range" type="range" min="0" max="1000" value="0" data-vseek aria-label="Seek the inviter flow"><span class="lbl" data-dur>0:00</span></div>
-          <div class="deck"><div class="btns"><button class="orb big" type="button" data-vplay aria-pressed="true" aria-label="Play or pause the inviter flow"><svg class="ico-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><svg class="ico-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button><span class="name">inviter flow</span></div></div>
-        </div>
-      </figure>
-    </div>
     <div class="reflect">
       <div class="memo">
         <div class="memo-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2l2 2h8.8A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>reflection</div>
@@ -351,7 +333,7 @@
     <button class="orb" type="button" data-step="-1" aria-label="Previous part"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h2.4v14H6zM20 5v14L9.5 12z"/></svg></button>
     <button class="orb" type="button" data-step="1" aria-label="Next part"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.6 5H18v14h-2.4zM4 5l10.5 7L4 19z"/></svg></button>
   </div>
-  <div class="info"><span><b class="chapter" data-chapter>overview</b></span><input class="range" type="range" min="0" max="1000" step="1" value="0" data-seek aria-label="Your place in the case study"></div>
+  <div class="info"><span><b class="chapter" data-chapter>overview</b></span><span class="pl-bar dock-bar" aria-hidden="true"><i data-progress></i></span></div>
   <span class="count" data-count>1 / 6</span>
 </div>
 

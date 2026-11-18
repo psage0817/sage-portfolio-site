@@ -1,7 +1,8 @@
 /* invetty.js: the invetty case study.
-   - the side menu of sections, the seek bar and the floating bar: your place in the case study
+   - the two flow videos at the top: play, pause, restart and seek (nothing here moves the page)
+   - the side menu of sections and the floating bar: your place in the case study
    - before/after wipes (drag the bar, or hover the screen with a mouse)
-   - the journey map zooms under your cursor; the flow videos play, pause and seek */
+   - the journey map zooms under your cursor */
 (function () {
   'use strict';
   var root = document.documentElement;
@@ -28,9 +29,7 @@
   /* ---------- your place in the case study ---------- */
   var secs = Array.prototype.slice.call(document.querySelectorAll('.sec[data-name]'));
   var main = document.querySelector('.case');
-  var seeks = document.querySelectorAll('[data-seek]'), chapters = document.querySelectorAll('[data-chapter]');
-  var counts = document.querySelectorAll('[data-count]');
-  var dragging = false;
+  var chapters = document.querySelectorAll('[data-chapter]'), counts = document.querySelectorAll('[data-count]'), bars = document.querySelectorAll('[data-progress]');
   function span() { var top = main.offsetTop - innerHeight * 0.6, end = main.offsetTop + main.offsetHeight - innerHeight; return [top, Math.max(top + 1, end)]; }
   function current() {
     var y = innerHeight * 0.4, idx = 0;
@@ -40,20 +39,12 @@
   function update() {
     var sp = span(), p = Math.min(1, Math.max(0, (scrollY - sp[0]) / (sp[1] - sp[0])));
     var i = current();
-    seeks.forEach(function (r) { if (!(dragging && r === document.activeElement)) r.value = Math.round(p * 1000); r.style.setProperty('--p', (r.value / 10) + '%'); });
+    bars.forEach(function (b) { b.style.width = (p * 100).toFixed(1) + '%'; });
     chapters.forEach(function (c) { c.textContent = secs[i].getAttribute('data-name'); });
     counts.forEach(function (c) { c.textContent = (i + 1) + ' / ' + secs.length; });
     sideLinks.forEach(function (a, k) { if (k === i) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
     sideBar.style.width = (p * 100).toFixed(1) + '%';
   }
-  seeks.forEach(function (r) {
-    r.addEventListener('pointerdown', function () { dragging = true; });
-    r.addEventListener('pointerup', function () { dragging = false; });
-    r.addEventListener('input', function () {
-      var sp = span(); window.scrollTo({ top: sp[0] + (sp[1] - sp[0]) * r.value / 1000, behavior: 'auto' });
-      r.style.setProperty('--p', (r.value / 10) + '%');
-    });
-  });
   document.querySelectorAll('[data-step]').forEach(function (b) {
     b.addEventListener('click', function () {
       var i = current(), atTop = scrollY < main.offsetTop - innerHeight * 0.6;
@@ -109,17 +100,34 @@
     map.addEventListener('pointerleave', function () { lens.hidden = true; });
   }
 
-  /* ---------- the flow videos: real play, pause and seek ---------- */
+  /* ---------- the two flow videos at the top ---------- */
+  // the inviter flow is the longer one, so the bar and the times follow it; seeking moves both to the same point
   function mmss(t) { t = Math.max(0, t || 0); return Math.floor(t / 60) + ':' + String(Math.floor(t % 60)).padStart(2, '0'); }
-  document.querySelectorAll('.flow').forEach(function (f) {
-    var v = f.querySelector('video'), b = f.querySelector('[data-vplay]'), r = f.querySelector('[data-vseek]'), cur = f.querySelector('[data-cur]'), dur = f.querySelector('[data-dur]');
-    if (reduce) { v.removeAttribute('autoplay'); v.pause(); }
-    function sync() { b.setAttribute('aria-pressed', String(!v.paused)); }
-    function tick() { if (v.duration) { r.value = Math.round(v.currentTime / v.duration * 1000); r.style.setProperty('--p', (r.value / 10) + '%'); cur.textContent = mmss(v.currentTime); dur.textContent = mmss(v.duration); } }
-    b.addEventListener('click', function () { if (v.paused) v.play(); else v.pause(); });
-    r.addEventListener('input', function () { if (v.duration) v.currentTime = r.value / 1000 * v.duration; r.style.setProperty('--p', (r.value / 10) + '%'); });
-    v.addEventListener('play', sync); v.addEventListener('pause', sync); v.addEventListener('timeupdate', tick); v.addEventListener('loadedmetadata', tick);
-    sync();
-  });
+  var duo = document.querySelector('[data-duo]');
+  if (duo) {
+    var vs = Array.prototype.slice.call(duo.querySelectorAll('video')), lead = vs[vs.length - 1];
+    var dPlay = document.querySelector('[data-duo-play]'), dSeek = document.querySelector('[data-duo-seek]');
+    var dCur = document.querySelector('[data-duo-cur]'), dDur = document.querySelector('[data-duo-dur]');
+    if (reduce) vs.forEach(function (v) { v.removeAttribute('autoplay'); v.pause(); });
+    function playing() { return vs.some(function (v) { return !v.paused; }); }
+    function sync() { dPlay.setAttribute('aria-pressed', String(playing())); }
+    function tick() {
+      if (!lead.duration) return;
+      if (document.activeElement !== dSeek) dSeek.value = Math.round(lead.currentTime / lead.duration * 1000);
+      dSeek.style.setProperty('--p', (dSeek.value / 10) + '%');
+      dCur.textContent = mmss(lead.currentTime); dDur.textContent = mmss(lead.duration);
+    }
+    function playAll() { vs.forEach(function (v) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }); }
+    dPlay.addEventListener('click', function () { if (playing()) vs.forEach(function (v) { v.pause(); }); else playAll(); });
+    document.querySelector('[data-duo-restart]').addEventListener('click', function () { vs.forEach(function (v) { v.currentTime = 0; }); playAll(); });
+    dSeek.addEventListener('input', function () {
+      var f = dSeek.value / 1000;
+      vs.forEach(function (v) { if (v.duration) v.currentTime = Math.min(v.duration - .05, f * v.duration); });
+      dSeek.style.setProperty('--p', (dSeek.value / 10) + '%');
+    });
+    vs.forEach(function (v) { v.addEventListener('play', sync); v.addEventListener('pause', sync); });
+    lead.addEventListener('timeupdate', tick); lead.addEventListener('loadedmetadata', tick);
+    sync(); tick();
+  }
 
 })();
