@@ -28,31 +28,31 @@
 }
 .win-concept[data-theme="night"] {
   /* a white wall at night, lit by a warm lamp somewhere behind you */
-  --bg: #312922;
-  --surface: #3B3129;
-  --ink: #F4EADD;
-  --muted: #C2B29E;
-  --line: #43392F;
-  --ph: #3A3029;
-  --ph-ink: #D3C2AC;
+  --bg: #1F1D21;
+  --surface: #29262B;
+  --ink: #F2EAE1;
+  --muted: #BCB2A8;
+  --line: #37333A;
+  --ph: #2C292F;
+  --ph-ink: #CFC5BA;
   --lift: rgba(0, 0, 0, 0.45);
-  --glass: rgba(60, 48, 38, 0.45);
-  --glass-strong: rgba(48, 39, 32, 0.92);
+  --glass: rgba(44, 40, 46, 0.45);
+  --glass-strong: rgba(36, 33, 38, 0.92);
   --glass-line: rgba(255, 236, 210, 0.16);
   --hero-ink: #FFF8EE;
   --hero-muted: #D9C9B4;
-  --fabric: #685A4C;
+  --fabric: #4E474A;
   --fabric-thread: .1;
-  --sill: #463C33;
+  --sill: #3A363A;
   --bronze: #2C2421;
   --bronze-hi: #4A3E38;
   --bronze-lo: #191412;
   /* the contact section and footer go warm with the room */
-  --night: #1F1915;
-  --night-deep: #18130F;
-  --night-card: #2D251F;
-  --night-muted: #CDBCA6;
-  --lamp: rgba(255, 180, 105, 0.22);
+  --night: #19181C;
+  --night-deep: #131216;
+  --night-card: #262328;
+  --night-muted: #C9C0B6;
+  --lamp: rgba(255, 180, 105, 0.17);
 }
 /* the lamp: brightest low on the left, falling off across the wall; it stays put as you scroll */
 .win-concept[data-theme="night"] body {
@@ -66,7 +66,7 @@
   content: ""; position: absolute; inset: 0; pointer-events: none;
   background: linear-gradient(90deg, rgba(255, 196, 130, 0.16), rgba(255, 196, 130, 0) 70%);
 }
-[data-theme="night"] .time-cities button[aria-pressed="true"] { color: #312922; }
+[data-theme="night"] .time-cities button[aria-pressed="true"] { color: #1F1D21; }
 
 .room {
   position: relative; overflow-x: clip;
@@ -207,7 +207,7 @@
 /* ---------- the rest of the page sits on the wall ---------- */
 .win-concept .work { padding-top: 34px; }
 .win-concept .card-media::after { background: rgba(242, 237, 230, 0.3); }
-[data-theme="night"].win-concept .card-media::after { background: rgba(42, 35, 30, 0.3); }
+[data-theme="night"].win-concept .card-media::after { background: rgba(31, 29, 33, 0.3); }
 
 @media (max-width: 640px) {
   .win-concept { --band: 70px; --frame: 9px; --stile: 7px; --glass-h: clamp(440px, calc(100svh - var(--band) - 104px), 720px); }
