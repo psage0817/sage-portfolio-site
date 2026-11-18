@@ -29,6 +29,9 @@
     'uniform vec2 uLightPos;',
     // a calm patch of glass behind the headline: (left, top, right, bottom) in pixels
     'uniform vec4 uCalm;',
+    // window.html: the view shifts a little as the cursor moves (uShift, uZoom), and an open sash has no glass (uOpen, from the bottom)
+    'uniform vec2 uShift;',
+    'uniform float uZoom, uOpen;',
     'varying vec2 vUv;',
     // the scene behind the glass, colour-graded for the time of day; with a night photo it crossfades to that
     // smooth noise worked out on the spot, so it never repeats or shows seams
@@ -36,8 +39,9 @@
     'float vnoise(vec2 p) { vec2 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f);',
     '  return mix(mix(hash2(i), hash2(i + vec2(1., 0.)), f.x), mix(hash2(i + vec2(0., 1.)), hash2(i + vec2(1., 1.)), f.x), f.y); }',
     'vec3 grade(vec3 c, vec3 mul, float sat) { float l = dot(c, vec3(.299, .587, .114)); return mix(vec3(l), c, sat) * mul; }',
-    'vec3 sceneSharp(vec2 p) { return mix(grade(texture2D(uScene, p).rgb, uGradeA, uSatA), grade(texture2D(uScene2, p).rgb, uGradeB, uSatB), uNightMix); }',
-    'vec3 sceneSoft(vec2 p) { return mix(grade(texture2D(uBlur, p).rgb, uGradeA, uSatA), grade(texture2D(uBlur2, p).rgb, uGradeB, uSatB), uNightMix); }',
+    'vec2 view(vec2 p) { return (p - .5) * uZoom + .5 + uShift; }',
+    'vec3 sceneSharp(vec2 p) { p = view(p); return mix(grade(texture2D(uScene, p).rgb, uGradeA, uSatA), grade(texture2D(uScene2, p).rgb, uGradeB, uSatB), uNightMix); }',
+    'vec3 sceneSoft(vec2 p) { p = view(p); return mix(grade(texture2D(uBlur, p).rgb, uGradeA, uSatA), grade(texture2D(uBlur2, p).rgb, uGradeB, uSatB), uNightMix); }',
     'void main(){',
     '  vec2 uv = vUv;',
     '  vec2 px = uv * uRes;',
@@ -126,6 +130,7 @@
     // a faint shadow under each bead on the fog
     '  float under = texture2D(uBeads, uv - vec2(0., 2.5) / uRes).a * keep;',
     '  col *= 1. - under * (1. - cov) * .1 * fogAmt;',
+    '  if (px.y > uRes.y - uOpen) col = sceneSharp(uv);',
     '  gl_FragColor = vec4(col, 1.);',
     '}'
   ].join('\n');
@@ -291,7 +296,7 @@
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
     var aPos = gl.getAttribLocation(prog, 'aPos'); gl.enableVertexAttribArray(aPos); gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
     var U = {};
-    ['uScene', 'uBlur', 'uScene2', 'uBlur2', 'uBeadR', 'uMagnify', 'uNightMix', 'uSatA', 'uSatB', 'uGradeA', 'uGradeB', 'uFogMix', 'uCalm', 'uBeads', 'uMask', 'uNoise', 'uTrail', 'uLightPos', 'uRes', 'uFog', 'uLight', 'uAspect', 'uFogCol', 'uHi', 'uDrops'].forEach(function (k) { U[k] = gl.getUniformLocation(prog, k); });
+    ['uScene', 'uBlur', 'uScene2', 'uBlur2', 'uBeadR', 'uMagnify', 'uNightMix', 'uSatA', 'uSatB', 'uGradeA', 'uGradeB', 'uFogMix', 'uCalm', 'uBeads', 'uMask', 'uNoise', 'uTrail', 'uLightPos', 'uRes', 'uFog', 'uLight', 'uAspect', 'uFogCol', 'uHi', 'uDrops', 'uShift', 'uZoom', 'uOpen'].forEach(function (k) { U[k] = gl.getUniformLocation(prog, k); });
 
     function texture(unit, repeat) {
       var t = gl.createTexture(); gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, t);
@@ -310,6 +315,7 @@
     gl.uniform1f(U.uSatA, 1); gl.uniform1f(U.uSatB, 1); gl.uniform1f(U.uNightMix, 0); gl.uniform1f(U.uFogMix, 0.8);
     // how wide a view each bead takes in, as a multiple of its size: bigger shows a smaller, more distant world
     gl.uniform1f(U.uMagnify, 3.4);
+    gl.uniform2f(U.uShift, 0, 0); gl.uniform1f(U.uZoom, 1); gl.uniform1f(U.uOpen, 0);
     var maxTex = gl.getParameter(gl.MAX_TEXTURE_SIZE) || 4096;
     function upload(unit, tex, source) {
       gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, tex);
@@ -860,9 +866,14 @@
         sceneChanged();
         schedule();
       },
-      failed: function () { return failed; }
+      failed: function () { return failed; },
+      // window.html: shift the view behind the glass (in parts of the window), zoom it, and open the lower sash (css px)
+      setView: function (sx, sy, zoom, openPx) {
+        gl.uniform2f(U.uShift, sx, sy); gl.uniform1f(U.uZoom, zoom); gl.uniform1f(U.uOpen, openPx * dpr);
+        schedule();
+      }
     };
   }
 
-  window.SPGlass = { create: create };
+  window.SPGlass = { create: function (o) { var g = create(o); if (g) window.SPGlass.live = g; return g; } };
 })();
