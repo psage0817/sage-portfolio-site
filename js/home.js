@@ -96,4 +96,18 @@
       else apply(f);
     });
   });
+
+  /* ---------- as each project scrolls into view, it rises into place and its light switches on ---------- */
+  var spreads = document.querySelectorAll('.spread');
+  if ('IntersectionObserver' in window && !reduce) {
+    document.documentElement.classList.add('reveal');
+    var lights = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add('is-lit'); lights.unobserve(en.target); }
+      });
+    }, { threshold: 0, rootMargin: '0px 0px -4% 0px' });
+    spreads.forEach(function (s) { lights.observe(s); });
+  } else {
+    spreads.forEach(function (s) { s.classList.add('is-lit'); });
+  }
 })();

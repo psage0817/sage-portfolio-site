@@ -54,10 +54,10 @@
   --night-muted: #C9C0B6;
   --lamp: rgba(255, 180, 105, 0.17);
 }
-/* the lamp: brightest low on the left, falling off across the wall; it stays put as you scroll */
+/* the lamp: brightest low on the left of the room, falling off across the wall */
 .win-concept[data-theme="night"] body {
   background:
-    radial-gradient(1100px 900px at 6% 78%, var(--lamp), rgba(255, 178, 100, 0) 72%) fixed,
+    radial-gradient(1100px 900px at 6% 560px, var(--lamp), rgba(255, 178, 100, 0) 72%) no-repeat,
     var(--bg);
 }
 .win-concept .room { background: transparent; }

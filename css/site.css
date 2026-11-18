@@ -300,7 +300,7 @@ h1, h2, h3, .wordmark { font-family: var(--display); }
 .spreads { display: grid; gap: clamp(72px, 9vw, 120px); margin-top: 56px; }
 .spreads > [hidden] { display: none; }
 .spread {
-  display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(28px, 4vw, 56px); align-items: center;
+  display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 0 clamp(28px, 4vw, 56px); align-items: end;
   text-decoration: none; color: var(--ink);
 }
 .spread:nth-child(even) { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
@@ -310,12 +310,24 @@ h1, h2, h3, .wordmark { font-family: var(--display); }
   box-shadow: 0 18px 26px -20px rgba(40, 28, 20, 0.45);
   transition: transform .3s cubic-bezier(.22, 1, .36, 1), box-shadow .3s ease;
 }
-.spread-media { position: relative; display: block; aspect-ratio: 16 / 10; overflow: hidden; background: var(--ph); }
-.spread-media img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 12% 50%; transition: transform .5s cubic-bezier(.22, 1, .36, 1); }
+.spread-media { position: relative; display: block; aspect-ratio: 4 / 3; overflow: hidden; background: var(--ph); }
+.spread-media img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; transition: transform .5s cubic-bezier(.22, 1, .36, 1); }
 .spread-media .ph { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; font-size: 14px; color: var(--ph-ink); }
 .spread:hover .spread-pic, .spread:focus-visible .spread-pic { transform: translateY(-2px); box-shadow: 0 24px 30px -20px rgba(40, 28, 20, 0.5); }
 .spread:hover .spread-media img, .spread:focus-visible .spread-media img { transform: scale(1.03); }
-.spread-text { min-width: 0; }
+.spread-text { min-width: 0; padding-bottom: 6px; position: relative; clip-path: inset(-600px -300px 0 -300px); }  /* the light starts at the shelf */
+/* every project stands on its own white shelf, like the sill under the window: the cover and the text both sit on it */
+.shelf {
+  grid-column: 1 / -1; order: 3; display: block; position: relative; height: 14px; margin: 0 -12px;
+  background: var(--sill, #fff);
+  /* a darker underside edge, and the shelf's shadow falling on the wall below it */
+  box-shadow: inset 0 -2px 0 rgba(120, 100, 80, 0.18), 0 6px 8px -4px rgba(40, 28, 20, 0.35);
+}
+.shelf::after {
+  content: ""; position: absolute; left: 2%; right: 2%; top: 100%; height: 34px; pointer-events: none;
+  background: radial-gradient(ellipse 50% 100% at 50% 0%, rgba(40, 28, 20, 0.22), rgba(40, 28, 20, 0) 100%);
+}
+[data-theme="night"] .shelf::after { background: radial-gradient(ellipse 50% 100% at 50% 0%, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0) 100%); }
 .spread-text h3 {
   display: inline; margin: 0; font-weight: 400; font-size: clamp(34px, 4vw, 58px); line-height: 1.04;
   color: var(--bronze, var(--ink));
@@ -328,6 +340,52 @@ h1, h2, h3, .wordmark { font-family: var(--display); }
 .spread-facts dd { margin: 0; }
 .spread-go { display: inline-block; margin-top: 22px; font-size: 15px; text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 1px; }
 [data-theme="night"] .spread-text h3 { color: var(--ink); }
+
+/* a spotlight standing on each shelf, out of view at the outside corner. Its beam is a clean cone: two straight
+   edges from the lamp and an even arc where the light lands, brightest at the lamp and fading evenly outwards.
+   By day a pastel LED in the project's colour; after dark, warm white. */
+.spread-text > *:not(.spot) { position: relative; z-index: 1; }
+.spot {
+  position: absolute; z-index: 0; bottom: 0; height: calc(100% + 60px); min-height: clamp(240px, 24vw, 330px);
+  width: calc(100% + clamp(20px, 3vw, 48px)); pointer-events: none; opacity: 0;
+  /* the cone (--cone, below): a straight edge from the lamp to the peak, then one even curve down to the shelf */
+  -webkit-mask: var(--cone) 0 0 / 100% 100% no-repeat;
+          mask: var(--cone) 0 0 / 100% 100% no-repeat;
+  /* bright at the lamp, gone before the curved edge, so the edge dissolves instead of crossing the words */
+  background: radial-gradient(farthest-corner at var(--ax) 100%,
+    color-mix(in srgb, var(--led) 95%, transparent) 0%,
+    color-mix(in srgb, var(--led) 58%, transparent) 30%,
+    color-mix(in srgb, var(--led) 18%, transparent) 52%,
+    transparent 68%);
+  filter: blur(4px);
+}
+/* text on the right of its spread: the lamp is at the bottom right, shining up and to the left */
+.spread:nth-child(odd) .spot { --ax: 100%; --cone: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M100 100 L38 0 A38 100 0 0 0 0 100 Z'/%3E%3C/svg%3E"); right: calc(-1 * clamp(20px, 3vw, 48px)); }
+/* text on the left: the lamp is at the bottom left, shining up and to the right */
+.spread:nth-child(even) .spot { --ax: 0%; --cone: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M0 100 L62 0 A38 100 0 0 1 100 100 Z'/%3E%3C/svg%3E"); left: calc(-1 * clamp(20px, 3vw, 48px)); }
+.spread.is-lit .spot { animation: spot-on .4s ease-out .15s both; }
+[data-theme="night"] .spot { --led: #FFF1DC; mix-blend-mode: screen; }
+@keyframes spot-on { 0% { opacity: 0; } 20% { opacity: var(--spot-op); } 32% { opacity: calc(var(--spot-op) * .35); } 46% { opacity: var(--spot-op); } 100% { opacity: var(--spot-op); } }
+.spot { --spot-op: .5; }
+[data-theme="night"] .spot { --spot-op: .34; }
+
+/* as a project scrolls into view, its cover rises into place, then its words, then its light switches on.
+   Without script, or with reduced motion, everything simply shows. */
+.reveal .spread-pic, .reveal .spread-text { opacity: 0; transform: translateY(28px) scale(.98); }
+.reveal .spread.is-lit .spread-pic, .reveal .spread.is-lit .spread-text {
+  opacity: 1; transform: none;
+  transition: opacity .3s ease-out, transform .42s cubic-bezier(.22, 1, .36, 1);
+}
+.reveal .spread.is-lit .spread-text { transition-delay: .05s; }
+/* after it has arrived, the cover lifts on hover as before */
+.reveal .spread.is-lit:hover .spread-pic { transform: translateY(-2px); transition-delay: 0s; }
+@media (prefers-reduced-motion: reduce) {
+  .spread.is-lit .spot { animation: none; opacity: var(--spot-op); }
+}
+
+/* not finished yet: said plainly */
+.spread-media .ph.soon { font-family: var(--hand); font-size: clamp(24px, 2.4vw, 32px); color: var(--muted); }
+.spread-soon { display: inline-block; margin-top: 18px; font-size: 15px; color: var(--muted); }
 
 /* ---------- the lobby: contact and the record player ---------- */
 .lobby {
@@ -411,6 +469,9 @@ h1, h2, h3, .wordmark { font-family: var(--display); }
   .note-spot { top: 100px; right: auto; left: 16px; width: 176px; }
   .note { padding: 24px 20px 22px; font-size: 18px; }
   .spread, .spread:nth-child(even) { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  /* on a phone the words all sit under their covers, so every lamp is at the bottom left */
+  .spread:nth-child(odd) .spot { --ax: 0%; --cone: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M0 100 L62 0 A38 100 0 0 1 100 100 Z'/%3E%3C/svg%3E"); right: auto; left: -20px; }
+  .spot { width: calc(92% + 20px); height: calc(100% + 40px); min-height: 220px; }
   .spread:nth-child(even) .spread-pic { order: 0; }
   .deck { transform: scale(.85); transform-origin: left center; margin-right: -40px; }
   .foot-inner { grid-template-columns: minmax(0, 1fr); }
