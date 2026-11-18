@@ -62,20 +62,22 @@
     });
     msg.addEventListener('keydown', function (e) { if (e.key === 'Escape') msg.querySelector('.msg-ok').click(); });
   }
-  function lapse(dur) {
+  function frame(v) { range.value = ((v % 1440) + 1440) % 1440; range.dispatchEvent(new Event('input')); fill(); }
+  function lapse(dur, delay) {
     nowBtn.click();
     var target = Number(range.value), start = target - 540, t0 = 0;
     lapseOn = true; heroP.classList.add('lapsing');
+    // the first frame goes in straight away, in the same moment as "now" was worked out,
+    // so the window never shows the current time before the day starts playing
+    frame(start);
     function step(now) {
       if (!lapseOn) return;
       if (!t0) t0 = now;
       var k = Math.min(1, (now - t0) / dur), e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
-      var v = Math.round(start + (target - start) * e);
-      range.value = ((v % 1440) + 1440) % 1440;
-      range.dispatchEvent(new Event('input')); fill();
+      frame(Math.round(start + (target - start) * e));
       if (k < 1) requestAnimationFrame(step); else endLapse(true);
     }
-    requestAnimationFrame(step);
+    setTimeout(function () { if (lapseOn) requestAnimationFrame(step); }, delay || 0);
   }
   function endLapse(toNow) {
     if (!lapseOn) return;
@@ -92,16 +94,18 @@
   range.addEventListener('pointerdown', function () { endLapse(false); });
   range.addEventListener('keydown', function () { endLapse(false); });
   document.querySelector('[data-sky]').addEventListener('pointerdown', function () { endLapse(true); });
+  var introRan = false;
   function intro() {
     // with reduced motion there's no opening: the message is simply there
     if (reduce) { if (msg) msg.classList.remove('later'); return; }
     endLapse(false);
-    root.classList.remove('opening'); void heroP.offsetWidth;
-    root.classList.add('opening');
+    // the first time, the page head has already started the window opening; replays restart it
+    if (introRan || !root.classList.contains('opening')) { root.classList.remove('opening'); void heroP.offsetWidth; root.classList.add('opening'); }
+    introRan = true;
     if (msg && !msgClosed) msg.classList.add('later');
     clearTimeout(window.__openT); window.__openT = setTimeout(function () { root.classList.remove('opening'); }, 2600);
     // the day starts playing as the window opens
-    setTimeout(function () { lapse(3600); }, 350);
+    lapse(3600, 350);
   }
   window.SPIntro = function () { window.scrollTo(0, 0); intro(); };
 
