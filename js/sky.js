@@ -55,6 +55,12 @@
     live: true,
     scrub: 720
   };
+  // the home page opens by playing the day from nine hours ago (js/home.js): start there, not at now,
+  // so the window never shows the current time first
+  if (root.classList.contains('opening') && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    state.live = false;
+    state.scrub = Math.round(((localMinutes(CITIES[state.city].tz) - 540 + 1440) % 1440) / 5) * 5;
+  }
 
   /* ---------- small helpers ---------- */
   function rng(seed) {

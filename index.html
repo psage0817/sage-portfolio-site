@@ -8,6 +8,16 @@
 <script>
   // Apple devices get SF Pro, their system font; everything else gets Satoshi
   try { if (/Mac|iPhone|iPad|iPod/.test(navigator.platform || '') || /iPhone|iPad|Macintosh/.test(navigator.userAgent)) document.documentElement.classList.add('apple'); } catch (e) {}
+  // the opening plays the day from nine hours ago: start the window opening and the page in that light
+  // right away, so nothing shows the current time (or the wrong day or night) before it begins
+  try {
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      var h0 = Number(new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', hour: 'numeric', hourCycle: 'h23' }).format(new Date())) % 24;
+      var s0 = (h0 + 15) % 24;
+      document.documentElement.classList.add('opening');
+      document.documentElement.setAttribute('data-theme', s0 >= 7 && s0 < 18 ? 'day' : 'night');
+    }
+  } catch (e) {}
 </script>
 <link rel="preconnect" href="https://api.fontshare.com" crossorigin>
 <!-- Satoshi, from Fontshare (free for personal and commercial use) -->
