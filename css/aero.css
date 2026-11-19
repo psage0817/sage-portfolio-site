@@ -476,6 +476,11 @@ li.open>.sm-sub{display:block;animation:sm-in .18s cubic-bezier(.2,.8,.2,1)}
 .np-body{display:flex;align-items:center;gap:18px;margin:0 10px;padding:16px;border-radius:6px;background:linear-gradient(180deg,#141A24,#0B0F15);box-shadow:0 0 0 1px var(--screen-rim)}
 .np-body .vinyl{width:92px;height:92px;order:0;margin:0}
 .np-body .arm{height:70px;right:-12px}.np-body .arm::after{height:56px}
+.np-body{position:relative}
+/* Spotify's own player: invisible in the window, shown only if a browser won't start it from our button */
+.np-embed{position:absolute;inset:0;display:grid;align-items:center;padding:0 8px;opacity:0;pointer-events:none;transition:opacity .3s ease}
+.np-embed.on{opacity:1;pointer-events:auto;background:#0B0F15;border-radius:6px}
+.np-embed iframe{display:block;width:100%;height:80px;border:0;border-radius:12px}
 .np-body .pl-name{color:#F2F6FA}.np-body .pl-sub{color:rgba(235,243,250,.7)}
 .np .transport .deck{margin-top:10px}
 @media (max-width:900px){.hi-grid{grid-template-columns:1fr}.hi-memo{margin:0}.paper{aspect-ratio:4/3}.paint-body{grid-template-columns:1fr}.tools{grid-template-columns:repeat(8,38px);grid-auto-flow:row;overflow-x:auto}.tools .gap{display:none}.swatches-row{grid-template-columns:repeat(7,1fr);flex:1}}
