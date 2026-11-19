@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en" data-theme="day">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>softspot, by Sage Park</title>
+<meta name="description" content="softspot: a shared pet journal for families caring for an aging dog. Made in 36 hours at the WashUX Designathon by Sage Park, Soha Mehta and Princess Gallo.">
+<script>
+  // Apple devices get SF Pro, their system font; everything else gets Satoshi
+  try { if (/Mac|iPhone|iPad|iPod/.test(navigator.platform || '') || /iPhone|iPad|Macintosh/.test(navigator.userAgent)) document.documentElement.classList.add('apple'); } catch (e) {}
+</script>
+<script>
+  // day or night: what the window on the home page showed in the last few hours, otherwise this device's clock
+  (function () {
+    var th = null;
+    try { var o = JSON.parse(localStorage.getItem('sp-theme')); if (o && Date.now() - o.t < 6 * 3600e3) th = o.v; } catch (e) {}
+    if (!th) { var h = new Date().getHours(); th = h >= 19 || h < 6 ? 'night' : 'day'; }
+    document.documentElement.setAttribute('data-theme', th);
+  })();
+</script>
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<!-- Satoshi, from Fontshare (free for personal and commercial use) -->
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/aero.css">
+<link rel="stylesheet" href="css/case.css">
+<link rel="stylesheet" href="css/softspot.css">
+</head>
+<body>
+
+<div class="desk" id="top">
+  <div class="wrap">
+    <section class="case-player chrome" aria-label="softspot">
+      <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">softspot · s.park media player</span></div>
+      <div class="menubar">
+        <nav aria-label="Main"><a href="index.html#work">work</a><a href="about.html">about</a><a href="#contact">contact</a></nav>
+        <a class="back" href="index.html#work"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>all work</a>
+      </div>
+      <!-- on arrival, a stopwatch runs through the 36 hours of the designathon, then the app's flow plays.
+           The controls below only control the video; they never move the page. -->
+      <div class="screen case-screen flowhero" data-flowhero>
+        <video data-flow src="video/softspot-flow.mp4" poster="img/softspot/flow-poster.webp" muted loop playsinline preload="auto" aria-label="Screen recording of softspot: welcome, setting up Spot's profile, the family circle, daily check-ins and the calendar"></video>
+        <div class="timer" data-timer aria-hidden="true">
+          <p class="t-event">WashUX Designathon · 11/6–11/8</p>
+          <p class="t-clock" data-clock>00:00:00</p>
+          <ol class="t-phases"><li data-at="0">kickoff</li><li data-at=".25">research</li><li data-at=".5">direction</li><li data-at=".78">build</li><li data-at="1">demo</li></ol>
+        </div>
+      </div>
+      <div class="transport">
+        <div class="seek">
+          <span class="lbl" data-cur>0:00</span>
+          <input class="range" type="range" min="0" max="1000" step="1" value="0" data-vseek aria-label="Seek the softspot flow">
+          <span class="lbl" data-dur>1:47</span>
+        </div>
+        <div class="deck">
+          <div class="btns">
+            <button class="orb" type="button" data-vrestart aria-label="Play the flow from the start"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h2.4v14H6zM20 5v14L9.5 12z"/></svg></button>
+            <button class="orb big" type="button" data-vplay aria-pressed="false" aria-label="Play or pause the softspot flow"><svg class="ico-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><svg class="ico-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button>
+          </div>
+          <div class="hero-copy">
+            <div class="title-row"><h1>softspot</h1><img src="img/softspot/icon.webp" alt="The softspot app icon: a cartoon dog on butter yellow" width="512" height="512"></div>
+            <p class="sub">a shared pet journal for families caring for an aging dog</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="case-layout wrap">
+<!-- the sections, as a sticky menu on the side (built by the script below) -->
+<aside class="side" data-title="softspot" aria-label="Case study sections"></aside>
+<main class="case">
+  <section class="sec" id="s-intro" data-name="overview" data-icon="doc" aria-label="Overview">
+    <div class="ss-overview">
+      <div class="memo">
+        <div class="memo-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2l2 2h8.8A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>overview</div>
+        <div class="memo-body">
+          <h2 class="memo-h">softspot</h2>
+          <dl><dt>event</dt><dd>WashUX Designathon, 11/6–11/8</dd><dt>time</dt><dd>36 hours</dd><dt>team</dt><dd>Soha Mehta, Princess Gallo</dd><dt>my role</dt><dd>team leader</dd><dt>tools</dt><dd>Figma, FigJam</dd></dl>
+        </div>
+      </div>
+      <!-- the prompt, as it arrived -->
+      <div class="imsg chrome">
+        <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">the prompt · messages</span></div>
+        <div class="imsg-pane">
+          <div class="imsg-head"><span class="av" aria-hidden="true">W</span><b>WashUX Designathon</b></div>
+          <div class="imsg-thread">
+            <p class="imsg-time">Friday 11/6 · kickoff</p>
+            <div class="bubble them">how might we design ways for people to remain connected when memory, language, or familiar roles change?</div>
+            <div class="bubble them">design a digital product, prototype, or experience that supports meaningful exchanges between people and those who care about them.</div>
+          </div>
+        </div>
+      </div>
+      <!-- the concept and the design question, in a notepad -->
+      <div class="notepad chrome">
+        <div class="titlebar"><span class="np-ico" aria-hidden="true"></span><span class="t">concept.txt · s.park notepad</span></div>
+        <div class="np-menu" aria-hidden="true"><span><u>f</u>ile</span><span><u>e</u>dit</span><span><u>s</u>earch</span><span><u>h</u>elp</span></div>
+        <div class="np-paper">
+          <p class="np-label">the concept</p>
+          <p class="np-big">when a family is spread out, the little changes in an older dog are easy to miss.</p>
+          <p>the people who care for a pet day to day don’t have one place to see everything: routine, mood, photos. so patterns go unnoticed until they’re big ones.</p>
+          <p class="np-label">the design question</p>
+          <p class="np-big">how might we help families notice and talk about gradual changes in an aging pet when everyone sees them in different amounts, so that everybody can stay connected through the pet no matter where they are?<span class="caret" aria-hidden="true"></span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="s-why" data-name="why softspot" data-icon="heart" aria-labelledby="h-why">
+    <h2 class="sr-only" id="h-why">my personal connection</h2>
+    <div class="ss-why">
+      <figure class="photo chrome">
+        <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">home.jpg · s.park photos</span></div>
+        <div class="photo-pic"><img src="img/softspot/mocha.webp" alt="Me holding Mocha, a small cream-coloured dog, on a green blanket at home" width="1100" height="1342"></div>
+        <figcaption class="statusbar"><span>mocha, 9</span><span>san diego</span></figcaption>
+      </figure>
+      <div class="memo">
+        <div class="memo-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2l2 2h8.8A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>my personal connection</div>
+        <div class="memo-body">
+          <p class="memo-lead">my dog mocha is 9, and she lives back home in san diego with my family while i am at school in st. louis.</p>
+          <p>as she’s gotten older, i’ve been feeling like i’m missing more and more of her life. i only get to know about her increasing lethargy and frequent vet visits from my mom, occasionally. sometimes, i feel like her entire life is just passing by without me there to see it. this is the emotional root of softspot.</p>
+        </div>
+      </div>
+      <div class="imsg chrome">
+        <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">family · messages</span></div>
+        <div class="imsg-pane">
+          <div class="imsg-head"><span class="av" aria-hidden="true">M</span><b>mama park</b></div>
+          <div class="imsg-thread chat">
+            <div><span class="sender">mama park</span><div class="bubble them">mocha’s going to the vet again. she’s been drinking too much water and sleeping more.</div></div>
+            <div class="row-us"><div class="bubble us">since when?? is she going to be ok??</div></div>
+            <div><div class="bubble them">a couple weeks ago? she’ll be ok</div></div>
+          </div>
+          <!-- what i didn't send -->
+          <div class="imsg-input" data-typing><span class="draft"><span class="sr-only">i feel worried, helpless, and sorry that i can’t be there for her.</span><span class="typed" aria-hidden="true">i feel worried, helpless, and sorry that i can’t be there for her.</span><span class="caret" aria-hidden="true"></span></span><span class="send" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="s-research" data-name="research" data-icon="chat" aria-labelledby="h-research">
+    <div class="col">
+      <h2 id="h-research">what we heard</h2>
+    </div>
+    <div class="ss-research">
+      <div class="viewer chrome">
+        <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">research wall · s.park photos</span></div>
+        <div class="screen">
+          <div class="journey">
+            <img src="img/softspot/research-wall.webp" alt="Our FigJam research wall: the app flow from creating a pet profile and inviting family to daily check-ins and monthly reports, beside two personas with journey maps" width="2572" height="1552">
+            <span class="lens" hidden></span>
+          </div>
+        </div>
+        <div class="statusbar"><span>app flow and personas</span><span class="for-mouse">hover to zoom</span></div>
+      </div>
+      <div class="memo">
+        <div class="memo-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2l2 2h8.8A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>research</div>
+        <div class="memo-body">
+          <p class="memo-lead">we talked to 7 pet owners in the first hours. the clearest finding: primary caregivers had no single place to see all their pet’s information.</p>
+          <p>one participant told us that having it all in one place would help them spot patterns faster and more clearly.</p>
+          <dl><dt>interviews</dt><dd>7</dd><dt>time spent</dt><dd>3 hours</dd></dl>
+        </div>
+      </div>
+    </div>
+    <!-- from the interviews, word for word -->
+    <div class="voices four">
+      <figure class="bubble-wrap"><figcaption class="sender">P1, 10-year-old cat, lives away from him</figcaption><blockquote class="bubble them">“I just wish that I knew how they were doing health-wise and that they’re happy and not stressed.”</blockquote></figure>
+      <figure class="bubble-wrap"><figcaption class="sender">P2, 9-year-old dog, lives with her</figcaption><blockquote class="bubble them">“I usually keep paper copies of the invoices and records in the binder from the vet.”</blockquote></figure>
+      <figure class="bubble-wrap"><figcaption class="sender">P2, on family in other time zones</figcaption><blockquote class="bubble them">“Having a shared space where everyone can post pictures and updates anytime would help us feel more connected, even with the time difference.”</blockquote></figure>
+      <figure class="bubble-wrap"><figcaption class="sender">P4, 13-year-old dog, lives away from him</figcaption><blockquote class="bubble them">“Sometimes they call me and they put him on the camera but I don’t think he can like process iphone screens because he always just like looks completely lost. But I see him and that’s nice.”</blockquote></figure>
+    </div>
+  </section>
+
+  <section class="sec" id="s-people" data-name="who it’s for" data-icon="person" aria-labelledby="h-people">
+    <div class="col">
+      <h2 id="h-people">who it’s for</h2>
+      <p>two composite personas, built from the interviews: one person who’s away, and one who lives with the pet.</p>
+    </div>
+    <div class="ss-people">
+      <div class="contact chrome">
+        <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">alex · contacts</span></div>
+        <div class="contact-card">
+          <span class="av big a" aria-hidden="true">A</span>
+          <div><h3>Alex, 19</h3><p class="meta">the one who’s away</p></div>
+          <blockquote class="bubble them">“I’m not worried until something makes me worry, and then I have no way to check.”</blockquote>
+        </div>
+      </div>
+      <div class="contact chrome">
+        <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">dana · contacts</span></div>
+        <div class="contact-card">
+          <span class="av big d" aria-hidden="true">D</span>
+          <div><h3>Dana, 30s</h3><p class="meta">the one who lives with the pet</p></div>
+          <blockquote class="bubble them">“I keep it all in my head and a binder, then tell the same news to everyone separately.”</blockquote>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="s-app" data-name="what we made" data-icon="phones" aria-labelledby="h-app">
+    <div class="col">
+      <h2 id="h-app">what we made</h2>
+      <p>one family. one spot. anyone in the family circle can log what they see, and it all builds up into a picture of how the dog is doing.</p>
+    </div>
+    <div class="made">
+      <div class="made-row two">
+        <div class="made-t"><h3>a family circle</h3><p>everyone who cares for the dog joins with one code, at home or away from it, and shares one calendar of walks, vet visits and visits home.</p></div>
+        <div class="screens"><img src="img/softspot/s-invite.webp" alt="Spot’s family invite code, active for seven days" width="550" height="1200" loading="lazy"><img src="img/softspot/s-calendar.webp" alt="The shared calendar, with Spot’s vet and grooming appointments this month" width="550" height="1200" loading="lazy"></div>
+      </div>
+      <div class="made-row four">
+        <div class="made-t"><h3>daily check-ins</h3><p>a quick note on appetite, water, mood, energy and sleep, a photo, or a private diary entry. little moments, added to the story.</p></div>
+        <div class="screens"><img src="img/softspot/s-checkin.webp" alt="The daily check-in: appetite, water, mood, energy and sleep, each a row of quick choices" width="550" height="1200" loading="lazy"><img src="img/softspot/s-home.webp" alt="Today’s check-ins from the family, under the softspot dog" width="550" height="1200" loading="lazy"><img src="img/softspot/s-camera.webp" alt="Taking a photo of Spot to add to the day" width="550" height="1200" loading="lazy"><img src="img/softspot/s-diary.webp" alt="Spot’s family diary: private entries and the family’s shared ones" width="550" height="1200" loading="lazy"></div>
+      </div>
+      <div class="made-row two flip">
+        <div class="made-t"><h3>a monthly report</h3><p>daily entries build up into a monthly picture: a one-line summary, trends, and what to mention to the vet.</p></div>
+        <div class="screens"><img src="img/softspot/s-notifs.webp" alt="Notifications: Spot’s monthly report is ready, above the family’s recent logs" width="550" height="1200" loading="lazy"><img src="img/softspot/s-monthly.webp" alt="The monthly report: a one-sentence summary, trends for sleep, energy, appetite and mood, and a note to mention to the vet" width="550" height="1200" loading="lazy"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="s-reflect" data-name="reflection" data-icon="star" aria-labelledby="h-reflect">
+    <div class="col">
+      <h2 id="h-reflect">looking back</h2>
+    </div>
+    <div class="reflect">
+      <div class="memo">
+        <div class="memo-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2l2 2h8.8A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>what’s next</div>
+        <div class="memo-body">
+          <!-- a notes-app checklist: the circles tick when clicked -->
+          <ul class="checklist">
+            <li><input type="checkbox" id="next-1"><label for="next-1"><span class="ck-t">test with families</span><span class="ck-sub">validate the shared updates and how useful the report is, then refine based on their feedback</span></label></li>
+            <li><input type="checkbox" id="next-2"><label for="next-2"><span class="ck-t">make the avatar in the middle customizable to fit what the user’s pet would look like</span></label></li>
+            <li><input type="checkbox" id="next-3"><label for="next-3"><span class="ck-t">make the app compatible for every type of animal</span></label></li>
+            <li><input type="checkbox" id="next-4"><label for="next-4"><span class="ck-t">verify the information with vets</span></label></li>
+            <li><input type="checkbox" id="next-5"><label for="next-5"><span class="ck-t">design widgets and notifications</span></label></li>
+          </ul>
+        </div>
+      </div>
+      <div class="memo">
+        <div class="memo-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2l2 2h8.8A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>what i would improve</div>
+        <div class="memo-body">
+          <p class="memo-lead">make the daily check-in faster</p>
+          <ul class="nlist dots">
+            <li><p>the whole idea depends on someone logging every day, and four questions is still a lot on a busy night. i’d shrink it to one tap when nothing’s changed (“same as yesterday”) and only ask more when something’s different.</p></li>
+            <li><p>people who are far away mostly want to know when something changes. i’d give them a short weekly digest instead, so they stay close without a feed of every meal.</p></li>
+          </ul>
+          <p class="aside">softspot is an observation journal, not a replacement for a vet.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- up next -->
+  <!-- up next: strike magazine stl. When its case study is ready, make this an <a class="upnext chrome" href="strike.html">
+       and swap the spinner for the play button, like the up next on invetty -->
+  <div class="upnext chrome is-soon" aria-label="Up next: strike magazine stl, case study in progress">
+    <span class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">up next · s.park media player</span></span>
+    <span class="upnext-bar">
+      <span class="orb big" aria-hidden="true"><svg class="spinner" viewBox="0 0 24 24" aria-hidden="true"><line x1="12" y1="2.5" x2="12" y2="6.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-opacity="0.15" transform="rotate(0 12 12)"/><line x1="12" y1="2.5" x2="12" y2="6.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-opacity="0.23" transform="rotate(30 12 12)"/><line x1="12" y1="2.5" x2="12" y2="6.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-opacity="0.30" transform="rotate(60 12 12)"/><line x1="12" y1="2.5" x2="12" y2="6.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-opacity="0.38" transform="rotate(90 12 12)"/><line x1="12" y1="2.5" x2="12" y2="6.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-opacity="0.46" transform="rotate(120 12 12)"/><line x1="12" y1="2.5" x2="12" y2="6.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-opacity="0.54" transform="rotate(150 12 12)"/><line x1="12" y1="2.5" x2="12" y2="6.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-opacity="0.61" transform="rotate(180 12 12)"/><line x1="12" y1="2.5" x2="12" y2="6.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-opacity="0.69" transform="rotate(210 12 12)"/><line x1="12" y1="2.5" x2="12" y2="6.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-opacity="0.77" transform="rotate(240 12 12)"/><line x1="12" y1="2.5" x2="12" y2="6.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-opacity="0.85" transform="rotate(270 12 12)"/><line x1="12" y1="2.5" x2="12" y2="6.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-opacity="0.92" transform="rotate(300 12 12)"/><line x1="12" y1="2.5" x2="12" y2="6.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-opacity="1.00" transform="rotate(330 12 12)"/></svg></span>
+      <span class="upnext-t"><b>strike magazine stl</b><span>art direction, editorial design</span></span>
+      <span class="soon-tag">case study in progress</span>
+    </span>
+  </div>
+</main>
+</div>
+
+  <section class="lobby wrap" id="contact" aria-labelledby="hi-title">
+    <h2 class="sr-only" id="hi-title">let’s say hi</h2>
+    <div class="hi-grid">
+      <!-- a paint window: "let's say hi" is written on in my handwriting, then anyone can draw on it -->
+      <div class="paint chrome" data-paint>
+        <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">untitled · s.park paint</span></div>
+        <div class="paint-body">
+          <div class="tools" role="toolbar" aria-label="Drawing tools"><button class="tool" type="button" data-tool="pencil" aria-pressed="true" aria-label="pencil"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.2-4.6L15.6 5a2 2 0 0 1 2.8 0l.6.6a2 2 0 0 1 0 2.8L8.6 18.8z" fill="#F7C64A" stroke="#9A6B0E" stroke-width=".9" stroke-linejoin="round"/><path d="M4 20l1.2-4.6 3.4 3.4z" fill="#F1D9B5" stroke="#9A6B0E" stroke-width=".9" stroke-linejoin="round"/><path d="M4 20l.5-1.9 1.4 1.4z" fill="#2B2B2B"/><path d="M14.4 6.2l3.4 3.4" stroke="#E07B8A" stroke-width="2.4"/></svg></button><button class="tool" type="button" data-tool="brush" aria-pressed="false" aria-label="brush"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 10.5 20 4a1.4 1.4 0 0 1 2 2l-6.5 6.5z" fill="#B07A45" stroke="#6E4520" stroke-width=".8"/><path d="M12.6 11.4l2 2-1.2 1.2-2-2z" fill="#C3CCD5" stroke="#6F7C88" stroke-width=".7"/><path d="M11.2 12.8l2 2c-.6 2.9-2.8 5-6.9 5.4-.8.1-1.6-.3-1.3-.9 1.3-2.4 1.1-5.1 6.2-6.5z" fill="#1F3A93" stroke="#14275F" stroke-width=".7"/></svg></button><button class="tool" type="button" data-tool="spray" aria-pressed="false" aria-label="spray"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="9" width="8" height="12.5" rx="2" fill="#E0412F" stroke="#8E2117" stroke-width=".8"/><rect x="7.6" y="6" width="4.8" height="3.4" rx=".8" fill="#C3CCD5" stroke="#6F7C88" stroke-width=".7"/><rect x="6.6" y="12" width="6.8" height="4" fill="#fff" opacity=".85"/><g fill="#1F3A93"><circle cx="17" cy="5" r=".9"/><circle cx="19.5" cy="7" r=".9"/><circle cx="18" cy="9" r=".9"/><circle cx="20.5" cy="4" r=".7"/><circle cx="21" cy="9.6" r=".7"/></g></svg></button><button class="tool" type="button" data-tool="eraser" aria-pressed="false" aria-label="eraser"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.6 15.4 13 6a1.8 1.8 0 0 1 2.5 0l4.4 4.4a1.8 1.8 0 0 1 0 2.5L12.8 20H8.2z" fill="#F5A9BE" stroke="#A8536B" stroke-width=".9" stroke-linejoin="round"/><path d="M3.6 15.4 8.2 20h4.6l2.1-2.1-6.6-6.6z" fill="#F2F4F7" stroke="#A8536B" stroke-width=".9" stroke-linejoin="round"/><path d="M8 20h12" stroke="#7C8088" stroke-width="1" stroke-linecap="round"/></svg></button><span class="gap" aria-hidden="true"></span><button class="tool" type="button" data-act="undo" aria-label="Undo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7H15a5 5 0 0 1 0 10h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M9.5 3.5 5.8 7l3.7 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="tool" type="button" data-act="clear" aria-label="Clear the canvas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h8l4 4V20a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1z" fill="#fff" stroke="#5E7C98" stroke-width=".9"/><path d="M14 3.5v4h4" fill="#E3EAF1" stroke="#5E7C98" stroke-width=".9" stroke-linejoin="round"/><path d="m9 12 5 5m0-5-5 5" stroke="#E0412F" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>
+          <div class="paper"><canvas aria-label="A drawing canvas with “let’s say hi” handwritten on it. Draw on it with your mouse or finger."></canvas></div>
+        </div>
+        <div class="palette" role="group" aria-label="Colours"><span class="cur" aria-hidden="true"><i></i></span><div class="swatches-row"><button class="sw" type="button" data-c="#1A1A1A" aria-label="black" aria-pressed="false"></button><button class="sw" type="button" data-c="#1F3A93" aria-label="ink blue" aria-pressed="true"></button><button class="sw" type="button" data-c="#1A9FDB" aria-label="sky blue" aria-pressed="false"></button><button class="sw" type="button" data-c="#5DB83D" aria-label="green" aria-pressed="false"></button><button class="sw" type="button" data-c="#FFC93C" aria-label="yellow" aria-pressed="false"></button><button class="sw" type="button" data-c="#F2A33A" aria-label="orange" aria-pressed="false"></button><button class="sw" type="button" data-c="#E0412F" aria-label="red" aria-pressed="false"></button><button class="sw" type="button" data-c="#FFFFFF" aria-label="white" aria-pressed="false"></button><button class="sw" type="button" data-c="#7C8088" aria-label="grey" aria-pressed="false"></button><button class="sw" type="button" data-c="#8A5E34" aria-label="brown" aria-pressed="false"></button><button class="sw" type="button" data-c="#F5A9BE" aria-label="pink" aria-pressed="false"></button><button class="sw" type="button" data-c="#9DA8F5" aria-label="periwinkle" aria-pressed="false"></button><button class="sw" type="button" data-c="#9FE0C4" aria-label="mint" aria-pressed="false"></button><button class="sw" type="button" data-c="#9CD3EA" aria-label="pale blue" aria-pressed="false"></button></div></div>
+        <div class="statusbar"><span data-hint>pencil: drag to draw</span><span data-xy></span></div>
+      </div>
+      <div class="hi-side">
+        <div class="memo hi-memo">
+          <div class="memo-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2l2 2h8.8A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>contact</div>
+          <div class="memo-body">
+            <a class="email" href="mailto:sagespark19@gmail.com">sagespark19@gmail.com</a>
+            <div class="cta">
+              <a class="pill primary" href="mailto:sagespark19@gmail.com">email me</a>
+              <a class="pill" href="https://www.linkedin.com/in/sage-park-422842282/" target="_blank" rel="noopener">linkedin</a>
+              <a class="pill" href="#contact">instagram</a>
+            </div>
+          </div>
+        </div>
+        <!-- my playlist, as its own little player -->
+        <div class="np chrome">
+          <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">now playing · s.park media player</span></div>
+          <div class="np-body">
+            <div class="vinyl" aria-hidden="true"><div class="rec"></div><div class="arm"></div></div>
+            <div>
+              <strong class="pl-name">s.park record</strong>
+              <span class="pl-sub">21 songs · made for this site</span>
+            </div>
+          </div>
+          <div class="transport" data-juke aria-label="My playlist">
+            <div class="seek">
+              <span class="lbl" data-pl-time>0:00</span>
+              <div class="pl-bar" aria-hidden="true"><i></i></div>
+              <span class="lbl" data-pl-dur>0:30</span>
+            </div>
+            <div class="deck">
+              <div class="btns">
+                <button class="orb" type="button" aria-label="Previous song"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h2.4v14H6zM20 5v14L9.5 12z"/></svg></button>
+                <button class="orb big" type="button" data-record aria-pressed="false" aria-label="Play or pause the playlist"><svg class="ico-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><svg class="ico-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button>
+                <button class="orb" type="button" aria-label="Next song"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.6 5H18v14h-2.4zM4 5l10.5 7L4 19z"/></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>© 2026 sage park</span>
+    <span>designed in figma, [built with claude code]</span>
+    <a href="#top">back to the top</a>
+  </div>
+</footer>
+
+<!-- the dock: prev / next part and your place in the case study -->
+<div class="dock chrome" aria-label="Case study progress">
+  <div class="btns">
+    <button class="orb" type="button" data-step="-1" aria-label="Previous part"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h2.4v14H6zM20 5v14L9.5 12z"/></svg></button>
+    <button class="orb" type="button" data-step="1" aria-label="Next part"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.6 5H18v14h-2.4zM4 5l10.5 7L4 19z"/></svg></button>
+  </div>
+  <div class="info"><span><b class="chapter" data-chapter>overview</b></span><span class="pl-bar dock-bar" aria-hidden="true"><i data-progress></i></span></div>
+  <span class="count" data-count>1 / 6</span>
+</div>
+
+<div class="toast" role="status" aria-live="polite"></div>
+
+<script>
+  /* the start menu: what's in it on this page */
+  window.SPMenu = [
+    { label: 'work', key: 'w', icon: 'folder', sub: [
+      { label: 'invetty', icon: 'img:img/invetty-logo.webp', href: 'invetty.html', note: 'case study' },
+      { label: 'softspot', icon: 'img:img/softspot/icon.webp', href: '#top', current: true },
+      { label: 'strike magazine stl', icon: 'folder-dim', disabled: true, note: 'coming soon' },
+      { label: 'social media marketing', icon: 'folder-dim', disabled: true, note: 'coming soon' },
+      { label: 'type collection', icon: 'folder-dim', disabled: true, note: 'coming soon' },
+      'sep',
+      { label: 'all work', icon: 'folder', href: 'index.html#work' } ] },
+    { label: 'this case study', key: 's', icon: 'doc', sub: [
+      { label: 'overview', icon: 'doc', href: '#s-intro' },
+      { label: 'why softspot', icon: 'heart', href: '#s-why' },
+      { label: 'research', icon: 'chat', href: '#s-research' },
+      { label: 'who it’s for', icon: 'person', href: '#s-people' },
+      { label: 'what we made', icon: 'phones', href: '#s-app' },
+      { label: 'reflection', icon: 'star', href: '#s-reflect' } ] },
+    { label: 'run the 36 hours again', key: 'y', icon: 'clock', action: 'hours' },
+    { label: 'about', key: 'a', icon: 'person', href: 'about.html' },
+    { label: 'playlist', key: 'p', icon: 'music', href: '#contact' },
+    { label: 'contact', key: 'c', icon: 'mail', sub: [
+      { label: 'email me', icon: 'mail', href: 'mailto:sagespark19@gmail.com' },
+      { label: 'copy my email', icon: 'copy', action: 'copy-email' },
+      { label: 'linkedin', icon: 'case', href: 'https://www.linkedin.com/in/sage-park-422842282/', external: true },
+      { label: 'instagram', icon: 'camera', href: '#contact' } ] },
+    'sep',
+    { label: 'home', key: 'h', icon: 'home', href: 'index.html' },
+    { label: 'back to the top', key: 'b', icon: 'up', href: '#top' }
+  ];
+  window.SPMenuActions = {
+    'hours': function () { if (window.SPHours) SPHours(); },
+    'copy-email': function () {
+      var t = function () { if (window.SP) SP.toast('copied sagespark19@gmail.com'); };
+      try { navigator.clipboard.writeText('sagespark19@gmail.com').then(t, function () { if (window.SP) SP.toast('sagespark19@gmail.com'); }); } catch (e) {}
+    }
+  };
+</script>
+<script src="js/startmenu.js"></script>
+<script src="js/sayhi.js"></script>
+<script src="js/aero.js"></script>
+<script src="js/player.js"></script>
+<script src="js/case.js"></script>
+<script src="js/softspot.js"></script>
+</body>
+</html>

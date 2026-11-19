@@ -1,0 +1,148 @@
+/* softspot.css: the softspot case study, on top of aero.css and case.css.
+   Messages windows for conversations, a notepad for the concept, photos and screens in viewer windows. */
+
+/* ---------- the hero: a stopwatch through the 36 hours, then the app's flow ---------- */
+.flowhero { position: relative; display: block; padding: 0; background: #000; overflow: hidden; }
+.flowhero video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; transition: opacity .7s ease; }
+.flowhero.timed video { opacity: 1; }
+.timer { position: absolute; inset: 0; display: grid; align-content: center; justify-items: center; gap: clamp(14px, 2vw, 26px); padding: 6%; color: #F4F1EA; cursor: pointer;
+  transition: opacity .55s ease, transform .7s cubic-bezier(.2, .8, .2, 1), visibility 0s; }
+.flowhero.timed .timer { opacity: 0; visibility: hidden; transform: scale(.96); cursor: default; transition: opacity .55s ease, transform .7s cubic-bezier(.2, .8, .2, 1), visibility 0s .55s; }
+.t-event { margin: 0; font-size: 14px; color: rgba(244, 241, 234, .6); }
+.t-clock { margin: 0; font-family: var(--display); font-weight: 200; font-size: clamp(64px, 11vw, 168px); line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.t-phases { display: flex; gap: clamp(10px, 2.4vw, 34px); margin: 0; padding: 0; list-style: none; font-size: 14px; color: rgba(244, 241, 234, .38); }
+.t-phases li { position: relative; padding-top: 14px; transition: color .25s ease; }
+.t-phases li::before { content: ""; position: absolute; left: 50%; top: 0; width: 6px; height: 6px; margin-left: -3px; border-radius: 50%; background: currentColor; }
+.t-phases li.done { color: rgba(244, 241, 234, .7); }
+.t-phases li.on { color: #FFD36E; }
+
+/* ---------- messages windows ---------- */
+.imsg-pane { display: flex; flex-direction: column; margin: 0 10px 10px; border-radius: 6px; overflow: hidden; background: var(--paper); color: var(--paper-ink); box-shadow: 0 0 0 1px var(--rule); }
+.imsg-head { display: grid; justify-items: center; gap: 4px; padding: 12px 12px 10px; border-bottom: 1px solid var(--rule); background: color-mix(in oklab, var(--paper) 94%, var(--tint)); font-size: 13px; }
+.imsg-head b { font-weight: 600; }
+.av { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; color: #fff; font-weight: 600; font-size: 15px;
+  background: linear-gradient(180deg, #B9C2CE, #8F99A7); box-shadow: inset 0 1px 0 rgba(255,255,255,.4); }
+.imsg-thread { display: grid; gap: 8px; padding: 14px 14px 16px; align-content: start; }
+.imsg-thread .bubble { font-size: 15.5px; max-width: 88%; justify-self: start; }
+.imsg-time { margin: 0 0 4px; justify-self: center; font-size: 12px; color: var(--paper-2); }
+.imsg-input { display: flex; align-items: flex-end; gap: 8px; margin: auto 10px 10px; padding: 8px 8px 8px 14px; border-radius: 18px; box-shadow: inset 0 0 0 1px var(--rule); font-size: 15px; line-height: 1.4; }
+.imsg-input .draft { flex: 1; min-width: 0; color: var(--paper-ink); }
+.imsg-input .send { flex: none; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; color: #fff; background: color-mix(in oklab, var(--accent-fill) 45%, var(--paper)); }
+.imsg-input .send svg { width: 15px; height: 15px; }
+.caret { display: inline-block; width: 1.5px; height: 1.05em; margin-left: 2px; vertical-align: -.15em; background: var(--accent-fill); animation: caret 1.06s steps(1) infinite; }
+@keyframes caret { 50% { opacity: 0; } }
+
+/* ---------- the notepad ---------- */
+.np-ico { width: 16px; height: 16px; flex: none; border-radius: 2px; background: linear-gradient(#fff, #fff) 3px 4px / 10px 1.5px no-repeat, linear-gradient(#fff, #fff) 3px 7px / 10px 1.5px no-repeat, linear-gradient(#fff, #fff) 3px 10px / 7px 1.5px no-repeat, linear-gradient(180deg, #6FB4E6, #2777B8); box-shadow: inset 0 0 0 1px rgba(0, 30, 60, .3); }
+.np-menu { display: flex; gap: 18px; margin: 0 10px; padding: 4px 8px 6px; font-size: 13.5px; color: var(--ink-on-chrome); }
+.np-menu u { text-underline-offset: 2px; }
+.np-paper { margin: 0 10px 10px; padding: clamp(18px, 2.4vw, 30px) clamp(20px, 3vw, 38px); border-radius: 4px; background: var(--paper); color: var(--paper-ink); box-shadow: inset 0 0 0 1px var(--rule), inset 0 2px 4px rgba(0, 20, 40, .06); font-family: var(--np-font, var(--sans)); }
+.np-paper p { margin: 0 0 12px; font-size: 16.5px; line-height: 1.6; color: var(--paper-2); max-width: 66ch; }
+.np-paper .np-label { margin-top: 26px; color: var(--accent-ink); font-size: 16.5px; }
+.np-paper .np-label:first-child { margin-top: 0; }
+.np-paper .np-big { color: var(--paper-ink); font-family: var(--np-big-font, var(--display)); font-weight: var(--display-w); font-size: clamp(21px, 2vw, 27px); line-height: 1.35; letter-spacing: -.01em; }
+:root[data-np="hand"] .np-paper { --np-font: var(--hand); --np-big-font: var(--hand); }
+:root[data-np="hand"] .np-paper p { font-size: 20px; }
+:root[data-np="hand"] .np-paper .np-big { font-size: clamp(24px, 2.3vw, 31px); font-weight: 400; }
+
+/* ---------- overview: the facts, the prompt, the notepad ---------- */
+.ss-overview { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 28px; align-items: start; }
+.ss-overview > .memo { grid-column: 1 / 6; grid-row: 1; margin: 0; transform: none; align-self: center; }
+.ss-overview > .imsg { grid-column: 6 / 13; grid-row: 1; }
+.ss-overview > .notepad { grid-column: 2 / 12; grid-row: 2; margin-top: 8px; }
+
+/* ---------- why softspot: the photo, the note, the messages with mama ---------- */
+.ss-why { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: center; }
+.photo { grid-column: 1 / 5; grid-row: 1; margin: 0; }
+.photo-pic { margin: 0 10px; aspect-ratio: 4 / 5; overflow: hidden; border-radius: 4px 4px 0 0; box-shadow: 0 0 0 1px var(--screen-rim); }
+.photo-pic img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; transition: transform .6s cubic-bezier(.2, .7, .2, 1); }
+.photo:hover .photo-pic img { transform: scale(1.025); }
+.photo .statusbar { margin: 0; }
+.ss-why > .memo { grid-column: 4 / 8; grid-row: 1; position: relative; z-index: 2; margin: 0; transform: translateY(14%); }
+.ss-why > .imsg { grid-column: 8 / 13; grid-row: 1; margin-left: 28px; display: flex; flex-direction: column; }
+.ss-why > .imsg .imsg-pane { min-height: 400px; }
+.memo .memo-lead { margin: 0 0 12px; color: var(--paper-ink); font-size: 17.5px; line-height: 1.5; }
+
+/* ---------- research ---------- */
+.ss-research { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); margin-top: 28px; }
+.ss-research > .viewer { grid-column: 4 / 13; grid-row: 1; margin: 0; }
+.ss-research > .memo { grid-column: 1 / 6; grid-row: 1; align-self: end; position: relative; z-index: 2; margin: 0 0 -56px; transform: none; }
+.voices.four { margin-top: 96px; }
+
+/* ---------- who it's for ---------- */
+.ss-people { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; margin-top: 28px; }
+.contact-card { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px 16px; align-items: center; margin: 0 10px 10px; padding: 20px; border-radius: 6px; background: var(--paper); color: var(--paper-ink); box-shadow: 0 0 0 1px var(--rule); }
+.contact-card h3 { margin: 0; font-size: 21px; font-weight: 600; letter-spacing: -.01em; }
+.contact-card .meta { margin: 2px 0 0; color: var(--paper-2); font-size: 15px; }
+.contact-card .bubble { grid-column: 1 / -1; justify-self: start; font-size: 16px; max-width: 92%; }
+.av.big { width: 56px; height: 56px; font-size: 22px; }
+.av.a { background: linear-gradient(180deg, #F7A8A0, #D9655A); }
+.av.d { background: linear-gradient(180deg, #8EC2F2, #3E8CD0); }
+
+/* ---------- what we made: the screens on their own, with a shadow ---------- */
+.made { --sw: clamp(130px, 15.2vw, 219px); --sg: clamp(14px, 1.7vw, 24px); display: grid; gap: clamp(64px, 8vw, 110px); margin-top: 44px; }
+/* every screen is the same size; two-screen rows sit beside their text (alternating sides), the four-screen row under it */
+.made-row { display: grid; gap: clamp(28px, 4vw, 56px); align-items: center; }
+.made-row.two { grid-template-columns: auto minmax(0, 1fr); }
+.made-row.two .made-t { order: 2; }
+.made-row.two.flip .made-t { order: 0; }
+.made-row.two.flip { grid-template-columns: minmax(0, 1fr) auto; }
+.made-row.four { gap: 22px; }
+.made-t { max-width: 420px; }
+.made-t h3 { margin: 0; font-family: var(--display); font-weight: 500; font-size: 24px; letter-spacing: -.01em; }
+.made-t p { margin: 8px 0 0; color: var(--ink-2); font-size: 16px; line-height: 1.55; }
+.screens { display: flex; gap: var(--sg); }
+.screens img { flex: none; width: var(--sw); height: auto; border-radius: 9%/4.2%;
+  box-shadow: 0 28px 44px -22px rgba(60, 40, 20, .45), 0 4px 10px -4px rgba(60, 40, 20, .2), 0 0 0 .5px rgba(60, 40, 20, .12);
+  transition: transform .35s cubic-bezier(.2, .8, .2, 1), box-shadow .35s ease; }
+.screens img:hover { transform: translateY(-6px); box-shadow: 0 36px 50px -22px rgba(60, 40, 20, .5), 0 6px 14px -4px rgba(60, 40, 20, .2), 0 0 0 .5px rgba(60, 40, 20, .12); }
+:root[data-theme="night"] .screens img { box-shadow: 0 28px 44px -20px rgba(0, 0, 0, .8), 0 0 0 .5px rgba(255, 255, 255, .08); }
+
+/* reflection: a bulleted note, and a notes-app checklist */
+.reflect .checklist li, .reflect .nlist li { padding: 0; border-top: 0; }
+.reflect .checklist li + li, .reflect .nlist li + li { border-top: 1px solid var(--rule); }
+.reflect .nlist.dots li { padding: 12px 0 12px 18px; }
+.reflect .nlist.dots li:first-child { padding-top: 2px; }
+.memo .nlist.dots li { position: relative; padding-left: 18px; }
+.memo .nlist.dots li::before { content: ""; position: absolute; left: 2px; top: 22px; width: 6px; height: 6px; border-radius: 50%; background: var(--notes); }
+.memo .nlist.dots li:first-child::before { top: 10px; }
+.memo .nlist.dots p { margin: 0; color: var(--paper-ink); }
+.memo .aside { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--rule); font-size: 14.5px; }
+.checklist { list-style: none; margin: 0; padding: 0; }
+.checklist li { position: relative; }
+.checklist li + li { border-top: 1px solid var(--rule); }
+.checklist input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.checklist label { display: grid; grid-template-columns: 24px minmax(0, 1fr); column-gap: 12px; padding: 12px 0; cursor: pointer; font-size: 16px; line-height: 1.45; color: var(--paper-ink); }
+.checklist li:first-child label { padding-top: 2px; }
+.checklist label::before { content: ""; grid-row: 1 / 3; width: 22px; height: 22px; margin-top: 1px; border-radius: 50%; box-sizing: border-box; border: 1.5px solid color-mix(in oklab, var(--paper-2) 70%, transparent);
+  transition: background-color .18s ease, border-color .18s ease, transform .12s ease; }
+.checklist label:active::before { transform: scale(.88); }
+.checklist .ck-t { grid-column: 2; }
+.checklist .ck-sub { grid-column: 2; margin-top: 2px; font-size: 14.5px; color: var(--paper-2); }
+.checklist input:checked + label::before { border-color: transparent;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'%3E%3Cpath d='M6.5 11.5l3 3 6-6.5' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 22px no-repeat, color-mix(in oklab, var(--notes) 85%, #A86A00); }
+.checklist input:checked + label .ck-t, .checklist input:checked + label .ck-sub { color: var(--paper-2); }
+.checklist input:focus-visible + label::before { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* the unsent message: the caret blinks in an empty box, then it types itself */
+.imsg-input.empty .draft::before { content: "iMessage"; color: var(--paper-2); }
+.imsg-input.empty .typed { display: none; }
+.imsg-input.done .send { background: var(--accent-fill); transition: background .3s ease; }
+
+/* ---------- smaller screens ---------- */
+@media (max-width: 900px) {
+  .ss-overview, .ss-why, .ss-research { display: flex; flex-direction: column; gap: 24px; }
+  .ss-overview > .notepad { margin: 0; }
+  .ss-why > .memo { transform: none; margin: 0 14px; }
+  .ss-why > .imsg { margin: 0; }
+  .ss-research > .memo { margin: 0; order: 2; }
+  .ss-people { grid-template-columns: 1fr; }
+  .made-row.two, .made-row.two.flip { grid-template-columns: 1fr; }
+  .made-row .made-t, .made-row.two .made-t { order: 0; }
+  .screens { overflow-x: auto; padding: 4px 4px 40px; margin: 0 -4px -36px; scroll-snap-type: x mandatory; }
+  .screens img { width: 46vw; max-width: 220px; scroll-snap-align: start; }
+  .voices.four { margin-top: 36px; }
+}
+@media (max-width: 560px) {
+}
+@media (prefers-reduced-motion: reduce) { .caret { animation: none; } }
