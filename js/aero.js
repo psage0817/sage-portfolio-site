@@ -59,7 +59,7 @@
       if (!b || !b.offsetWidth) { thumb.style.opacity = '0'; return; }
       if (!animate || reduce) thumb.style.transition = 'none';
       thumb.style.opacity = '1';
-      thumb.style.left = b.offsetLeft + 'px'; thumb.style.top = b.offsetTop + 'px';
+      thumb.style.transform = 'translate(' + b.offsetLeft + 'px, ' + b.offsetTop + 'px)';
       thumb.style.width = b.offsetWidth + 'px'; thumb.style.height = b.offsetHeight + 'px';
       if (!animate || reduce) { void thumb.offsetWidth; thumb.style.transition = ''; }
     }

@@ -164,7 +164,8 @@ button { font: inherit; color: inherit; }
 .hero-player:fullscreen { height: 100vh; border-radius: 0; }
 /* the opening: the window opens, the screen switches on, the day plays up to now */
 .opening .hero-player { animation: win-open .9s var(--ease-out) backwards; }
-@keyframes win-open { from { opacity: 0; transform: translateY(18px) scale(.965); filter: blur(6px); } }
+/* no blur on the window: blurring a full-screen player with the live glass inside is the costliest frame of the opening */
+@keyframes win-open { from { opacity: 0; transform: translateY(18px) scale(.965); } }
 .hero-copy h1 .w { display: inline-block; }
 /* the words start while the window is still settling, so the opening reads as one motion:
    each gap is shorter than the last (the delays are set in js/home.js), the line under follows */
@@ -236,13 +237,13 @@ button { font: inherit; color: inherit; }
 /* it pops up with a bounce: overshoots, settles back, a small second bounce, then rests */
 .msg.pop { transform-origin: 50% 80%; animation: msg-pop .75s linear both; }
 @keyframes msg-pop {
-  0%   { opacity: 0; transform: translateY(18px) scale(.55); animation-timing-function: cubic-bezier(.2, .7, .3, 1); }
+  0%   { opacity: 0; transform: translateY(18px) scale(.9); animation-timing-function: cubic-bezier(.2, .7, .3, 1); }
   45%  { opacity: 1; transform: translateY(-6px) scale(1.07); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
   68%  { transform: translateY(2px) scale(.97); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
   86%  { transform: translateY(-1px) scale(1.015); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
   100% { opacity: 1; transform: none; }
 }
-.msg.is-fall { opacity: 0; transform: scale(.94); pointer-events: none; transition: opacity .22s ease, transform .22s ease; }
+.msg.is-fall { opacity: 0; transform: scale(.94); pointer-events: none; transition: opacity .2s var(--ease-out), transform .2s var(--ease-out); }
 .msg.is-gone { display: none; }
 .msg-bar { display: flex; align-items: center; justify-content: space-between; height: 34px; padding: 0 5px 0 13px; font-size: 13px; font-weight: 600; color: var(--ink-on-chrome); }
 .msg-x { width: 26px; height: 22px; display: grid; place-items: center; border: 0; border-radius: 6px; cursor: pointer; color: var(--orb-ink);
@@ -309,7 +310,7 @@ button { font: inherit; color: inherit; }
 .proj[hidden] { display: none; }
 .mini { grid-column: 1 / 9; grid-row: 1; display: block; text-decoration: none; transition: transform .25s ease; }
 .mini-screen { margin: 0 10px; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 4px 4px 0 0; box-shadow: 0 0 0 1px var(--screen-rim); background: #0E1A28; }
-.mini-screen img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .5s var(--ease-out); }
+.mini-screen img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .4s var(--ease-out); }
 @media (hover: hover) and (pointer: fine) { a.mini:hover { transform: translateY(-2px); } }
 @media (hover: hover) and (pointer: fine) { a.mini:hover .mini-screen img { transform: scale(1.025); } }
 .mini-bar { display: flex; align-items: center; gap: 12px; padding: 12px 16px 14px; color: var(--ink-on-chrome); font-size: 14px; }
@@ -378,7 +379,8 @@ button { font: inherit; color: inherit; }
 
 /* the contact player's transport plays the playlist */
 .pl-bar { height: 8px; border-radius: 99px; overflow: hidden; background: color-mix(in oklab, var(--chrome-edge) 22%, transparent); box-shadow: inset 0 1px 2px rgba(0, 20, 40, .25); }
-.pl-bar i { display: block; height: 100%; width: 0; border-radius: 99px; background: linear-gradient(180deg, rgba(255,255,255,calc(.6*var(--gloss))), rgba(255,255,255,0) 60%), var(--seek); transition: width .3s linear; }
+/* the fill is always full width and is clipped back, so progress never causes a layout */
+.pl-bar i { display: block; height: 100%; width: 100%; clip-path: inset(0 100% 0 0 round 99px); border-radius: 99px; background: linear-gradient(180deg, rgba(255,255,255,calc(.6*var(--gloss))), rgba(255,255,255,0) 60%), var(--seek); transition: clip-path .3s linear; }
 .now { display: flex; align-items: center; gap: 16px; min-width: 0; text-align: right; }
 .now > div:last-child { min-width: 0; }
 .pl-name { display: block; font-weight: 600; font-size: 18px; color: var(--ink); }
@@ -535,7 +537,7 @@ a.mini:active { transform: translateY(0) scale(.992); transition-duration: .08s;
 /* segmented controls: one white thumb slides to the chosen option (js/aero.js) */
 .seg { position: relative; }
 .seg-thumb { position: absolute; z-index: 0; border-radius: 8px; background: var(--paper); box-shadow: 0 1px 3px rgba(0, 20, 40, .16), 0 0 0 .5px rgba(0, 20, 40, .06); pointer-events: none;
-  transition: left .32s var(--ease-out), top .32s var(--ease-out), width .32s var(--ease-out), opacity .2s ease; }
+  left: 0; top: 0; transition: transform .32s var(--ease-out), width .32s var(--ease-out), opacity .2s ease; }
 .seg.has-thumb button { position: relative; z-index: 1; }
 .seg.has-thumb button[aria-pressed="true"] { background: none; box-shadow: none; }
 

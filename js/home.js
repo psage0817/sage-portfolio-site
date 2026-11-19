@@ -60,7 +60,15 @@
     msg.addEventListener('pointerdown', function (e) { e.stopPropagation(); });
     msg.querySelectorAll('[data-msg-close]').forEach(function (b) {
       b.addEventListener('click', function () {
-        msgClosed = true; msg.classList.add('is-fall');
+        msgClosed = true;
+        // if it's still popping, hold it where it is, then fade out from there
+        if (msg.classList.contains('pop')) {
+          var cs = getComputedStyle(msg);
+          msg.style.opacity = cs.opacity; msg.style.transform = cs.transform;
+          msg.classList.remove('pop'); void msg.offsetWidth;
+          msg.style.opacity = ''; msg.style.transform = '';
+        }
+        msg.classList.add('is-fall');
         setTimeout(function () { msg.classList.add('is-gone'); }, 240);
       });
     });

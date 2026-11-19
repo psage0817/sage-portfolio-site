@@ -38,11 +38,12 @@
   function update() {
     var sp = span(), p = Math.min(1, Math.max(0, (scrollY - sp[0]) / (sp[1] - sp[0])));
     var i = current();
-    bars.forEach(function (b) { b.style.width = (p * 100).toFixed(1) + '%'; });
+    var clip = 'inset(0 ' + ((1 - p) * 100).toFixed(1) + '% 0 0 round 99px)';
+    bars.forEach(function (b) { b.style.clipPath = clip; });
     chapters.forEach(function (c) { c.textContent = secs[i].getAttribute('data-name'); });
     counts.forEach(function (c) { c.textContent = (i + 1) + ' / ' + secs.length; });
     sideLinks.forEach(function (a, k) { if (k === i) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
-    sideBar.style.width = (p * 100).toFixed(1) + '%';
+    sideBar.style.clipPath = clip;
   }
   document.querySelectorAll('[data-step]').forEach(function (b) {
     b.addEventListener('click', function () {
@@ -75,8 +76,8 @@
       if (x < 0 || y < 0 || x > r.width || y > r.height) { lens.hidden = true; return; }
       lens.hidden = false;
       var lw = lens.offsetWidth, lh = lens.offsetHeight;
-      lens.style.left = Math.min(Math.max(x - lw / 2, 0), r.width - lw) + 'px';
-      lens.style.top = Math.min(Math.max(y - lh / 2, 0), r.height - lh) + 'px';
+      // moved with a transform, so following the pointer never causes a layout
+      lens.style.transform = 'translate(' + Math.min(Math.max(x - lw / 2, 0), r.width - lw) + 'px, ' + Math.min(Math.max(y - lh / 2, 0), r.height - lh) + 'px)';
       lens.style.backgroundSize = (r.width * ZOOM) + 'px ' + (r.height * ZOOM) + 'px';
       lens.style.backgroundPosition = (-(x * ZOOM - lw / 2)) + 'px ' + (-(y * ZOOM - lh / 2)) + 'px';
     });

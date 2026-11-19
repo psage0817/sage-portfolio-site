@@ -16,7 +16,7 @@ img { max-width: 100%; }
 /* the two phones rise with the window, the second just behind the first */
 .opening .duo-v { animation: rise-in .9s var(--ease-out) both .3s; }
 .opening .duo-v + .duo-v { animation-delay: .38s; }
-@keyframes win-open { from { opacity: 0; transform: translateY(18px) scale(.965); filter: blur(6px); } }
+@keyframes win-open { from { opacity: 0; transform: translateY(18px) scale(.965); } }
 @keyframes rise-in { from { opacity: 0; transform: translateY(40px) scale(.97); } }
 .back { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--accent-ink); text-decoration: none; font-weight: 500; }
 @media (hover: hover) and (pointer: fine) { .back:hover { text-decoration: underline; text-underline-offset: 4px; } }
@@ -83,7 +83,7 @@ img { max-width: 100%; }
 .viewer .screen { height: auto; border-radius: 4px 4px 0 0; }
 .journey { position: relative; display: block; background: #fff; }
 .journey img { display: block; width: 100%; height: auto; }
-.lens { position: absolute; width: 260px; height: 170px; border-radius: 14px; pointer-events: none; background-repeat: no-repeat; box-shadow: 0 12px 30px rgba(0,0,0,.3), 0 0 0 3px #fff; }
+.lens { position: absolute; left: 0; top: 0; width: 260px; height: 170px; border-radius: 14px; pointer-events: none; background-repeat: no-repeat; box-shadow: 0 12px 30px rgba(0,0,0,.3), 0 0 0 3px #fff; }
 .statusbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px 12px; font-size: 13.5px; color: var(--ink-on-chrome); }
 :root:not([data-theme="night"]) .statusbar a { color: color-mix(in oklab, var(--accent-ink) 78%, #021B30); }
 .statusbar a { color: var(--accent-ink); font-weight: 500; text-decoration: none; }
