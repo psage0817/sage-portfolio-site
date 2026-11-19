@@ -16,6 +16,9 @@
   --accent-ink: color-mix(in oklab, var(--accent) 66%, #021B30);
   --accent-fill: color-mix(in oklab, var(--accent) 74%, #021B30);
   --ground-pick: #BFE2F7;
+  /* the page at night: top of the page, then the rest */
+  --night-top: #1B1F27;
+  --night-bot: #111419;
 
   --gloss: .75;         /* how shiny the chrome is, 0 to 1 */
   --r: 16px;            /* window corners */
@@ -52,22 +55,23 @@
 :root.apple { --sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Satoshi', 'Segoe UI', system-ui, sans-serif; --display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Satoshi', 'Segoe UI', system-ui, sans-serif; }
 :root[data-theme="night"] {
   color-scheme: dark;
-  --ground-top: color-mix(in oklab, var(--ground-pick) 14%, #07111C);
-  --ground-bot: color-mix(in oklab, var(--ground-pick) 6%, #0B1A29);
+  --ground-top: var(--night-top);
+  --ground-bot: var(--night-bot);
   --ink: #E5F0FA;
-  --ink-2: #93AAC0;
-  --ink-on-chrome: color-mix(in oklab, var(--tint) 30%, #E8F1F9);
-  --chrome-1: color-mix(in oklab, var(--tint) 26%, #1A2836);
-  --chrome-2: color-mix(in oklab, var(--tint) 16%, #111C27);
-  --chrome-3: color-mix(in oklab, var(--tint) 10%, #0A121A);
-  --chrome-edge: color-mix(in oklab, var(--tint) 30%, #03070B);
-  --chrome-hi: rgba(255, 255, 255, .28);
-  --menu: rgba(10, 18, 27, .72);
+  --ink-2: #A3ABB8;
+  /* the window frames at night are made from the night background, a little lighter */
+  --ink-on-chrome: color-mix(in oklab, var(--tint) 12%, #E8ECF1);
+  --chrome-1: color-mix(in oklab, var(--night-top), #7A8290 30%);
+  --chrome-2: color-mix(in oklab, var(--night-top), #7A8290 16%);
+  --chrome-3: color-mix(in oklab, var(--night-top), #7A8290 7%);
+  --chrome-edge: color-mix(in oklab, var(--night-bot), #000 45%);
+  --chrome-hi: rgba(255, 255, 255, .22);
+  --menu: color-mix(in oklab, var(--night-bot) 78%, transparent);
   --paper: #1C1E22;
   --paper-ink: #F2F3F5;
   --paper-2: #9CA1AA;
   --rule: rgba(255, 255, 255, .1);
-  --orb: color-mix(in oklab, var(--tint) 22%, #1A2633);
+  --orb: color-mix(in oklab, var(--night-top), #7A8290 26%);
   --orb-ink: #DDEAF6;
   --shadow: 0 30px 70px -24px rgba(0, 0, 0, .7), 0 0 0 1px rgba(255, 255, 255, .05);
   --accent-ink: color-mix(in oklab, var(--accent) 70%, white);

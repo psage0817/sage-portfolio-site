@@ -56,11 +56,16 @@
     ['.projects > .proj > .memo', 'rv-side', null, 0],
     ['.soon-row > .proj', '', '.soon-row', 90],
     ['.hi-grid .paint, .hi-grid .hi-memo, .hi-grid .np', '', '.hi-grid', 110],
-    ['.viewer, .pair-win, .persona, .findings, .next', '', null, 0],
+    ['.viewer, .pair-win, .persona, .findings, .next, .upnext, .notepad, .ss-research > .memo', '', null, 0],
+    ['.ss-overview > .memo, .ss-overview > .imsg', '', '.ss-overview', 120],
+    ['.ss-why > .photo, .ss-why > .memo, .ss-why > .imsg', '', '.ss-why', 120],
+    ['.ss-people > .contact', '', '.ss-people', 120],
+    ['.made-row .made-t', '', null, 0],
+    ['.screens img', '', '.screens', 90],
     ['.flows > .flow', '', '.flows', 110],
     ['.reflect > .memo', '', '.reflect', 110],
     ['.lock .notif', 'rv-drop', '.lock', 140],
-    ['.voices .bubble, .chat .bubble', 'rv-pop', '.voices, .chat', 220]
+    ['.voices .bubble, .chat .bubble, .imsg-thread .bubble', 'rv-pop', '.voices, .chat, .imsg-thread', 220]
   ];
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (en) {

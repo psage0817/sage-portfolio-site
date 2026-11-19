@@ -62,9 +62,9 @@
 
 <div class="case-layout wrap">
 <!-- the sections, as a sticky menu on the side (built by the script below) -->
-<aside class="side" aria-label="Case study sections"></aside>
+<aside class="side" data-title="invetty" aria-label="Case study sections"></aside>
 <main class="case">
-  <section class="sec" id="s-intro" data-name="overview" aria-label="Overview">
+  <section class="sec" id="s-intro" data-name="overview" data-icon="doc" aria-label="Overview">
     <div class="overview">
       <p class="question">How can we help people with celiac disease feel less anxious and join social meals with more confidence, by giving them control over how their dietary needs are handled?</p>
       <div class="memo">
@@ -77,7 +77,7 @@
     </div>
   </section>
 
-  <section class="sec" id="s-research" data-name="research" aria-labelledby="h-research">
+  <section class="sec" id="s-research" data-name="research" data-icon="chat" aria-labelledby="h-research">
     <div class="col">
       <h2 id="h-research">What we needed to learn</h2>
       <p>Eating safely with celiac disease takes work before the meal starts, and the social cost is as heavy as the physical risk. To understand both sides, we spoke with people who live with it, and with allergists and dieticians who treat patients of all ages.</p>
@@ -98,7 +98,7 @@
     </div>
   </section>
 
-  <section class="sec" id="s-define" data-name="define" aria-labelledby="h-define">
+  <section class="sec" id="s-define" data-name="define" data-icon="person" aria-labelledby="h-define">
     <div class="col">
       <h2 id="h-define">Synthesizing the research</h2>
       <p class="todo">[one or two lines on how you got from 13 interviews to one persona: affinity mapping, clustering, what you argued about]</p>
@@ -130,7 +130,7 @@
     </div>
   </section>
 
-  <section class="sec" id="s-ideate" data-name="ideate" aria-labelledby="h-ideate">
+  <section class="sec" id="s-ideate" data-name="ideate" data-icon="bulb" aria-labelledby="h-ideate">
     <div class="concept">
     <div class="col">
       <h2 id="h-ideate">The concept</h2>
@@ -145,7 +145,7 @@
     </div>
   </section>
 
-  <section class="sec" id="s-iterate" data-name="iterate" aria-labelledby="h-iterate">
+  <section class="sec" id="s-iterate" data-name="iterate" data-icon="phones" aria-labelledby="h-iterate">
     <div class="col">
       <h2 id="h-iterate">Wireframing and user testing</h2>
       <p>We started with grey wireframes and tested them with real people. After each round, the screens changed for a reason. Drag the bar under each screen to go from before to after.</p>
@@ -216,7 +216,7 @@
     </div>
   </section>
 
-  <section class="sec" id="s-outcome" data-name="outcome" aria-labelledby="h-outcome">
+  <section class="sec" id="s-outcome" data-name="outcome" data-icon="star" aria-labelledby="h-outcome">
     <div class="col">
       <h2 id="h-outcome">Final design</h2>
       <p>Set in Ubuntu and DM Sans.</p>
@@ -251,16 +251,15 @@
     </div>
   </section>
 
-  <a class="next" href="index.html#work">
-    <div class="mini chrome">
-      <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">softspot</span></div>
-      <div class="mini-screen" style="margin-bottom: 10px"><img src="img/softspot-cover.webp" alt="" width="1600" height="1200"></div>
-    </div>
-    <div>
-      <h2>softspot</h2>
-      <p>next project. The case study is in progress.</p>
-      <span class="back">see all work <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-    </div>
+  <!-- up next -->
+  <a class="upnext chrome" href="softspot.html">
+    <span class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">up next · s.park media player</span></span>
+    <span class="upnext-bar">
+      <span class="orb big" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+      <img src="img/softspot/icon.webp" alt="" width="512" height="512">
+      <span class="upnext-t"><b>softspot</b><span>a shared pet journal for families caring for an aging dog</span></span>
+      <span class="back">read the case study <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </span>
   </a>
 </main>
 </div>
@@ -344,7 +343,7 @@
   window.SPMenu = [
     { label: 'work', key: 'w', icon: 'folder', sub: [
       { label: 'invetty', icon: 'img:img/invetty-logo.webp', href: '#top', current: true },
-      { label: 'softspot', icon: 'img:img/softspot-cover.webp', disabled: true, note: 'in progress' },
+      { label: 'softspot', icon: 'img:img/softspot/icon.webp', href: 'softspot.html', note: 'case study' },
       { label: 'strike magazine stl', icon: 'folder-dim', disabled: true, note: 'coming soon' },
       { label: 'social media marketing', icon: 'folder-dim', disabled: true, note: 'coming soon' },
       { label: 'type collection', icon: 'folder-dim', disabled: true, note: 'coming soon' },
@@ -379,6 +378,7 @@
 <script src="js/sayhi.js"></script>
 <script src="js/aero.js"></script>
 <script src="js/player.js"></script>
+<script src="js/case.js"></script>
 <script src="js/invetty.js"></script>
 </body>
 </html>

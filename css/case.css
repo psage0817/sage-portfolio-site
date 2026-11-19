@@ -109,12 +109,6 @@ img { max-width: 100%; }
 .reflect ul { margin: 12px 0 0; padding: 0; list-style: none; }
 .reflect li { padding: 11px 0; border-top: 1px solid var(--rule); font-size: 15.5px; line-height: 1.5; }
 
-/* up next */
-.next { display: grid; grid-template-columns: minmax(0, 300px) 1fr; gap: 28px; align-items: center; margin-top: clamp(90px, 10vw, 140px); text-decoration: none; transition: transform .25s ease; }
-.next .mini { grid-column: auto; grid-row: auto; }
-.next h2 { margin: 6px 0 0; font-family: var(--display); font-weight: var(--display-w); font-size: clamp(30px, 3vw, 44px); letter-spacing: -.02em; line-height: 1.05; }
-.next p { margin: 8px 0 0; color: var(--ink-2); }
-.next .back { margin-top: 12px; }
 
 /* the concept's three outcomes, as invetty notifications on its own colours */
 .concept { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 400px); gap: clamp(28px, 4vw, 56px); align-items: center; }
@@ -151,7 +145,6 @@ img { max-width: 100%; }
 }
 .dock:not(.on) { visibility: hidden; transition: transform .45s cubic-bezier(.2,.8,.2,1), visibility 0s .45s; }
 .dock.on { transform: translate(-50%, 0); }
-.next:hover .mini-screen img { transform: scale(1.025); }
 .dock .btns { gap: 6px; }
 .dock .orb { --s: 36px; }
 .dock .info { min-width: 0; display: grid; gap: 4px; font-size: 13.5px; color: var(--ink-on-chrome); }
@@ -161,7 +154,7 @@ img { max-width: 100%; }
 :root.has-dock { --toggle-lift: 0px; }
 
 @media (max-width: 900px) {
-  .overview, .persona, .pair, .voices, .reflect, .next { grid-template-columns: 1fr; }
+  .overview, .persona, .pair, .voices, .reflect { grid-template-columns: 1fr; }
   .persona .who { border-right: 0; border-bottom: 1px solid var(--rule); }
   .pair:nth-child(even) .pair-win { order: 0; }
   .title-row { justify-content: flex-start; flex-direction: row-reverse; }
@@ -174,3 +167,23 @@ img { max-width: 100%; }
   .dock .count { display: none; }
 }
 @media (min-width: 1100px) { .dock, .dock.on { display: none; } }
+
+/* ---------- up next: the next case study, as a slim player ---------- */
+.upnext { display: block; margin-top: clamp(80px, 9vw, 120px); text-decoration: none; color: inherit; transition: transform .25s ease; }
+.upnext .titlebar { display: flex; }
+.upnext-bar { display: flex; align-items: center; gap: 14px; padding: 10px 18px 14px; }
+.upnext-bar img { width: 40px; height: 40px; border-radius: 10px; box-shadow: 0 4px 10px -4px rgba(20, 18, 60, .5); }
+.upnext-t { display: grid; min-width: 0; }
+.upnext-t b { font-weight: 600; font-size: 17px; color: var(--ink); }
+.upnext-t span { color: var(--ink-2); font-size: 14px; }
+.upnext .back { margin-left: auto; white-space: nowrap; }
+.upnext:not(.is-soon):hover { transform: translateY(-2px); }
+.upnext.is-soon .orb.big { --accent: #F5A9BE; cursor: default; color: #fff; }
+.upnext.is-soon .orb.big .spinner { width: 46%; height: 46%; animation: spin12 1s steps(12) infinite; }
+.upnext .soon-tag { margin-left: auto; white-space: nowrap; font-size: 14px; color: var(--ink-2); }
+@media (max-width: 560px) { .upnext .soon-tag { display: none; } }
+.upnext:hover .back svg { translate: 3px 0; }
+.upnext:not(.is-soon):active { transform: scale(.995); }
+@media (prefers-reduced-motion: reduce) { .upnext.is-soon .orb.big .spinner { animation: none; } }
+
+@media (max-width: 560px) { .upnext .back { display: none; } }
