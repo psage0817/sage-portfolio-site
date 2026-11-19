@@ -46,7 +46,11 @@
   /* the opening: the window opens, its screen switches on and the day plays from nine hours ago up to now.
      Grab the seek bar or draw on the glass to take over. */
   var h1 = document.querySelector('.hero-copy h1');
-  h1.innerHTML = h1.textContent.split(' ').map(function (w, i) { return '<span class="w" style="--i:' + i + '">' + w + '</span>'; }).join(' ');
+  // 450ms in, then gaps of 80, 66, 54ms...: a wave rather than an even tick
+  h1.innerHTML = h1.textContent.split(' ').map(function (w, i) {
+    var d = 450 + 80 * (1 - Math.pow(0.82, i)) / (1 - 0.82);
+    return '<span class="w" style="--d:' + Math.round(d) + 'ms">' + w + '</span>';
+  }).join(' ');
   var nowBtn = document.querySelector('[data-now]'), lapseOn = false;
 
   /* the hint: a new message on the glass. ok or the x closes it (drawing a stroke closes it too, in sky.js) */
@@ -56,7 +60,15 @@
     msg.addEventListener('pointerdown', function (e) { e.stopPropagation(); });
     msg.querySelectorAll('[data-msg-close]').forEach(function (b) {
       b.addEventListener('click', function () {
-        msgClosed = true; msg.classList.add('is-fall');
+        msgClosed = true;
+        // if it's still popping, hold it where it is, then fade out from there
+        if (msg.classList.contains('pop')) {
+          var cs = getComputedStyle(msg);
+          msg.style.opacity = cs.opacity; msg.style.transform = cs.transform;
+          msg.classList.remove('pop'); void msg.offsetWidth;
+          msg.style.opacity = ''; msg.style.transform = '';
+        }
+        msg.classList.add('is-fall');
         setTimeout(function () { msg.classList.add('is-gone'); }, 240);
       });
     });
@@ -145,7 +157,15 @@
     b.addEventListener('click', function () {
       var f = b.getAttribute('data-filter');
       document.querySelectorAll('[data-filter]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
-      projs.forEach(function (p) { p.hidden = f !== 'all' && p.getAttribute('data-cat') !== f; });
+      projs.forEach(function (p) {
+        var hide = f !== 'all' && p.getAttribute('data-cat') !== f;
+        // the ones that come back settle in, instead of popping into place
+        if (p.hidden && !hide) {
+          p.classList.remove('is-back'); void p.offsetWidth; p.classList.add('is-back');
+          p.addEventListener('animationend', function () { p.classList.remove('is-back'); }, { once: true });
+        }
+        p.hidden = hide;
+      });
     });
   });
 

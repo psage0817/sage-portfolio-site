@@ -26,6 +26,28 @@
     }).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
   }
 
+  /* ---------- on a phone ---------- */
+  // iOS Safari only shows :active presses once the page listens for touches
+  document.addEventListener('touchstart', function () {}, { passive: true });
+  // the status bar takes the colour at the top of the page, for day and for night
+  var tc = document.querySelector('meta[name="theme-color"]');
+  if (!tc) { tc = document.createElement('meta'); tc.name = 'theme-color'; document.head.appendChild(tc); }
+  function paintBar() {
+    try {
+      var probe = document.createElement('i');
+      probe.style.cssText = 'position:absolute;visibility:hidden;color:var(--ground-top)';
+      document.body.appendChild(probe);
+      var c = getComputedStyle(probe).color; probe.remove();
+      // flatten whatever colour syntax the browser reports into plain hex
+      var cv = document.createElement('canvas'); cv.width = cv.height = 1;
+      var x = cv.getContext('2d'); x.fillStyle = c; x.fillRect(0, 0, 1, 1);
+      var d = x.getImageData(0, 0, 1, 1).data;
+      tc.content = '#' + [d[0], d[1], d[2]].map(function (n) { return n.toString(16).padStart(2, '0'); }).join('');
+    } catch (e) {}
+  }
+  paintBar();
+  if ('MutationObserver' in window) new MutationObserver(paintBar).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+
   /* ---------- segmented controls ---------- */
   document.querySelectorAll('.seg').forEach(function (seg) {
     var thumb = document.createElement('span');
@@ -37,7 +59,7 @@
       if (!b || !b.offsetWidth) { thumb.style.opacity = '0'; return; }
       if (!animate || reduce) thumb.style.transition = 'none';
       thumb.style.opacity = '1';
-      thumb.style.left = b.offsetLeft + 'px'; thumb.style.top = b.offsetTop + 'px';
+      thumb.style.transform = 'translate(' + b.offsetLeft + 'px, ' + b.offsetTop + 'px)';
       thumb.style.width = b.offsetWidth + 'px'; thumb.style.height = b.offsetHeight + 'px';
       if (!animate || reduce) { void thumb.offsetWidth; thumb.style.transition = ''; }
     }
@@ -65,8 +87,15 @@
     ['.flows > .flow', '', '.flows', 110],
     ['.reflect > .memo', '', '.reflect', 110],
     ['.lock .notif', 'rv-drop', '.lock', 140],
-    ['.voices .bubble, .chat .bubble, .imsg-thread .bubble', 'rv-pop', '.voices, .chat, .imsg-thread', 220]
+    ['.voices .bubble, .chat .bubble, .imsg-thread .bubble', 'rv-pop', '.voices, .chat, .imsg-thread', 220, true]
   ];
+  // a group arrives as a wave, not a queue: each gap is a little shorter than the one before,
+  // so a long row never keeps its last item waiting. Message bubbles keep an even beat (k[4]),
+  // because they stand in for a conversation.
+  function lag(i, gap, even) {
+    if (even) return i * gap;
+    return gap * (1 - Math.pow(0.78, i)) / (1 - 0.78);
+  }
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (en) {
       if (!en.isIntersecting) return;
@@ -91,7 +120,7 @@
       if (k[2]) {
         var group = el.closest(k[2]);
         var mates = group ? Array.prototype.slice.call(group.querySelectorAll(k[0])) : [el];
-        el.style.setProperty('--d', (mates.indexOf(el) * k[3]) + 'ms');
+        el.style.setProperty('--d', Math.round(lag(mates.indexOf(el), k[3], k[4])) + 'ms');
       }
       io.observe(el);
     });

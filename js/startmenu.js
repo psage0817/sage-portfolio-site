@@ -104,6 +104,7 @@
   }
   function setOpen(on, focusFirst) {
     menu.hidden = !on; btn.setAttribute('aria-expanded', String(on));
+    menu.classList.toggle('kb', !!focusFirst);
     if (on) { place(); if (focusFirst) rows(menu.querySelector('.sm-list'))[0].focus(); else menu.focus({ preventScroll: true }); }
     else closeSubs();
   }

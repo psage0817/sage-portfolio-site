@@ -45,7 +45,7 @@ let ctrl=null,loading=false,state='idle',trackIdx=0;
 
 const set=s=>{state=s;views.forEach(v=>{v.dataset.state=s;v.classList.toggle('playing',s==='playing');v.querySelectorAll('[data-record]').forEach(b=>b.setAttribute('aria-pressed',String(s==='playing')))})};
 const mmss=ms=>{const t=Math.max(0,Math.floor((ms||0)/1000));return Math.floor(t/60)+':'+String(t%60).padStart(2,'0')};
-const progress=(p,pos,dur)=>views.forEach(v=>{const b=v.querySelector('.pl-bar i');if(b)b.style.width=Math.max(0,Math.min(1,p))*100+'%';const a=v.querySelector('[data-pl-time]');if(a&&pos!=null)a.textContent=mmss(pos);const z=v.querySelector('[data-pl-dur]');if(z&&dur)z.textContent=mmss(dur)});
+const progress=(p,pos,dur)=>views.forEach(v=>{const b=v.querySelector('.pl-bar i');if(b)b.style.clipPath='inset(0 '+(100-Math.max(0,Math.min(1,p))*100)+'% 0 0 round 99px)';const a=v.querySelector('[data-pl-time]');if(a&&pos!=null)a.textContent=mmss(pos);const z=v.querySelector('[data-pl-dur]');if(z&&dur)z.textContent=mmss(dur)});
 const toast=m=>window.SP&&window.SP.toast(m);
 
 // Spotify's player sits inside the window, invisible until it's needed
