@@ -26,7 +26,7 @@ Then open http://localhost:8000.
 
 ## How it's organised
 
-`css/aero.css` and the shared scripts (`startmenu.js`, `aero.js`, `player.js`) are used on every page, and `sayhi.js` on every page with the drawing window. Each page also has its own stylesheet and script with the same name, for example `strike.html` uses `css/strike.css` and `js/strike.js`. The two case studies share `css/case.css` and `js/case.js`. `css/site.css` is left over from an older version and isn't used.
+`css/aero.css` and the shared scripts (`startmenu.js`, `aero.js`, `player.js`) are used on every page, and `sayhi.js` on every page with the drawing window. Most pages also have their own stylesheet and script, for example `strike.html` uses `css/strike.css` and `js/strike.js`, and the home page uses `js/home.js`. The two case studies share `css/case.css` and `js/case.js`. `css/site.css` is left over from an older version and isn't used.
 
 ```
 css/       aero.css (shared), case.css, softspot.css, strike.css, about.css
