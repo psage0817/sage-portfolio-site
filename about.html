@@ -1,43 +1,193 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="day">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>About Sage Park</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Beth+Ellen&display=swap" rel="stylesheet">
-<!-- Satoshi, the body typeface, from Fontshare (free for personal and commercial use) -->
-<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/site.css">
-<style>
-  .about-top { background: #0B1F4D; color: #fff; border-radius: 0 0 16px 16px; padding: 0 var(--gutter) 96px; }
-  .about-top .nav { position: static; padding-inline: 0; color: #fff; }
-  .about-top h1 { margin: 120px 0 0; font-weight: 400; font-size: clamp(46px, 6vw, 84px); letter-spacing: -0.035em; line-height: 1; }
-  .about-body { padding: 96px 0 160px; color: var(--muted); }
-</style>
+<meta name="description" content="Sage Park is a second-year communication design student at WashU who designs things people use, draws letters and sings a cappella. Experience, education and fine arts work.">
+<script>
+  // Apple devices get SF Pro, their system font; everything else gets Satoshi
+  try { if (/Mac|iPhone|iPad|iPod/.test(navigator.platform || '') || /iPhone|iPad|Macintosh/.test(navigator.userAgent)) document.documentElement.classList.add('apple'); } catch (e) {}
+</script>
+<script>
+  // day or night: what the window on the home page showed in the last few hours, otherwise this device's clock
+  (function () {
+    var th = null;
+    try { var o = JSON.parse(localStorage.getItem('sp-theme')); if (o && Date.now() - o.t < 6 * 3600e3) th = o.v; } catch (e) {}
+    if (!th) { var h = new Date().getHours(); th = h >= 19 || h < 6 ? 'night' : 'day'; }
+    document.documentElement.setAttribute('data-theme', th);
+    // the window opens on arrival (not for people who turn off animations)
+    try { if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('opening'); } catch (e) {}
+  })();
+</script>
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<!-- Satoshi, from Fontshare (free for personal and commercial use) -->
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/aero.css">
+<link rel="stylesheet" href="css/about.css">
 </head>
 <body>
-<header class="about-top">
-  <nav class="nav" aria-label="Main">
-    <div class="nav-links">
-      <a class="link" href="index.html#work">work</a>
-      <a class="link" href="about.html" aria-current="page">about</a>
-      <a class="link" href="index.html#contact">contact</a>
+
+<div class="desk" id="top">
+  <div class="wrap">
+    <section class="about-player chrome" aria-label="About">
+      <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">about · s.park media player</span></div>
+      <div class="menubar">
+        <nav aria-label="Main"><a href="index.html#work">work</a><a href="about.html" aria-current="page">about</a><a href="#contact">contact</a></nav>
+        <span class="clock" aria-label="The time in San Diego">
+          <svg class="chip-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          <svg class="chip-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+          <span data-clock-time>…</span><span class="city">in san diego</span>
+        </span>
+      </div>
+      <div class="screen about-screen">
+        <figure class="me">
+          <img src="img/about/portrait.webp" alt="Sage lying on a white studio floor, typing on a laptop" width="1104" height="1400">
+        </figure>
+        <div class="about-copy">
+          <h1 class="about-hi">hi, i’m sage!</h1>
+          <p class="about-lede">i’m a <mark class="hl">second-year student</mark> at <mark class="hl">washu</mark>, majoring in <mark class="hl">communication design</mark> and minoring in <mark class="hl">psychology</mark> and <mark class="hl">human-computer interaction</mark>.</p>
+          <p class="about-p">art has always been a huge part of my life, whether i’m singing on stage or painting in a studio. i’ve also always been curious about other people, which led me to journalism in high school. as i got older, those two interests came together in design, where i get to be creative and help people at the same time.</p>
+          <p class="about-p">right now i’m most into ui/ux design, editorial design and social media graphics. when i’m not designing, i’m probably with my a cappella group (s.o. sens!), watching video essays, or trying a new cafe.</p>
+        </div>
+      </div>
+      <!-- the s.park record, the same playlist as every other page (player.js plays it), then the contact buttons -->
+      <div class="transport about-transport np" id="contact" data-juke aria-label="My playlist">
+        <div class="np-body">
+          <div class="vinyl" aria-hidden="true"><div class="rec"></div><div class="arm"></div></div>
+          <div><strong class="pl-name">s.park record</strong><span class="pl-sub">21 songs · made for this site</span></div>
+        </div>
+        <div class="btns">
+          <button class="orb" type="button" aria-label="Previous song"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h2.4v14H6zM20 5v14L9.5 12z"/></svg></button>
+          <button class="orb big" type="button" data-record aria-pressed="false" aria-label="Play or pause the playlist"><svg class="ico-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><svg class="ico-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button>
+          <button class="orb" type="button" aria-label="Next song"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.6 5H18v14h-2.4zM4 5l10.5 7L4 19z"/></svg></button>
+        </div>
+        <div class="seek">
+          <span class="lbl" data-pl-time>0:00</span>
+          <div class="pl-bar" aria-hidden="true"><i></i></div>
+          <span class="lbl" data-pl-dur>0:30</span>
+        </div>
+        <div class="cta">
+          <a class="pill primary" href="mailto:sagespark19@gmail.com">email me</a>
+          <a class="pill" href="https://www.linkedin.com/in/sage-park-422842282/" target="_blank" rel="noopener">linkedin</a>
+          <a class="pill" href="#contact">instagram</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<main>
+  <!-- experience: the resume in short, as notes. Each role opens to show what i did. -->
+  <section class="xp wrap" id="experience" aria-label="Experience">
+    <div class="memo xp-memo">
+      <div class="memo-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2l2 2h8.8A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>experience &amp; education</div>
+        <div class="memo-body xp-body">
+        <div class="xp-jobs">
+          <h2 class="xp-label">experience</h2>
+          <ul class="xp-list">
+            <li><details>
+              <summary><span class="xp-what"><b>art director, editorial designer</b><span>Strike Magazine STL</span></span><span class="xp-when">2025–now</span><svg class="xp-chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+              <ul class="xp-more"><li>set the creative vision for issue 12 of the nation’s largest student-run publication, carried through photography, layout and social media</li><li>directed and mentored all four shoot groups</li><li>designed editorial spreads and promotional social graphics</li></ul>
+            </details></li>
+            <li><details>
+              <summary><span class="xp-what"><b>marketing communications intern</b><span>Goodwill Industries of San Diego</span></span><span class="xp-when">summer 2026</span><svg class="xp-chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+              <ul class="xp-more"><li>created social content for Goodwill’s mission, workforce programs, community services and stores</li><li>wrote and edited copy for social posts, newsletters, the website and internal communications</li><li>photographed and filmed community impact stories and events</li><li>placed through Bank of America Student Leaders</li></ul>
+            </details></li>
+            <li><details>
+              <summary><span class="xp-what"><b>ux designer</b><span>WashUX</span></span><span class="xp-when">2025–now</span><svg class="xp-chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+              <ul class="xp-more"><li>redesigned PitchBook’s corporate events tracking feature with a student team, mentored by a PitchBook senior product designer</li><li>redesigned the WashU Student Health Center appointment booking flow and portal</li><li>led a team of three at the 36-hour WashUX Designathon to make softspot</li></ul>
+            </details></li>
+            <li><details>
+              <summary><span class="xp-what"><b>creative director, pr &amp; design chair</b><span>Sensasians A Cappella</span></span><span class="xp-when">2026–now</span><svg class="xp-chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+              <ul class="xp-more"><li>develop concepts for concerts, photoshoots and music videos, directing styling, wardrobe and set design</li><li>design posters and social carousels</li><li>run the group’s social media and short-form video</li></ul>
+            </details></li>
+          </ul>
+        </div>
+        <div class="xp-edu">
+          <h2 class="xp-label">education</h2>
+          <h3 class="xp-school">Washington University in St. Louis</h3>
+          <p>bfa in communication design, minors in psychology and human-computer interaction</p>
+          <p class="xp-class">class of 2029</p>
+          <a class="read" href="mailto:sagespark19@gmail.com?subject=Resume%20request">resume available on request <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div>
+      </div>
     </div>
-    <a class="wordmark" href="index.html" aria-label="Sage Park, home">s.park</a>
-  </nav>
-  <h1>about</h1>
-</header>
-<main class="wrap about-body">
-  <p>[your about page layout goes here]</p>
+  </section>
+
+  <section class="roll" id="currently" data-roll aria-labelledby="roll-title">
+    <div class="wrap roll-head">
+      <h2 id="roll-title">currently...</h2>
+      <button class="orb" type="button" data-roll-pause aria-pressed="true" aria-label="Pause the photos"><svg class="ico-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><svg class="ico-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button>
+    </div>
+    <div class="roll-screen">
+      <div class="roll-view" tabindex="0" aria-label="Photos: use the arrow keys to move through them"></div>
+      <button class="orb roll-arrow l" type="button" data-roll-step="-1" aria-label="Earlier photos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <button class="orb roll-arrow r" type="button" data-roll-step="1" aria-label="Later photos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+  </section>
+
+  <!-- etc: paintings, drawings and installations -->
+  <section class="etc wrap" id="etc" aria-labelledby="etc-title">
+    <div class="sec-head">
+      <h2 id="etc-title">etc</h2>
+      <p>paintings, drawings and installations. open a few and move them around.</p>
+    </div>
+    <!-- a small desktop: the folder, and the pieces you open as windows you can drag -->
+    <div class="md" data-md>
+      <div class="md-folder" data-mwin style="--x:22;--y:22"><div class="etc-stage" data-etc></div></div>
+    </div>
+  </section>
 </main>
+
 <footer class="foot">
-  <div class="foot-inner wrap">
+  <div class="wrap">
     <span>© 2026 sage park</span>
-    <p></p>
-    <a class="back link" href="#top">back to the top</a>
+    <span>designed in figma, [built with claude code]</span>
+    <a href="#top">back to the top</a>
   </div>
 </footer>
+
+<div class="toast" role="status" aria-live="polite"></div>
+
+<script>
+  /* the start menu: what's in it on this page */
+  window.SPMenu = [
+    { label: 'work', key: 'w', icon: 'folder', sub: [
+      { label: 'invetty', icon: 'img:img/invetty-logo.webp', href: 'invetty.html', note: 'case study' },
+      { label: 'softspot', icon: 'img:img/softspot/icon.webp', href: 'softspot.html', note: 'case study' },
+      { label: 'strike magazine stl', icon: 'img:img/strike/social/avatar.webp', href: 'strike.html', note: 'issues' },
+      { label: 'social media marketing', icon: 'folder-dim', disabled: true, note: 'coming soon' },
+      { label: 'type collection', icon: 'folder-dim', disabled: true, note: 'coming soon' },
+      'sep',
+      { label: 'all work', icon: 'folder', href: 'index.html#work' } ] },
+    { label: 'about', key: 'a', icon: 'person', href: '#top', current: true },
+    { label: 'this page', key: 's', icon: 'doc', sub: [
+      { label: 'experience & education', icon: 'case', href: '#experience' },
+      { label: 'currently...', icon: 'camera', href: '#currently' },
+      { label: 'etc', icon: 'folder', href: '#etc' } ] },
+    { label: 'playlist', key: 'p', icon: 'music', href: '#contact' },
+    { label: 'contact', key: 'c', icon: 'mail', sub: [
+      { label: 'email me', icon: 'mail', href: 'mailto:sagespark19@gmail.com' },
+      { label: 'copy my email', icon: 'copy', action: 'copy-email' },
+      { label: 'linkedin', icon: 'case', href: 'https://www.linkedin.com/in/sage-park-422842282/', external: true },
+      { label: 'instagram', icon: 'camera', href: '#contact' } ] },
+    'sep',
+    { label: 'home', key: 'h', icon: 'home', href: 'index.html' },
+    { label: 'back to the top', key: 'b', icon: 'up', href: '#top' }
+  ];
+  window.SPMenuActions = {
+    'copy-email': function () {
+      var t = function () { if (window.SP) SP.toast('copied sagespark19@gmail.com'); };
+      try { navigator.clipboard.writeText('sagespark19@gmail.com').then(t, function () { if (window.SP) SP.toast('sagespark19@gmail.com'); }); } catch (e) {}
+    }
+  };
+</script>
+<script src="js/startmenu.js"></script>
+<script src="js/aero.js"></script>
+<script src="js/player.js"></script>
+<script src="js/about.js"></script>
+<script src="js/etc.js"></script>
+<script src="js/minidesk.js"></script>
 </body>
 </html>
