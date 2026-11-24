@@ -335,7 +335,7 @@ button { font: inherit; color: inherit; }
 }
 .projects > .proj:nth-child(even) .mini { grid-column: 5 / 13; }
 .projects > .proj:nth-child(even) .memo { grid-column: 1 / 6; margin-left: 0; margin-right: calc(var(--ov) * -1 + 48px); }
-.soon-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; align-items: start; }
+.soon-row { display: grid; grid-template-columns: repeat(2, minmax(0, 380px)); justify-content: center; gap: 28px; align-items: start; }
 .soon-row .proj { display: flex; flex-direction: column; align-items: stretch; }
 .soon-row .mini { padding-bottom: 10px; }
 .soon-row .mini-screen { aspect-ratio: 16 / 10; border-radius: 4px; }

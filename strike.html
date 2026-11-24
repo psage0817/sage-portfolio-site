@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en" data-theme="day">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>strike magazine stl, by Sage Park</title>
+<meta name="description" content="Strike Magazine St. Louis: art director for issue 12, Reverie, and graphic designer for issues 10 and 11, plus the social graphics, by Sage Park.">
+<script>
+  // Apple devices get SF Pro, their system font; everything else gets Satoshi
+  try { if (/Mac|iPhone|iPad|iPod/.test(navigator.platform || '') || /iPhone|iPad|Macintosh/.test(navigator.userAgent)) document.documentElement.classList.add('apple'); } catch (e) {}
+</script>
+<script>
+  // day or night: what the window on the home page showed in the last few hours, otherwise this device's clock
+  (function () {
+    var th = null;
+    try { var o = JSON.parse(localStorage.getItem('sp-theme')); if (o && Date.now() - o.t < 6 * 3600e3) th = o.v; } catch (e) {}
+    if (!th) { var h = new Date().getHours(); th = h >= 19 || h < 6 ? 'night' : 'day'; }
+    document.documentElement.setAttribute('data-theme', th);
+  })();
+</script>
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<!-- Satoshi, from Fontshare (free for personal and commercial use) -->
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/aero.css">
+<link rel="stylesheet" href="css/case.css">
+<link rel="stylesheet" href="css/strike.css">
+</head>
+<body>
+
+<div class="desk" id="top">
+  <div class="wrap">
+    <section class="case-player chrome strike-hero" aria-label="strike magazine stl">
+      <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">strike magazine stl · issues 10–12 · s.park media player</span></div>
+      <div class="menubar">
+        <nav aria-label="Main"><a href="index.html#work">work</a><a href="about.html">about</a><a href="#contact">contact</a></nav>
+        <a class="back" href="index.html#work"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>all work</a>
+      </div>
+      <!-- the three issues dropped on a table, one photo at a time; each cover opens its issue below -->
+      <div class="screen case-screen covers-stage" data-covers></div>
+      <div class="transport">
+        <div class="deck">
+          <div class="btns"><button class="orb big" type="button" data-redrop aria-label="Drop the covers again"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5"/></svg></button></div>
+          <div class="hero-copy">
+            <h1>strike magazine stl</h1>
+            <p class="sub">art director for issue 12, graphic designer for issues 10 and 11</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="case-layout wrap">
+<aside class="side" data-title="strike" aria-label="Issues"></aside>
+<main class="case">
+  <section class="sec issue" id="issue-12" data-name="issue 12 · reverie" data-icon="view" aria-labelledby="h-12">
+    <div class="issue-head"><h2 id="h-12">issue 12 <span>reverie</span></h2><div class="issue-meta"><p>art director · 86 pages</p><a class="issuu" href="https://issuu.com/strike_magazine/docs/strike_st._louis_issue_12_reverie" target="_blank" rel="noopener">read the whole issue on issuu<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a></div></div>
+    <div class="viewer chrome mag-win" data-issue="12">
+      <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">issue 12: reverie · s.park media player</span></div>
+      <div class="screen mag-stage" role="img" aria-label="Strike Magazine St. Louis issue 12, reverie, shown as a printed copy on a table, flipping through its spreads"></div>
+      <div class="transport">
+        <div class="seek">
+          <span class="lbl mag-lbl" data-mcur>p. 1</span>
+          <input class="range" type="range" min="0" max="1" step="1" value="0" data-mseek aria-label="Go to a spread in issue 12">
+          <span class="lbl mag-lbl r" data-mch>cover</span>
+        </div>
+        <div class="deck">
+          <div class="btns"><button class="orb" type="button" data-mprev aria-label="Previous spread"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h2.4v14H6zM20 5v14L9.5 12z"/></svg></button><button class="orb big" type="button" data-mplay aria-pressed="false" aria-label="Play or pause issue 12"><svg class="ico-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><svg class="ico-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button><button class="orb" type="button" data-mnext aria-label="Next spread"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.6 5H18v14h-2.4zM4 5l10.5 7L4 19z"/></svg></button></div>
+          <div class="chips" role="group" aria-label="Stories in issue 12"><button type="button" data-jump="12">nostalgia<small>12–27</small></button><button type="button" data-jump="28">narcissus<small>28–47</small></button><button type="button" data-jump="48">sonder<small>48–71</small></button><button type="button" data-jump="72">reverie<small>72–85</small></button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="sec issue" id="issue-11" data-name="issue 11 · the classics" data-icon="star" aria-labelledby="h-11">
+    <div class="issue-head"><h2 id="h-11">issue 11 <span>the classics</span></h2><div class="issue-meta"><p>graphic designer: the canon, haze code</p><a class="issuu" href="https://issuu.com/strike_magazine/docs/strike_magazine_st._louis_issue_11_the_classics_" target="_blank" rel="noopener">read the whole issue on issuu<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a></div></div>
+    <div class="viewer chrome mag-win" data-issue="11" data-pages="10-25,44-47">
+      <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">issue 11: the classics · s.park media player</span></div>
+      <div class="screen mag-stage" role="img" aria-label="My spreads from Strike Magazine St. Louis issue 11 (the canon and haze code), the classics, shown as a printed copy on a table, flipping through its spreads"></div>
+      <div class="transport">
+        <div class="seek">
+          <span class="lbl mag-lbl" data-mcur>p. 1</span>
+          <input class="range" type="range" min="0" max="1" step="1" value="0" data-mseek aria-label="Go to a spread in issue 11">
+          <span class="lbl mag-lbl r" data-mch>cover</span>
+        </div>
+        <div class="deck">
+          <div class="btns"><button class="orb" type="button" data-mprev aria-label="Previous spread"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h2.4v14H6zM20 5v14L9.5 12z"/></svg></button><button class="orb big" type="button" data-mplay aria-pressed="false" aria-label="Play or pause issue 11"><svg class="ico-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><svg class="ico-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button><button class="orb" type="button" data-mnext aria-label="Next spread"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.6 5H18v14h-2.4zM4 5l10.5 7L4 19z"/></svg></button></div>
+          <div class="chips" role="group" aria-label="My stories in issue 11"><button type="button" data-jump="10">the canon<small>10–25</small></button><button type="button" data-jump="44">haze code<small>44–47</small></button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="sec issue" id="issue-10" data-name="issue 10 · sapologie" data-icon="music" aria-labelledby="h-10">
+    <div class="issue-head"><h2 id="h-10">issue 10 <span>sapologie</span></h2><div class="issue-meta"><p>graphic designer: to the salon</p><a class="issuu" href="https://issuu.com/strike_magazine/docs/strike_magazine_st._louis_issue_10_sapologie" target="_blank" rel="noopener">read the whole issue on issuu<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a></div></div>
+    <div class="viewer chrome mag-win" data-issue="10" data-pages="58-71">
+      <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">issue 10: sapologie · s.park media player</span></div>
+      <div class="screen mag-stage" role="img" aria-label="My spreads from Strike Magazine St. Louis issue 10 (to the salon), sapologie, shown as a printed copy on a table, flipping through its spreads"></div>
+      <div class="transport">
+        <div class="seek">
+          <span class="lbl mag-lbl" data-mcur>p. 1</span>
+          <input class="range" type="range" min="0" max="1" step="1" value="0" data-mseek aria-label="Go to a spread in issue 10">
+          <span class="lbl mag-lbl r" data-mch>cover</span>
+        </div>
+        <div class="deck">
+          <div class="btns"><button class="orb" type="button" data-mprev aria-label="Previous spread"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h2.4v14H6zM20 5v14L9.5 12z"/></svg></button><button class="orb big" type="button" data-mplay aria-pressed="false" aria-label="Play or pause issue 10"><svg class="ico-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><svg class="ico-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button><button class="orb" type="button" data-mnext aria-label="Next spread"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.6 5H18v14h-2.4zM4 5l10.5 7L4 19z"/></svg></button></div>
+          <div class="chips" role="group" aria-label="My stories in issue 10"><button type="button" data-jump="58">to the salon<small>58–71</small></button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="sec" id="social" data-name="social graphics" data-icon="camera" aria-labelledby="h-social">
+    <div class="issue-head"><h2 id="h-social">social graphics</h2><div class="issue-meta"><p>graphic designer</p></div></div>
+    <div class="ig-grid">
+      <article class="ig chrome" data-post aria-label="Instagram post from august 5, 2026">
+        <header class="ig-head"><img class="ig-av" src="img/strike/social/avatar.webp" alt="" width="120" height="120"><span class="ig-who"><a class="ig-handle" href="https://www.instagram.com/strikemagazinestl/" target="_blank" rel="noopener">strikemagazinestl</a><small>st. louis, missouri</small></span><span class="ig-more" aria-hidden="true"><i></i><i></i><i></i></span></header>
+        <div class="ig-media post-screen"><div class="post-track"><img src="img/strike/social/hiring.webp" alt="The "Strike STL is hiring" poster, taped to a pole on a St. Louis sidewalk, with tear-off "apply now" tabs" width="960" height="1200" draggable="false"></div></div>
+        <div class="ig-paper"><div class="ig-bar">
+          <button class="ig-btn ig-like" type="button" aria-pressed="false" aria-label="Like"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 8 3.4 4.5 7 4.5c2.1 0 3.7 1.2 5 3 1.3-1.8 2.9-3 5-3 3.6 0 5.6 3.5 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z"/></svg></button>
+          <a class="ig-btn" href="https://www.instagram.com/p/DbqxG7KiX-l/" target="_blank" rel="noopener" aria-label="Comments, on Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.7 16.5A9 9 0 1 0 17 20.1L21.5 21z"/></svg></a>
+          <a class="ig-btn" href="https://www.instagram.com/p/DbqxG7KiX-l/" target="_blank" rel="noopener" aria-label="Share, on Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.5 3 9.6 10.2M21.5 3l-7 18-4.9-10.8L2.5 6.2z"/></svg></a>
+          <button class="ig-btn ig-save" type="button" aria-pressed="false" aria-label="Save"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21.5 12 15l-7 6.5V3.5h14z"/></svg></button>
+        </div>
+        <div class="ig-cap"><p><b>strikemagazinestl</b> STRIKE STL WANTS YOU!<br><br>Apply for Strike’s twelfth issue. Link in bio.<br>Due August 24th.<br><br>Graphic by <a href="https://www.instagram.com/qkrtjgus19/" target="_blank" rel="noopener">@qkrtjgus19</a><br><br>⚡️</p><button class="ig-more-btn" type="button" hidden>more</button></div>
+        <a class="ig-view" href="https://www.instagram.com/p/DbqxG7KiX-l/" target="_blank" rel="noopener">view on instagram<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+        <time class="ig-date" datetime="2026-08-05">august 5, 2026</time></div>
+      </article>
+      <article class="ig chrome" data-post aria-label="Instagram post from september 28, 2026">
+        <header class="ig-head"><img class="ig-av" src="img/strike/social/avatar.webp" alt="" width="120" height="120"><span class="ig-who"><a class="ig-handle" href="https://www.instagram.com/strikemagazinestl/" target="_blank" rel="noopener">strikemagazinestl</a><small>st. louis, missouri</small></span><span class="ig-more" aria-hidden="true"><i></i><i></i><i></i></span></header>
+        <div class="ig-media post-screen" role="group" aria-roledescription="carousel" aria-label="7 slides"><div class="post-track"><img src="img/strike/social/staff-1.webp" alt="Issue 12 staff list, the cover slide" width="960" height="1200" draggable="false"><img src="img/strike/social/staff-2.webp" alt="Executive" width="960" height="1200" draggable="false" loading="lazy"><img src="img/strike/social/staff-3.webp" alt="Creative" width="960" height="1200" draggable="false" loading="lazy"><img src="img/strike/social/staff-4.webp" alt="Styling" width="960" height="1200" draggable="false" loading="lazy"><img src="img/strike/social/staff-5.webp" alt="Photography" width="960" height="1200" draggable="false" loading="lazy"><img src="img/strike/social/staff-6.webp" alt="Writing" width="960" height="1200" draggable="false" loading="lazy"><img src="img/strike/social/staff-7.webp" alt="Business" width="960" height="1200" draggable="false" loading="lazy"></div><span class="ig-count" aria-hidden="true" data-pcount>1/7</span><button class="ig-arrow orb l" type="button" data-pprev aria-label="Previous slide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button><button class="ig-arrow orb r" type="button" data-pnext aria-label="Next slide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 6 6 6-6 6"/></svg></button><div class="ig-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+        <div class="ig-paper"><div class="ig-bar">
+          <button class="ig-btn ig-like" type="button" aria-pressed="false" aria-label="Like"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 8 3.4 4.5 7 4.5c2.1 0 3.7 1.2 5 3 1.3-1.8 2.9-3 5-3 3.6 0 5.6 3.5 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z"/></svg></button>
+          <a class="ig-btn" href="https://www.instagram.com/p/Ddz7w_ljEQS/" target="_blank" rel="noopener" aria-label="Comments, on Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.7 16.5A9 9 0 1 0 17 20.1L21.5 21z"/></svg></a>
+          <a class="ig-btn" href="https://www.instagram.com/p/Ddz7w_ljEQS/" target="_blank" rel="noopener" aria-label="Share, on Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.5 3 9.6 10.2M21.5 3l-7 18-4.9-10.8L2.5 6.2z"/></svg></a>
+          <button class="ig-btn ig-save" type="button" aria-pressed="false" aria-label="Save"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21.5 12 15l-7 6.5V3.5h14z"/></svg></button>
+        </div>
+        <div class="ig-cap"><p><b>strikemagazinestl</b> Introducing the creatives behind Strike Issue 12… 🩵🌀<br><br>Graphic by <a href="https://www.instagram.com/qkrtjgus19/" target="_blank" rel="noopener">@qkrtjgus19</a><br><br><a href="https://www.instagram.com/explore/tags/strikemagazine/" target="_blank" rel="noopener">#strikemagazine</a> <a href="https://www.instagram.com/explore/tags/strikemagazinestl/" target="_blank" rel="noopener">#strikemagazinestl</a></p><button class="ig-more-btn" type="button" hidden>more</button></div>
+        <a class="ig-view" href="https://www.instagram.com/p/Ddz7w_ljEQS/" target="_blank" rel="noopener">view on instagram<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+        <time class="ig-date" datetime="2026-09-28">september 28, 2026</time></div>
+      </article>
+      <article class="ig chrome" data-post aria-label="Instagram post from october 8, 2026">
+        <header class="ig-head"><img class="ig-av" src="img/strike/social/avatar.webp" alt="" width="120" height="120"><span class="ig-who"><a class="ig-handle" href="https://www.instagram.com/strikemagazinestl/" target="_blank" rel="noopener">strikemagazinestl</a><small>st. louis, missouri</small></span><span class="ig-more" aria-hidden="true"><i></i><i></i><i></i></span></header>
+        <div class="ig-media post-screen"><div class="post-track"><img src="img/strike/social/runway.webp" alt="F26 Runway: designer applications for the fall 2026 runway show, due November 1st" width="960" height="1200" draggable="false"></div></div>
+        <div class="ig-paper"><div class="ig-bar">
+          <button class="ig-btn ig-like" type="button" aria-pressed="false" aria-label="Like"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 8 3.4 4.5 7 4.5c2.1 0 3.7 1.2 5 3 1.3-1.8 2.9-3 5-3 3.6 0 5.6 3.5 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z"/></svg></button>
+          <a class="ig-btn" href="https://www.instagram.com/p/DePvxxPS0m5/" target="_blank" rel="noopener" aria-label="Comments, on Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.7 16.5A9 9 0 1 0 17 20.1L21.5 21z"/></svg></a>
+          <a class="ig-btn" href="https://www.instagram.com/p/DePvxxPS0m5/" target="_blank" rel="noopener" aria-label="Share, on Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.5 3 9.6 10.2M21.5 3l-7 18-4.9-10.8L2.5 6.2z"/></svg></a>
+          <button class="ig-btn ig-save" type="button" aria-pressed="false" aria-label="Save"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21.5 12 15l-7 6.5V3.5h14z"/></svg></button>
+        </div>
+        <div class="ig-cap"><p><b>strikemagazinestl</b> Designer applications for our annual fashion show are now open!<br>Apply now through the link in our bio.<br>Due November 1st!<br><br>Photo &amp; dress: <a href="https://www.instagram.com/maxineroederdesign/" target="_blank" rel="noopener">@maxineroederdesign</a><br>Graphic design: <a href="https://www.instagram.com/qkrtjgus19/" target="_blank" rel="noopener">@qkrtjgus19</a><br>Model: <a href="https://www.instagram.com/paris_nix/" target="_blank" rel="noopener">@paris_nix</a><br><br><a href="https://www.instagram.com/explore/tags/strike/" target="_blank" rel="noopener">#strike</a> <a href="https://www.instagram.com/explore/tags/fashion/" target="_blank" rel="noopener">#fashion</a> <a href="https://www.instagram.com/explore/tags/designer/" target="_blank" rel="noopener">#designer</a> <a href="https://www.instagram.com/explore/tags/fashionshow/" target="_blank" rel="noopener">#fashionshow</a></p><button class="ig-more-btn" type="button" hidden>more</button></div>
+        <a class="ig-view" href="https://www.instagram.com/p/DePvxxPS0m5/" target="_blank" rel="noopener">view on instagram<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+        <time class="ig-date" datetime="2026-10-08">october 8, 2026</time></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- up next: back around to the first case study -->
+  <a class="upnext chrome" href="invetty.html">
+    <span class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">up next · s.park media player</span></span>
+    <span class="upnext-bar">
+      <span class="orb big" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+      <img src="img/invetty-logo.webp" alt="" width="512" height="512">
+      <span class="upnext-t"><b>invetty</b><span>an app that lets event guests share dietary needs privately</span></span>
+      <span class="back">read the case study <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </span>
+  </a>
+</main>
+</div>
+
+  <section class="lobby wrap" id="contact" aria-labelledby="hi-title">
+    <h2 class="sr-only" id="hi-title">let’s say hi</h2>
+    <div class="hi-grid">
+      <!-- a paint window: "let's say hi" is written on in my handwriting, then anyone can draw on it -->
+      <div class="paint chrome" data-paint>
+        <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">untitled · s.park paint</span></div>
+        <div class="paint-body">
+          <div class="tools" role="toolbar" aria-label="Drawing tools"><button class="tool" type="button" data-tool="pencil" aria-pressed="true" aria-label="pencil"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.2-4.6L15.6 5a2 2 0 0 1 2.8 0l.6.6a2 2 0 0 1 0 2.8L8.6 18.8z" fill="#F7C64A" stroke="#9A6B0E" stroke-width=".9" stroke-linejoin="round"/><path d="M4 20l1.2-4.6 3.4 3.4z" fill="#F1D9B5" stroke="#9A6B0E" stroke-width=".9" stroke-linejoin="round"/><path d="M4 20l.5-1.9 1.4 1.4z" fill="#2B2B2B"/><path d="M14.4 6.2l3.4 3.4" stroke="#E07B8A" stroke-width="2.4"/></svg></button><button class="tool" type="button" data-tool="brush" aria-pressed="false" aria-label="brush"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 10.5 20 4a1.4 1.4 0 0 1 2 2l-6.5 6.5z" fill="#B07A45" stroke="#6E4520" stroke-width=".8"/><path d="M12.6 11.4l2 2-1.2 1.2-2-2z" fill="#C3CCD5" stroke="#6F7C88" stroke-width=".7"/><path d="M11.2 12.8l2 2c-.6 2.9-2.8 5-6.9 5.4-.8.1-1.6-.3-1.3-.9 1.3-2.4 1.1-5.1 6.2-6.5z" fill="#1F3A93" stroke="#14275F" stroke-width=".7"/></svg></button><button class="tool" type="button" data-tool="spray" aria-pressed="false" aria-label="spray"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="9" width="8" height="12.5" rx="2" fill="#E0412F" stroke="#8E2117" stroke-width=".8"/><rect x="7.6" y="6" width="4.8" height="3.4" rx=".8" fill="#C3CCD5" stroke="#6F7C88" stroke-width=".7"/><rect x="6.6" y="12" width="6.8" height="4" fill="#fff" opacity=".85"/><g fill="#1F3A93"><circle cx="17" cy="5" r=".9"/><circle cx="19.5" cy="7" r=".9"/><circle cx="18" cy="9" r=".9"/><circle cx="20.5" cy="4" r=".7"/><circle cx="21" cy="9.6" r=".7"/></g></svg></button><button class="tool" type="button" data-tool="eraser" aria-pressed="false" aria-label="eraser"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.6 15.4 13 6a1.8 1.8 0 0 1 2.5 0l4.4 4.4a1.8 1.8 0 0 1 0 2.5L12.8 20H8.2z" fill="#F5A9BE" stroke="#A8536B" stroke-width=".9" stroke-linejoin="round"/><path d="M3.6 15.4 8.2 20h4.6l2.1-2.1-6.6-6.6z" fill="#F2F4F7" stroke="#A8536B" stroke-width=".9" stroke-linejoin="round"/><path d="M8 20h12" stroke="#7C8088" stroke-width="1" stroke-linecap="round"/></svg></button><span class="gap" aria-hidden="true"></span><button class="tool" type="button" data-act="undo" aria-label="Undo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7H15a5 5 0 0 1 0 10h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M9.5 3.5 5.8 7l3.7 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="tool" type="button" data-act="clear" aria-label="Clear the canvas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h8l4 4V20a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1z" fill="#fff" stroke="#5E7C98" stroke-width=".9"/><path d="M14 3.5v4h4" fill="#E3EAF1" stroke="#5E7C98" stroke-width=".9" stroke-linejoin="round"/><path d="m9 12 5 5m0-5-5 5" stroke="#E0412F" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>
+          <div class="paper"><canvas aria-label="A drawing canvas with “let’s say hi” handwritten on it. Draw on it with your mouse or finger."></canvas></div>
+        </div>
+        <div class="palette" role="group" aria-label="Colours"><span class="cur" aria-hidden="true"><i></i></span><div class="swatches-row"><button class="sw" type="button" data-c="#1A1A1A" aria-label="black" aria-pressed="false"></button><button class="sw" type="button" data-c="#1F3A93" aria-label="ink blue" aria-pressed="true"></button><button class="sw" type="button" data-c="#1A9FDB" aria-label="sky blue" aria-pressed="false"></button><button class="sw" type="button" data-c="#5DB83D" aria-label="green" aria-pressed="false"></button><button class="sw" type="button" data-c="#FFC93C" aria-label="yellow" aria-pressed="false"></button><button class="sw" type="button" data-c="#F2A33A" aria-label="orange" aria-pressed="false"></button><button class="sw" type="button" data-c="#E0412F" aria-label="red" aria-pressed="false"></button><button class="sw" type="button" data-c="#FFFFFF" aria-label="white" aria-pressed="false"></button><button class="sw" type="button" data-c="#7C8088" aria-label="grey" aria-pressed="false"></button><button class="sw" type="button" data-c="#8A5E34" aria-label="brown" aria-pressed="false"></button><button class="sw" type="button" data-c="#F5A9BE" aria-label="pink" aria-pressed="false"></button><button class="sw" type="button" data-c="#9DA8F5" aria-label="periwinkle" aria-pressed="false"></button><button class="sw" type="button" data-c="#9FE0C4" aria-label="mint" aria-pressed="false"></button><button class="sw" type="button" data-c="#9CD3EA" aria-label="pale blue" aria-pressed="false"></button></div></div>
+        <div class="statusbar"><span data-hint>pencil: drag to draw</span><span data-xy></span></div>
+      </div>
+      <div class="hi-side">
+        <div class="memo hi-memo">
+          <div class="memo-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2l2 2h8.8A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>contact</div>
+          <div class="memo-body">
+            <a class="email" href="mailto:sagespark19@gmail.com">sagespark19@gmail.com</a>
+</main>
+</div>
+
+  <section class="lobby wrap" id="contact" aria-labelledby="hi-title">
+    <h2 class="sr-only" id="hi-title">let’s say hi</h2>
+    <div class="hi-grid">
+      <!-- a paint window: "let's say hi" is written on in my handwriting, then anyone can draw on it -->
+      <div class="paint chrome" data-paint>
+        <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">untitled · s.park paint</span></div>
+        <div class="paint-body">
+          <div class="tools" role="toolbar" aria-label="Drawing tools"><button class="tool" type="button" data-tool="pencil" aria-pressed="true" aria-label="pencil"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.2-4.6L15.6 5a2 2 0 0 1 2.8 0l.6.6a2 2 0 0 1 0 2.8L8.6 18.8z" fill="#F7C64A" stroke="#9A6B0E" stroke-width=".9" stroke-linejoin="round"/><path d="M4 20l1.2-4.6 3.4 3.4z" fill="#F1D9B5" stroke="#9A6B0E" stroke-width=".9" stroke-linejoin="round"/><path d="M4 20l.5-1.9 1.4 1.4z" fill="#2B2B2B"/><path d="M14.4 6.2l3.4 3.4" stroke="#E07B8A" stroke-width="2.4"/></svg></button><button class="tool" type="button" data-tool="brush" aria-pressed="false" aria-label="brush"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 10.5 20 4a1.4 1.4 0 0 1 2 2l-6.5 6.5z" fill="#B07A45" stroke="#6E4520" stroke-width=".8"/><path d="M12.6 11.4l2 2-1.2 1.2-2-2z" fill="#C3CCD5" stroke="#6F7C88" stroke-width=".7"/><path d="M11.2 12.8l2 2c-.6 2.9-2.8 5-6.9 5.4-.8.1-1.6-.3-1.3-.9 1.3-2.4 1.1-5.1 6.2-6.5z" fill="#1F3A93" stroke="#14275F" stroke-width=".7"/></svg></button><button class="tool" type="button" data-tool="spray" aria-pressed="false" aria-label="spray"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="9" width="8" height="12.5" rx="2" fill="#E0412F" stroke="#8E2117" stroke-width=".8"/><rect x="7.6" y="6" width="4.8" height="3.4" rx=".8" fill="#C3CCD5" stroke="#6F7C88" stroke-width=".7"/><rect x="6.6" y="12" width="6.8" height="4" fill="#fff" opacity=".85"/><g fill="#1F3A93"><circle cx="17" cy="5" r=".9"/><circle cx="19.5" cy="7" r=".9"/><circle cx="18" cy="9" r=".9"/><circle cx="20.5" cy="4" r=".7"/><circle cx="21" cy="9.6" r=".7"/></g></svg></button><button class="tool" type="button" data-tool="eraser" aria-pressed="false" aria-label="eraser"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.6 15.4 13 6a1.8 1.8 0 0 1 2.5 0l4.4 4.4a1.8 1.8 0 0 1 0 2.5L12.8 20H8.2z" fill="#F5A9BE" stroke="#A8536B" stroke-width=".9" stroke-linejoin="round"/><path d="M3.6 15.4 8.2 20h4.6l2.1-2.1-6.6-6.6z" fill="#F2F4F7" stroke="#A8536B" stroke-width=".9" stroke-linejoin="round"/><path d="M8 20h12" stroke="#7C8088" stroke-width="1" stroke-linecap="round"/></svg></button><span class="gap" aria-hidden="true"></span><button class="tool" type="button" data-act="undo" aria-label="Undo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7H15a5 5 0 0 1 0 10h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M9.5 3.5 5.8 7l3.7 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="tool" type="button" data-act="clear" aria-label="Clear the canvas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h8l4 4V20a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1z" fill="#fff" stroke="#5E7C98" stroke-width=".9"/><path d="M14 3.5v4h4" fill="#E3EAF1" stroke="#5E7C98" stroke-width=".9" stroke-linejoin="round"/><path d="m9 12 5 5m0-5-5 5" stroke="#E0412F" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>
+          <div class="paper"><canvas aria-label="A drawing canvas with “let’s say hi” handwritten on it. Draw on it with your mouse or finger."></canvas></div>
+        </div>
+        <div class="palette" role="group" aria-label="Colours"><span class="cur" aria-hidden="true"><i></i></span><div class="swatches-row"><button class="sw" type="button" data-c="#1A1A1A" aria-label="black" aria-pressed="false"></button><button class="sw" type="button" data-c="#1F3A93" aria-label="ink blue" aria-pressed="true"></button><button class="sw" type="button" data-c="#1A9FDB" aria-label="sky blue" aria-pressed="false"></button><button class="sw" type="button" data-c="#5DB83D" aria-label="green" aria-pressed="false"></button><button class="sw" type="button" data-c="#FFC93C" aria-label="yellow" aria-pressed="false"></button><button class="sw" type="button" data-c="#F2A33A" aria-label="orange" aria-pressed="false"></button><button class="sw" type="button" data-c="#E0412F" aria-label="red" aria-pressed="false"></button><button class="sw" type="button" data-c="#FFFFFF" aria-label="white" aria-pressed="false"></button><button class="sw" type="button" data-c="#7C8088" aria-label="grey" aria-pressed="false"></button><button class="sw" type="button" data-c="#8A5E34" aria-label="brown" aria-pressed="false"></button><button class="sw" type="button" data-c="#F5A9BE" aria-label="pink" aria-pressed="false"></button><button class="sw" type="button" data-c="#9DA8F5" aria-label="periwinkle" aria-pressed="false"></button><button class="sw" type="button" data-c="#9FE0C4" aria-label="mint" aria-pressed="false"></button><button class="sw" type="button" data-c="#9CD3EA" aria-label="pale blue" aria-pressed="false"></button></div></div>
+        <div class="statusbar"><span data-hint>pencil: drag to draw</span><span data-xy></span></div>
+      </div>
+      <div class="hi-side">
+        <div class="memo hi-memo">
+          <div class="memo-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2l2 2h8.8A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>contact</div>
+          <div class="memo-body">
+            <a class="email" href="mailto:sagespark19@gmail.com">sagespark19@gmail.com</a>
+            <div class="cta">
+              <a class="pill primary" href="mailto:sagespark19@gmail.com">email me</a>
+              <a class="pill" href="https://www.linkedin.com/in/sage-park-422842282/" target="_blank" rel="noopener">linkedin</a>
+              <a class="pill" href="#contact">instagram</a>
+            </div>
+          </div>
+        </div>
+        <!-- my playlist, as its own little player -->
+        <div class="np chrome">
+          <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">now playing · s.park media player</span></div>
+          <div class="np-body">
+            <div class="vinyl" aria-hidden="true"><div class="rec"></div><div class="arm"></div></div>
+            <div>
+              <strong class="pl-name">s.park record</strong>
+              <span class="pl-sub">21 songs · made for this site</span>
+            </div>
+          </div>
+          <div class="transport" data-juke aria-label="My playlist">
+            <div class="seek">
+              <span class="lbl" data-pl-time>0:00</span>
+              <div class="pl-bar" aria-hidden="true"><i></i></div>
+              <span class="lbl" data-pl-dur>0:30</span>
+            </div>
+            <div class="deck">
+              <div class="btns">
+                <button class="orb" type="button" aria-label="Previous song"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h2.4v14H6zM20 5v14L9.5 12z"/></svg></button>
+                <button class="orb big" type="button" data-record aria-pressed="false" aria-label="Play or pause the playlist"><svg class="ico-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><svg class="ico-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button>
+                <button class="orb" type="button" aria-label="Next song"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.6 5H18v14h-2.4zM4 5l10.5 7L4 19z"/></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>© 2026 sage park</span>
+    <span>designed in figma, [built with claude code]</span>
+    <a href="#top">back to the top</a>
+  </div>
+</footer>
+
+<!-- the dock: prev / next part and your place in the case study -->
+<div class="dock chrome" aria-label="Case study progress">
+  <div class="btns">
+    <button class="orb" type="button" data-step="-1" aria-label="Previous section"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h2.4v14H6zM20 5v14L9.5 12z"/></svg></button>
+    <button class="orb" type="button" data-step="1" aria-label="Next section"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.6 5H18v14h-2.4zM4 5l10.5 7L4 19z"/></svg></button>
+  </div>
+  <div class="info"><span><b class="chapter" data-chapter>issue 12 · reverie</b></span><span class="pl-bar dock-bar" aria-hidden="true"><i data-progress></i></span></div>
+  <span class="count" data-count>1 / 4</span>
+</div>
+
+<div class="toast" role="status" aria-live="polite"></div>
+
+<script>
+  /* the start menu: what's in it on this page */
+  window.SPMenu = [
+    { label: 'work', key: 'w', icon: 'folder', sub: [
+      { label: 'invetty', icon: 'img:img/invetty-logo.webp', href: 'invetty.html', note: 'case study' },
+      { label: 'softspot', icon: 'img:img/softspot/icon.webp', href: 'softspot.html', note: 'case study' },
+      { label: 'strike magazine stl', icon: 'img:img/strike/social/avatar.webp', href: '#top', current: true },
+      { label: 'social media marketing', icon: 'folder-dim', disabled: true, note: 'coming soon' },
+      { label: 'type collection', icon: 'folder-dim', disabled: true, note: 'coming soon' },
+      'sep',
+      { label: 'all work', icon: 'folder', href: 'index.html#work' } ] },
+    { label: 'the issues', key: 'i', icon: 'doc', sub: [
+      { label: 'issue 12 · reverie', icon: 'view', href: '#issue-12' },
+      { label: 'issue 11 · the classics', icon: 'star', href: '#issue-11' },
+      { label: 'issue 10 · sapologie', icon: 'music', href: '#issue-10' },
+      { label: 'social graphics', icon: 'camera', href: '#social' } ] },
+    { label: 'drop the covers again', key: 'd', icon: 'play', action: 'redrop' },
+    { label: 'about', key: 'a', icon: 'person', href: 'about.html' },
+    { label: 'playlist', key: 'p', icon: 'music', href: '#contact' },
+    { label: 'contact', key: 'c', icon: 'mail', sub: [
+      { label: 'email me', icon: 'mail', href: 'mailto:sagespark19@gmail.com' },
+      { label: 'copy my email', icon: 'copy', action: 'copy-email' },
+      { label: 'linkedin', icon: 'case', href: 'https://www.linkedin.com/in/sage-park-422842282/', external: true },
+      { label: 'instagram', icon: 'camera', href: '#contact' } ] },
+    'sep',
+    { label: 'home', key: 'h', icon: 'home', href: 'index.html' },
+    { label: 'back to the top', key: 'b', icon: 'up', href: '#top' }
+  ];
+  window.SPMenuActions = {
+    'redrop': function () { window.scrollTo(0, 0); var b = document.querySelector('[data-redrop]'); if (b) b.click(); },
+    'copy-email': function () {
+      var t = function () { if (window.SP) SP.toast('copied sagespark19@gmail.com'); };
+      try { navigator.clipboard.writeText('sagespark19@gmail.com').then(t, function () { if (window.SP) SP.toast('sagespark19@gmail.com'); }); } catch (e) {}
+    }
+  };
+</script>
+<script src="js/startmenu.js"></script>
+<script src="js/sayhi.js"></script>
+<script src="js/aero.js"></script>
+<script src="js/player.js"></script>
+<script src="js/case.js"></script>
+<script src="js/strike.js"></script>
+<script src="js/social.js"></script>
+</body>
+</html>
