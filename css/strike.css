@@ -1,0 +1,166 @@
+/* strike.css: the strike magazine stl page (js/strike.js and js/social.js drive it).
+   - the top: the three covers dropped on a table
+   - each issue: the printed copy on a table as a stop-motion mockup. Every frame is a new "photo"
+     of it, so nothing glides. js/strike.js picks the style (flip-through, page turn or pile).
+   - social graphics: each post laid out like Instagram, built like the site's windows */
+
+.mag-stage {
+  --table: #E7E2D8;
+  position: relative; overflow: hidden; display: grid; place-items: center;
+  background: var(--table) url(../img/strike/grain.png);
+  perspective: 1900px;
+}
+/* the light falls from the top left, like a window beside the table */
+.mag-stage::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(120% 90% at 25% 10%, rgba(255,255,255,.18), rgba(255,255,255,0) 55%), radial-gradient(140% 120% at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.22));
+}
+/* exposure flicker between frames, the giveaway of a stop-motion shoot */
+.mag-flicker { position: absolute; inset: 0; z-index: 3; pointer-events: none; background: #000; opacity: 0; }
+
+.mag {
+  --pw: 300px; --ph: 388px;
+  position: relative; z-index: 1; width: calc(var(--pw) * 2); height: var(--ph);
+  transform-style: preserve-3d;
+}
+.angled .mag { transform-origin: 50% 60%; }
+.mag .pg {
+  position: absolute; top: 0; width: var(--pw); height: var(--ph); background: #fff center / cover no-repeat;
+  box-shadow: 0 1px 1px rgba(0,0,0,.08);
+}
+.mag .pg.l { left: 0; }
+.mag .pg.r { left: var(--pw); }
+.mag .pg.empty { visibility: hidden; }
+/* the curve into the spine */
+.mag .pg.l::after, .mag .pg.r::after { content: ""; position: absolute; inset: 0; pointer-events: none; }
+.mag .pg.l::after { background: linear-gradient(to left, rgba(0,0,0,.28), rgba(0,0,0,.08) 3%, rgba(0,0,0,0) 9%), linear-gradient(to left, rgba(255,255,255,0) 10%, rgba(255,255,255,.08) 16%, rgba(255,255,255,0) 30%); }
+.mag .pg.r::after { background: linear-gradient(to right, rgba(0,0,0,.3), rgba(0,0,0,.1) 2.5%, rgba(0,0,0,0) 8%), linear-gradient(to right, rgba(255,255,255,0) 9%, rgba(255,255,255,.1) 15%, rgba(255,255,255,0) 28%); }
+/* the shadow a lifted page throws onto the page under it */
+.mag .pg::before { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: var(--cast, 0); }
+.mag .pg.r::before { background: linear-gradient(to right, rgba(0,0,0,.55), rgba(0,0,0,.18) 45%, rgba(0,0,0,0) 85%); }
+.mag .pg.l::before { background: linear-gradient(to left, rgba(0,0,0,.55), rgba(0,0,0,.18) 45%, rgba(0,0,0,0) 85%); }
+/* the shadow the magazine throws on the table, and the stacked page edges */
+.mag-shadow { position: absolute; z-index: -1; top: 1.5%; height: 100%; border-radius: 2px; box-shadow: 0 18px 40px -10px rgba(0,0,0,.45), 0 4px 10px rgba(0,0,0,.22); }
+.mag .edge { position: absolute; top: 0; height: var(--ph); width: 5px; pointer-events: none;
+  background: repeating-linear-gradient(to right, #f4f2ee 0 1px, #d9d5cd 1px 1.6px); }
+.mag .edge.l { left: -4px; border-radius: 2px 0 0 2px; }
+.mag .edge.r { right: -4px; border-radius: 0 2px 2px 0; }
+
+/* the page being turned: its front is the right page, its back is the next left page */
+.leaf { position: absolute; top: 0; left: var(--pw); width: var(--pw); height: var(--ph); transform-origin: 0 50%; transform-style: preserve-3d; z-index: 2; }
+.leaf .face { position: absolute; inset: 0; background: #fff center / cover no-repeat; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.leaf .back { transform: rotateY(180deg); }
+.leaf .face::after { content: ""; position: absolute; inset: 0; background: #000; opacity: var(--shade, 0); }
+
+/* the pile: pages dropped on the table one at a time */
+.pile { position: absolute; inset: 0; z-index: 1; }
+.pile .pg { position: absolute; left: 50%; top: 50%; width: var(--pw); height: var(--ph); background: #fff center / cover no-repeat;
+  box-shadow: 0 10px 24px -8px rgba(0,0,0,.45), 0 1px 2px rgba(0,0,0,.2); }
+.pile .pg.lifted { box-shadow: 0 34px 50px -12px rgba(0,0,0,.4), 0 6px 14px rgba(0,0,0,.18); }
+
+.strike-hero .case-screen { min-height: 0; }
+.strike-hero .hero-copy h1 { margin: 0; }
+.mag-lbl { min-width: 6.2em; font-variant-numeric: tabular-nums; }
+.mag-lbl.r { text-align: right; }
+
+@media (prefers-reduced-motion: reduce) { .mag-flicker { display: none; } }
+
+/* ---------- the top: the three covers on the table ---------- */
+.covers-stage { --table: #E6E1D6; position: relative; overflow: hidden; background: var(--table) url(../img/strike/grain.png); }
+.covers-stage::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(120% 90% at 25% 10%, rgba(255,255,255,.2), rgba(255,255,255,0) 55%), radial-gradient(140% 120% at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.2)); }
+.cover { position: absolute; left: 50%; top: 50%; z-index: 1; display: block; width: var(--cw, 200px); height: var(--ch, 259px); border-radius: 1px;
+  box-shadow: 0 16px 34px -10px rgba(0,0,0,.45), 0 3px 8px rgba(0,0,0,.2), 3px 3px 0 -1px #efece6, 4px 4px 0 -1px #d8d3ca;
+  transition: translate .22s var(--ease-out); }
+.cover.lifted { box-shadow: 0 40px 60px -14px rgba(0,0,0,.4), 0 8px 16px rgba(0,0,0,.18); }
+.cover-img { position: absolute; inset: 0; background: center / cover no-repeat; }
+.cover-img::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to right, rgba(0,0,0,.18), rgba(0,0,0,0) 4%, rgba(255,255,255,.07) 7%, rgba(255,255,255,0) 14%); }
+.cover-tag { position: absolute; left: 0; top: calc(100% + 10px); white-space: nowrap; font-size: 13px; color: rgba(20,20,20,.75); opacity: 0; }
+@media (hover: hover) and (pointer: fine) {
+  .cover:hover { translate: 0 -10px; z-index: 5; }
+  .cover:hover .cover-tag { opacity: 1; }
+}
+.cover:active { translate: 0 -4px; }
+.cover:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+/* ---------- each issue ---------- */
+.issue-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin: 0 0 18px; }
+.issue-head h2 { margin: 0; font-size: clamp(28px, 4vw, 40px); font-weight: 400; letter-spacing: -.02em; line-height: 1.1; }
+.issue-head h2 span { color: var(--ink-2); }
+.issue-head p { margin: 0; color: var(--ink-2); font-size: 14px; font-variant-numeric: tabular-nums; }
+.mag-win .mag-stage { height: auto; aspect-ratio: 16 / 10; margin: 0 10px; }
+.mag-win .transport { padding-bottom: 12px; }
+.mag-win .deck { align-items: center; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+.chips button { border: 0; cursor: pointer; padding: 6px 11px; border-radius: 999px; font: inherit; font-size: 13px; color: var(--ink-2);
+  background: color-mix(in oklab, var(--tint) 16%, transparent); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--chrome-edge) 25%, transparent); }
+.chips button[aria-current="true"] { color: #fff; background: linear-gradient(180deg, rgba(255,255,255,.26), rgba(255,255,255,0) 55%), var(--accent-fill); box-shadow: none; }
+@media (hover: hover) and (pointer: fine) { .chips button:not([aria-current="true"]):hover { color: var(--ink); } }
+.chips button:active { box-shadow: inset 0 2px 4px rgba(0,20,40,.25); }
+.chips button small { opacity: .7; margin-left: 4px; font-variant-numeric: tabular-nums; }
+.issue + .issue { margin-top: clamp(64px, 8vw, 110px); }
+@media (max-width: 700px) { .mag-win .mag-stage { aspect-ratio: 4 / 3; } .mag-win .deck { flex-direction: column; align-items: stretch; gap: 12px; } .chips { justify-content: flex-start; } }
+
+/* the role, and a link to the whole issue on Issuu */
+.issue-meta { display: grid; justify-items: end; gap: 4px; text-align: right; }
+.issuu { display: inline-flex; align-items: center; gap: 5px; font-size: 14px; font-weight: 500; color: var(--accent-ink, var(--accent)); text-decoration: none; }
+.issuu svg { transition: translate .2s var(--ease-out); }
+@media (hover: hover) and (pointer: fine) { .issuu:hover { text-decoration: underline; text-underline-offset: 4px; } .issuu:hover svg { translate: 2px -2px; } }
+@media (max-width: 700px) { .issue-meta { justify-items: start; text-align: left; } }
+
+/* social graphics: each post keeps Instagram's layout (account, picture, actions, caption, date)
+   but is built like the rest of the site: a glossy window whose title bar is the account, the picture
+   inset like a screen, and everything under it on a paper panel, like the "sage says" message. */
+#social { margin-top: clamp(64px, 8vw, 110px); }
+.ig-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 22px; align-items: start; }
+.ig { display: grid; padding-bottom: 10px; font-size: 14px; line-height: 19px; }
+.ig-head { display: flex; align-items: center; gap: 10px; height: 46px; padding: 0 12px 0 12px; color: var(--ink-on-chrome); }
+.ig-av { width: 30px; height: 30px; border-radius: 50%; box-shadow: 0 0 0 2px rgba(255,255,255,.75), 0 1px 3px rgba(0, 20, 40, .3); }
+.ig-who { display: grid; flex: 1; min-width: 0; line-height: 17px; }
+.ig-handle { font-weight: 600; font-size: 13.5px; color: var(--ink); text-decoration: none; width: max-content; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.ig-who small { font-size: 12px; color: var(--ink-2); }
+@media (hover: hover) and (pointer: fine) { .ig-handle:hover { text-decoration: underline; text-underline-offset: 3px; } }
+.ig-more { display: flex; gap: 3px; padding: 6px 4px; }
+.ig-more i { width: 3.5px; height: 3.5px; border-radius: 50%; background: var(--ink-on-chrome); opacity: .8; }
+.ig-media { position: relative; margin: 0 10px; aspect-ratio: 4 / 5; overflow: hidden; border-radius: 4px; background: #0B0F15; box-shadow: 0 0 0 1px var(--screen-rim);
+  touch-action: pan-y; -webkit-user-select: none; user-select: none; }
+.ig-media[role] { cursor: grab; }
+.ig-media.dragging { cursor: grabbing; }
+.post-track { display: flex; height: 100%; will-change: transform; transition: transform .42s var(--ease-drawer); }
+.ig-media.dragging .post-track { transition: none; }
+.post-track img { flex: 0 0 100%; width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+/* the slide count, as a little glossy chip */
+.ig-count { position: absolute; top: 10px; right: 10px; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 500; color: #1B2A3A; font-variant-numeric: tabular-nums;
+  background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.35) 55%, rgba(255,255,255,.55)), color-mix(in oklab, var(--tint) 40%, white);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.6), 0 2px 6px rgba(0, 20, 40, .3); }
+/* previous and next are the site's round glossy buttons */
+.ig-arrow.orb { --s: 30px; position: absolute; top: 50%; margin-top: -15px; }
+.ig-arrow.orb svg { width: 50%; height: 50%; fill: none; stroke: currentColor; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; }
+.ig-arrow.l { left: 8px; } .ig-arrow.r { right: 8px; }
+.ig-arrow[hidden] { display: none; }
+/* the paper panel */
+.ig-paper { display: grid; margin: 8px 10px 0; padding: 2px 0 12px; border-radius: 8px; background: var(--paper); color: var(--paper-ink);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--chrome-edge) 25%, transparent); }
+.ig-bar { position: relative; display: flex; align-items: center; gap: 0; padding: 4px 4px 0; }
+.ig-btn { display: grid; place-items: center; width: 38px; height: 40px; padding: 0; border: 0; border-radius: 8px; background: none; color: var(--paper-ink); cursor: pointer; }
+.ig-btn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linejoin: round; stroke-linecap: round; }
+.ig-btn:active svg { transform: scale(.88); transition: transform .1s var(--ease-out); }
+.ig-save { margin-left: auto; }
+.ig-like[aria-pressed="true"] svg { fill: #E0415F; stroke: #E0415F; animation: ig-pop .34s var(--ease-out); }
+.ig-save[aria-pressed="true"] svg { fill: var(--accent-fill); stroke: var(--accent-fill); }
+@keyframes ig-pop { 40% { transform: scale(1.22); } }
+@media (hover: hover) and (pointer: fine) { .ig-btn:hover { background: color-mix(in oklab, var(--accent) 10%, transparent); } }
+.ig-dots { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); display: flex; gap: 5px; padding: 4px 7px; border-radius: 999px; pointer-events: none;
+  background: rgba(10, 20, 30, .28); }
+.ig-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.5); }
+.ig-dots i.on { background: #fff; box-shadow: 0 0 0 1.5px color-mix(in oklab, var(--accent) 70%, transparent); }
+.ig-cap { position: relative; margin: 2px 14px 0; overflow-wrap: anywhere; }
+.ig-cap p { margin: 0; }
+.ig-cap.clamp p { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ig-cap b { font-weight: 600; margin-right: 4px; }
+.ig-cap a { color: var(--accent-ink); text-decoration: none; }
+@media (hover: hover) and (pointer: fine) { .ig-cap a:hover { text-decoration: underline; text-underline-offset: 3px; } }
+.ig-more-btn { padding: 0; border: 0; background: none; font: inherit; color: var(--paper-2); cursor: pointer; }
+.ig-view { display: inline-flex; align-items: center; gap: 5px; margin: 8px 14px 0; width: max-content; color: var(--accent-ink); font-weight: 500; text-decoration: none; }
+@media (hover: hover) and (pointer: fine) { .ig-view:hover { text-decoration: underline; text-underline-offset: 3px; } }
+.ig-date { margin: 6px 14px 0; font-size: 12px; color: var(--paper-2); font-variant-numeric: tabular-nums; }
