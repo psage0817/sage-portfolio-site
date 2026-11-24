@@ -127,6 +127,8 @@ img { max-width: 100%; }
 .side-body { flex: 1; min-width: 0; padding: 0 0 8px; }
 .side .sm-list { padding: 6px 6px 0; }
 .side .sm-row { min-height: 40px; }
+/* a section without an icon: its name starts at the edge */
+.side .sm-row.no-ico { grid-template-columns: minmax(0, 1fr) auto; }
 .side .sm-row[aria-current="true"] { color: #fff; background: linear-gradient(180deg, rgba(255,255,255,.26), rgba(255,255,255,0) 55%), var(--accent-fill); }
 .side .sm-row[aria-current="true"] .sm-note { color: rgba(255,255,255,.85); }
 .side .sm-note { font-variant-numeric: tabular-nums; }

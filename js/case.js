@@ -10,20 +10,22 @@
 
   /* ---------- the side menu ---------- */
   var ic = window.SPIcon || function () { return '<span class="sm-ico"></span>'; };
-  // built from the page: each .sec gives its id, data-name and data-icon; the banner reads the side's data-title
+  // built from the page: each .sec gives its id, data-name and data-icon (data-icon="none" for no icon);
+  // the banner reads the side's data-title, then data-sub ("case study" unless the page says otherwise)
   var side = document.querySelector('.side');
   var SIDE = Array.prototype.map.call(document.querySelectorAll('.sec[data-name]'), function (s) { return [s.id, s.getAttribute('data-name'), s.getAttribute('data-icon') || 'doc']; });
+  var sub = side.hasAttribute('data-sub') ? side.getAttribute('data-sub') : 'case study';
   side.innerHTML = '<nav class="side-panel" aria-label="Sections">' +
-    '<div class="sm-banner" aria-hidden="true">' + (side.getAttribute('data-title') || '') + '<small>case study</small></div>' +
+    '<div class="sm-banner" aria-hidden="true">' + (side.getAttribute('data-title') || '') + (sub ? '<small>' + sub + '</small>' : '') + '</div>' +
     '<div class="side-body"><ul class="sm-list">' +
-    SIDE.map(function (x, k) { return '<li><a class="sm-row" href="#' + x[0] + '">' + ic(x[2]) + '<span>' + x[1] + '</span><span class="sm-note">' + (k + 1) + '</span></a></li>'; }).join('') +
+    SIDE.map(function (x, k) { var none = x[2] === 'none'; return '<li><a class="sm-row' + (none ? ' no-ico' : '') + '" data-sec href="#' + x[0] + '">' + (none ? '' : ic(x[2])) + '<span>' + x[1] + '</span><span class="sm-note">' + (k + 1) + '</span></a></li>'; }).join('') +
     '</ul><div class="sm-sep" role="separator"></div>' +
     '<div class="side-progress"><span data-count>1 / 6</span><div class="pl-bar" aria-hidden="true"><i data-side-bar></i></div></div>' +
     '<div class="sm-sep" role="separator"></div><ul class="sm-list">' +
     '<li><a class="sm-row" href="index.html#work">' + ic('folder') + '<span>all work</span><span></span></a></li>' +
     '<li><a class="sm-row" href="#top">' + ic('up') + '<span>back to the top</span><span></span></a></li>' +
     '</ul></div></nav>';
-  var sideLinks = side.querySelectorAll('a[href^="#s-"]'), sideBar = side.querySelector('[data-side-bar]');
+  var sideLinks = side.querySelectorAll('a[data-sec]'), sideBar = side.querySelector('[data-side-bar]');
 
   /* ---------- your place in the case study ---------- */
   var secs = Array.prototype.slice.call(document.querySelectorAll('.sec[data-name]'));
