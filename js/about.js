@@ -16,19 +16,19 @@
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   var ROLL = [
-    { file: 'strike-poster', name: 'IMG_1309', alt: 'Holding a printed Strike poster with the word strike repeated down it' },
-    { file: 'alphabet-sketch', name: 'IMG_0920', alt: 'Pencil sketches of a modular alphabet on graph paper' },
-    { file: 'group', name: 'fqs_2026-11-13', alt: 'A group photo in front of a stone wall' },
-    { file: 'sticky-notes', name: 'IMG_1906', alt: 'Sticky notes on a board under the headings celiac and gluten, I like, I wish, what if' },
-    { file: 'singing', name: 'IMG_2094', alt: 'Singing into a microphone on stage in a long blue dress' },
-    { file: 'handwritten-alphabet', name: 'IMG_1979', alt: 'A hand-drawn alphabet and numbers open in Illustrator' },
-    { file: 'student-leaders', name: 'IMG_8697', alt: 'Five student leaders on a stage in front of a screen reading serve, inspire, change' },
-    { file: 'haze-code', name: 'IMG_5581', alt: 'Blackout poetry spreads for the haze code, on a desk' },
-    { file: 'speaking', name: 'IMG_9087', alt: 'Asking a question into a microphone at a conference' },
-    { file: 'storyboard', name: 'IMG_1239', alt: 'A hand-drawn storyboard in eight panels' },
-    { file: 'tv-interview', name: 'IMG_9817', alt: 'A Fox 5 San Diego interview, captioned Sage Park, Bank of America Student Leader' },
-    { file: 'type-laptop', name: 'IMG_1312', alt: 'A modular typeface on a laptop screen in a studio' },
-    { file: 'dinner', name: 'IMG_1793', alt: 'A selfie with friends at a dinner table with laptops out' }
+    { file: 'strike-poster', name: '#sponsoredbyredbull', alt: 'printing for strike #sponsoredbyredbull' },
+    { file: 'alphabet-sketch', name: 'early pixel type sketches', alt: 'early pixel type sketches' },
+    { file: 'group', name: 'sens my family aww', alt: 'sens my family aww' },
+    { file: 'sticky-notes', name: 'after invetty final pitch', alt: 'after invetty final pitch' },
+    { file: 'singing', name: 'when i sang my sea - iu this fall', alt: 'when i sang my sea - iu this fall' },
+    { file: 'handwritten-alphabet', name: 'working on pixel type..', alt: 'working on pixel type..' },
+    { file: 'student-leaders', name: 'bank of america student leaders conference!', alt: 'bank of america student leaders conference!' },
+    { file: 'haze-code', name: 'haze code spread for strike', alt: 'working on the haze code spread for strike issue 11' },
+    { file: 'speaking', name: 'asking questions for the panelists at the bofa conference', alt: 'asking questions for the panelists at the bank of america student leaders conference' },
+    { file: 'storyboard', name: 'storyboarding for invetty', alt: 'storyboarding for invetty' },
+    { file: 'tv-interview', name: 'that time i was on fox 5 san diego for my goodwill/bofa internship!', alt: 'that time i was on fox 5 san diego for my goodwill/bofa internship!' },
+    { file: 'type-laptop', name: 'modular typeface in progres...', alt: 'modular typeface in progres...' },
+    { file: 'dinner', name: 'designathon dinner', alt: 'designathon dinner' }
   ];
   var SPEED = 40;   // how fast the photos drift, in pixels a second
 
