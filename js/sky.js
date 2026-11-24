@@ -25,8 +25,8 @@
      Use photos at least 2400px wide so the view through the beads stays sharp. */
   var PHOTOS = {
     // san diego sits low in the window so the tracks show: that's where the train runs
-    sd:  { day: 'img/sky/sd-day.jpg',  sunset: 'img/sky/sd-sunset.jpg',  night: 'img/sky/sd-night.jpg',  focus: [0.5, 0.92], water: 'img/sky/sd-water.png' },
-    stl: { day: 'img/sky/stl-day.jpg', sunset: 'img/sky/stl-sunset.jpg', night: 'img/sky/stl-night.jpg', focus: [0.5, 0.6] }
+    sd:  { day: 'img/sky/sd-day.webp',  sunset: 'img/sky/sd-sunset.webp',  night: 'img/sky/sd-night.webp',  focus: [0.5, 0.92], water: 'img/sky/sd-water.png' },
+    stl: { day: 'img/sky/stl-day.webp', sunset: 'img/sky/stl-sunset.webp', night: 'img/sky/stl-night.webp', focus: [0.5, 0.6] }
   };
 
   // how much haze softens the san diego coast's colours in daylight (0 = none, 1 = all sky)
@@ -51,7 +51,8 @@
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var forced = new URLSearchParams(location.search).get('city');
   var state = {
-    city: CITIES[forced] ? forced : (Math.random() < 0.5 ? 'sd' : 'stl'),
+    // the page head usually picks the city already (so its photos start downloading first)
+    city: CITIES[forced] ? forced : (CITIES[window.SPCity] ? window.SPCity : (Math.random() < 0.5 ? 'sd' : 'stl')),
     live: true,
     scrub: 720
   };
@@ -395,8 +396,11 @@
   var heroSvg = hero.querySelector('.sky-scene');
   var footSvg = document.querySelector('.foot-sky');
 
+  // a city with photos never shows the drawing, not even while its photos load: the screen stays dark
+  // (sky-wait) until they're ready. The drawing only comes back if the photos can't be loaded.
+  var photoFailed = {};
   function drawCity() {
-    heroSvg.innerHTML = heroScene(state.city);
+    heroSvg.innerHTML = PHOTOS[state.city] && !photoFailed[state.city] ? '' : heroScene(state.city);
     if (footSvg) {
       footSvg.setAttribute('viewBox', state.city === 'sd' ? '0 190 1200 320' : '0 200 1200 270');
       footSvg.innerHTML = footScene(state.city);
@@ -425,29 +429,58 @@
     }
     return photoLoads[src];
   }
+  // the photos come in two steps: first the ones the window shows at the start (the day photo, plus the
+  // sunset or night photo if the day starts in the evening), then the rest. The screen switches on after
+  // the first step, so it never waits on photos it doesn't need yet.
+  function firstNeeded() {
+    var t = (state.live && !root.classList.contains('opening') ? localMinutes(CITIES[state.city].tz) : state.scrub) / 60;
+    return { sunset: t >= 16.9 && t < 21, night: t >= 18.6 || t < 6 };
+  }
   function applyPhotos() {
     var want = state.city, cfg = PHOTOS[want];
     if (!cfg) return;
-    Promise.all([loadImg(cfg.day), loadImg(cfg.night), loadImg(cfg.sunset), cfg.water ? loadImg(cfg.water) : null]).then(function (got) {
+    var need = firstNeeded();
+    var first = [loadImg(cfg.day), need.night ? loadImg(cfg.night) : null, need.sunset ? loadImg(cfg.sunset) : null];
+    Promise.all(first).then(function (got) {
       if (state.city !== want || typeof fog === 'undefined') return;   // the city changed while loading
-      var day = got[0], night = got[1], sunset = got[2];
-      photoHas = { night: !!night, sunset: !!sunset };
-      // live: the san diego view gets moving waves and the train (js/glass.js)
-      var p = day ? { day: day, night: night, sunset: sunset, fx: cfg.focus[0], fy: cfg.focus[1], live: want === 'sd', water: got[3] } : null;
-      fog.setPhotos(p);
-      // without the condensation layer, show the photo plainly behind the flat fog instead of the drawing
-      plainPhoto = !!day && !fog.hasGlass();
-      var view = hero.querySelector('.sky-view');
-      view.style.backgroundImage = plainPhoto ? 'url("' + cfg.day + '")' : '';
-      view.style.backgroundSize = plainPhoto ? 'cover' : '';
-      view.style.backgroundPosition = plainPhoto ? (cfg.focus[0] * 100) + '% ' + (cfg.focus[1] * 100) + '%' : '';
-      if (!plainPhoto) view.style.filter = '';
-      [heroSvg, hero.querySelector('.sky-sun'), hero.querySelector('.sky-moon')].forEach(function (el) {
-        if (el) el.style.visibility = plainPhoto ? 'hidden' : '';
+      var day = got[0];
+      if (!day) { photoFailed[want] = true; heroSvg.innerHTML = heroScene(want); usePhotos(want, null); return; }
+      var rest = Promise.all([loadImg(cfg.night), loadImg(cfg.sunset), cfg.water ? loadImg(cfg.water) : null]);
+      var all = function (r) { if (state.city === want) usePhotos(want, { day: day, night: r[0], sunset: r[1], water: r[2] }); };
+      // if the rest are already here (a second visit), use everything at once
+      Promise.race([rest, new Promise(function (res) { setTimeout(res, 120); })]).then(function (r) {
+        if (r) { all(r); return; }
+        usePhotos(want, { day: day, night: got[1], sunset: got[2], water: null });
+        rest.then(all);
       });
-      paint();
     });
   }
+  function usePhotos(want, ph) {
+    var cfg = PHOTOS[want], day = ph && ph.day;
+    photoHas = { night: !!(ph && ph.night), sunset: !!(ph && ph.sunset) };
+    // live: the san diego view gets moving waves and the train (js/glass.js)
+    var p = day ? { day: day, night: ph.night, sunset: ph.sunset, fx: cfg.focus[0], fy: cfg.focus[1], live: want === 'sd', water: ph.water } : null;
+    fog.setPhotos(p);
+    // without the condensation layer, show the photo plainly behind the flat fog instead of the drawing
+    plainPhoto = !!day && !fog.hasGlass();
+    var view = hero.querySelector('.sky-view');
+    view.style.backgroundImage = plainPhoto ? 'url("' + cfg.day + '")' : '';
+    view.style.backgroundSize = plainPhoto ? 'cover' : '';
+    view.style.backgroundPosition = plainPhoto ? (cfg.focus[0] * 100) + '% ' + (cfg.focus[1] * 100) + '%' : '';
+    if (!plainPhoto) view.style.filter = '';
+    [heroSvg, hero.querySelector('.sky-sun'), hero.querySelector('.sky-moon')].forEach(function (el) {
+      if (el) el.style.visibility = plainPhoto ? 'hidden' : '';
+    });
+    paint();
+    // the photo is on the glass: switch the screen on (after the frame that draws it)
+    requestAnimationFrame(function () { requestAnimationFrame(skyReady); });
+  }
+  // the screen switches on once, when the first photo is drawn, or after 6 seconds whatever happens
+  var skyReady, skyOn = new Promise(function (resolve) {
+    skyReady = function () { root.classList.remove('sky-wait'); resolve(); };
+    setTimeout(skyReady, 6000);
+  });
+  window.SPSkyReady = skyOn;
 
   /* ---------- time ---------- */
   function localMinutes(tz) {

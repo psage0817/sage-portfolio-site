@@ -34,7 +34,8 @@
   };
   function icon(name) {
     if (!name) return '<span class="sm-ico"></span>';
-    if (name.indexOf('img:') === 0) return '<span class="sm-ico sm-thumb"><img src="' + name.slice(4) + '" alt=""></span>';
+    // lazy: the menu is closed when the page loads, so its pictures wait until it opens
+    if (name.indexOf('img:') === 0) return '<span class="sm-ico sm-thumb"><img src="' + name.slice(4) + '" alt="" loading="lazy" decoding="async" width="24" height="24"></span>';
     return '<span class="sm-ico" aria-hidden="true">' + (ICONS[name] || '') + '</span>';
   }
   window.SPIcon = icon;

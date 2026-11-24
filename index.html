@@ -18,6 +18,16 @@
       document.documentElement.setAttribute('data-theme', s0 >= 7 && s0 < 18 ? 'day' : 'night');
     }
   } catch (e) {}
+  // the window's view: pick the city now (js/sky.js uses this) and start its day photo downloading before
+  // anything else, so the window can switch on straight to the photo. The screen stays dark until then.
+  try {
+    var c0 = new URLSearchParams(location.search).get('city');
+    window.SPCity = c0 === 'sd' || c0 === 'stl' ? c0 : (Math.random() < 0.5 ? 'sd' : 'stl');
+    document.documentElement.classList.add('sky-wait');
+    var l = document.createElement('link');
+    l.rel = 'preload'; l.as = 'image'; l.href = 'img/sky/' + window.SPCity + '-day.webp'; l.setAttribute('fetchpriority', 'high');
+    document.head.appendChild(l);
+  } catch (e) {}
 </script>
 <link rel="preconnect" href="https://api.fontshare.com" crossorigin>
 <!-- Satoshi, from Fontshare (free for personal and commercial use) -->
@@ -119,7 +129,7 @@
       <article class="proj" data-cat="ux" style="--led: #9DA8F5">
         <a class="mini chrome" href="invetty.html">
           <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">invetty · s.park media player</span></div>
-          <div class="mini-screen"><img src="img/invetty-cover.webp" alt="Three invetty screens on phones: the host’s event page, the celiac alert and the allergy questionnaire" width="1600" height="1200"></div>
+          <div class="mini-screen"><img src="img/invetty-cover.webp" loading="lazy" decoding="async" alt="Three invetty screens on phones: the host’s event page, the celiac alert and the allergy questionnaire" width="1600" height="1200"></div>
           <div class="mini-bar"><span class="orb big" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span class="go">read the case study</span><span class="meta">2026</span></div>
         </a>
         <div class="memo">
@@ -136,7 +146,7 @@
       <article class="proj" data-cat="ux" style="--led: #FFD36E">
         <a class="mini chrome" href="softspot.html">
           <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">softspot · s.park media player</span></div>
-          <div class="mini-screen"><img src="img/softspot-cover.webp" alt="The softspot welcome screen on a phone in a stone stand on a desk" width="1600" height="1200"></div>
+          <div class="mini-screen"><img src="img/softspot-cover.webp" loading="lazy" decoding="async" alt="The softspot welcome screen on a phone in a stone stand on a desk" width="1600" height="1200"></div>
           <div class="mini-bar"><span class="orb big" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span class="go">read the case study</span><span class="meta">2026</span></div>
         </a>
         <div class="memo">
@@ -153,7 +163,7 @@
       <article class="proj" data-cat="brand" style="--led: #F5A9BE">
         <a class="mini chrome" href="strike.html">
           <div class="titlebar"><span class="app-orb" aria-hidden="true"></span><span class="t">strike magazine stl · s.park media player</span></div>
-          <div class="mini-screen"><img src="img/strike-cover.webp" alt="The covers of Strike Magazine St. Louis issues 10, 11 and 12 on a table" width="1600" height="1200"></div>
+          <div class="mini-screen"><img src="img/strike-cover.webp" loading="lazy" decoding="async" alt="The covers of Strike Magazine St. Louis issues 10, 11 and 12 on a table" width="1600" height="1200"></div>
           <div class="mini-bar"><span class="orb big" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span class="go">see the issues</span><span class="meta">2025–26</span></div>
         </a>
         <div class="memo">
@@ -282,8 +292,8 @@
       { label: 'all work', icon: 'folder', href: '#work' } ] },
     { label: 'about', key: 'a', icon: 'person', href: 'about.html' },
     { label: 'the view', key: 'v', icon: 'view', sub: [
-      { label: 'san diego', icon: 'img:img/sky/sd-day.jpg', action: 'city-sd' },
-      { label: 'st. louis', icon: 'img:img/sky/stl-day.jpg', action: 'city-stl' },
+      { label: 'san diego', icon: 'img:img/sky/sd-thumb.webp', action: 'city-sd' },
+      { label: 'st. louis', icon: 'img:img/sky/stl-thumb.webp', action: 'city-stl' },
       'sep',
       { label: 'play the day again', icon: 'play', action: 'replay' },
       { label: 'back to now', icon: 'clock', action: 'now' } ] },

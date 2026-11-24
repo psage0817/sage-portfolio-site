@@ -137,7 +137,8 @@
   pop.querySelectorAll('[data-go-city]').forEach(function (b) { b.addEventListener('click', function () { picks[b.getAttribute('data-go-city')].click(); syncMini();  }); });
   setInterval(function () { if (!pop.hidden) syncMini(); }, 400);
   range.addEventListener('input', function () { if (!pop.hidden) syncMini(); });
-  intro();
+  // the day starts playing when the window's photo is ready (js/sky.js), so it never plays on a dark screen
+  (window.SPSkyReady || Promise.resolve()).then(intro);
 
   /* the rotating words, one slot at a time */
   var WORDS = {
