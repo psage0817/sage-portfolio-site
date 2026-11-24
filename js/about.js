@@ -51,13 +51,16 @@
   if (!roll) return;
   var view = roll.querySelector('.roll-view');
   function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
-  function shot(p, copy) {
-    return '<figure class="shot"' + (copy ? ' aria-hidden="true"' : '') + '><span class="bar"><span class="app-orb" aria-hidden="true"></span>' + esc(p.name) + '</span>' +
+  // the windows sit at staggered heights, in a pattern that repeats; a photo and its copy get the same
+  // step, so the pattern never jumps when the strip loops
+  var STAGGER = [0, 1, .3, .75];
+  function shot(p, copy, i) {
+    return '<figure class="shot" style="--k:' + STAGGER[i % STAGGER.length] + '"' + (copy ? ' aria-hidden="true"' : '') + '><span class="bar"><span class="app-orb" aria-hidden="true"></span>' + esc(p.name) + '</span>' +
       '<img src="img/about/roll/' + p.file + '.webp" alt="' + (copy ? '' : esc(p.alt)) + '" decoding="async"></figure>';
   }
   // the photos, then a copy of them, so the strip can loop forever without a gap
   function buildRoll() {
-    view.innerHTML = '<div class="roll-row">' + ROLL.map(function (p) { return shot(p); }).join('') + ROLL.map(function (p) { return shot(p, true); }).join('') + '</div>';
+    view.innerHTML = '<div class="roll-row">' + ROLL.map(function (p, i) { return shot(p, false, i); }).join('') + ROLL.map(function (p, i) { return shot(p, true, i); }).join('') + '</div>';
     tracks = [{ el: view.firstChild, x: 0, dir: -1, period: 1 }];
     measure();
     view.querySelectorAll('img').forEach(function (i) { i.addEventListener('load', measure, { once: true }); });
