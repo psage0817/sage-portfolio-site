@@ -96,14 +96,18 @@ details[open] .xp-more { animation: rise .3s var(--ease-out); }
   -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%); }
 .roll-view.dragging { cursor: grabbing; }
 .roll-view img { -webkit-user-drag: none; pointer-events: none; }
-.roll-row { display: flex; width: max-content; gap: 18px; will-change: transform; }
-/* each photo in its own little window, named like the file on my phone */
-.shot { flex: none; margin: 0; border-radius: 12px; padding: 0 7px 7px;
-  background: linear-gradient(180deg, rgba(255,255,255, calc(.85 * var(--gloss))) 0, rgba(255,255,255, calc(.3 * var(--gloss))) 30px, rgba(255,255,255,0) 31px), linear-gradient(180deg, var(--chrome-1), var(--chrome-2) 40%, var(--chrome-3));
+.roll-row { display: flex; align-items: flex-end; width: max-content; gap: 18px; will-change: transform; }
+/* each photo in its own little window with its caption in the title bar. The window is exactly as wide
+   as its photo: a long caption wraps onto more lines (the window gets taller) instead of widening it,
+   so the photo always fills the window, never cropped or stretched. The photos line up along the bottom. */
+.shot { flex: none; width: min-content; margin: 0; border-radius: 12px; padding: 0 7px 7px;
+  background: linear-gradient(180deg, var(--chrome-1), var(--chrome-2) 40%, var(--chrome-3));
   box-shadow: 0 16px 30px -18px rgba(10, 36, 64, .5), 0 1px 3px rgba(15, 40, 70, .12), inset 0 1px 0 var(--chrome-hi), inset 0 0 0 1px color-mix(in oklab, var(--chrome-edge) 45%, transparent); }
-.shot .bar { display: flex; align-items: center; gap: 7px; height: 30px; padding: 0 4px; font-size: 12px; font-weight: 500; color: var(--ink-on-chrome); white-space: nowrap; }
-.shot .bar .app-orb { width: 12px; height: 12px; }
-.shot img { display: block; height: 280px; width: auto; border-radius: 2px; box-shadow: 0 0 0 1px var(--screen-rim); }
+/* the shine sits on the title bar, so it grows with a two-line caption */
+.shot .bar { display: flex; align-items: flex-start; gap: 7px; min-height: 30px; margin: 0 -7px; padding: 8px 11px 6px; border-radius: 12px 12px 0 0;
+  background: linear-gradient(180deg, rgba(255,255,255, calc(.85 * var(--gloss))), rgba(255,255,255, calc(.3 * var(--gloss)))); font-size: 12px; font-weight: 500; line-height: 1.3; color: var(--ink-on-chrome); text-wrap: pretty; }
+.shot .bar .app-orb { flex: none; width: 12px; height: 12px; margin-top: 1px; }
+.shot img { display: block; height: 280px; width: auto; max-width: none; border-radius: 2px; box-shadow: 0 0 0 1px var(--screen-rim); }
 /* the arrows at either end, in glass, so the photos show through */
 .roll-arrow { position: absolute; top: 50%; z-index: 3; --s: 42px; translate: 0 -50%; color: #fff; opacity: .75;
   background: radial-gradient(120% 70% at 50% 0%, rgba(255,255,255,.4) 0 38%, rgba(255,255,255,0) 40%), rgba(20, 40, 60, .16);
