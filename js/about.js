@@ -21,13 +21,13 @@
     { file: 'group', name: 'sens my family aww', alt: 'sens my family aww' },
     { file: 'sticky-notes', name: 'after invetty final pitch', alt: 'after invetty final pitch' },
     { file: 'singing', name: 'when i sang my sea - iu this fall', alt: 'when i sang my sea - iu this fall' },
-    { file: 'handwritten-alphabet', name: 'working on pixel type..', alt: 'working on pixel type..' },
+    { file: 'handwritten-alphabet', name: 'working on pixel type..', alt: 'modular type in progress..' },
     { file: 'student-leaders', name: 'bank of america student leaders conference!', alt: 'bank of america student leaders conference!' },
     { file: 'haze-code', name: 'haze code spread for strike', alt: 'working on the haze code spread for strike issue 11' },
     { file: 'speaking', name: 'asking questions for the panelists at the bofa conference', alt: 'asking questions for the panelists at the bank of america student leaders conference' },
     { file: 'storyboard', name: 'storyboarding for invetty', alt: 'storyboarding for invetty' },
     { file: 'tv-interview', name: 'that time i was on fox 5 san diego for my goodwill/bofa internship!', alt: 'that time i was on fox 5 san diego for my goodwill/bofa internship!' },
-    { file: 'type-laptop', name: 'modular typeface in progres...', alt: 'modular typeface in progres...' },
+    { file: 'type-laptop', name: 'modular typeface in progres...', alt: 'pixel type in progress..' },
     { file: 'dinner', name: 'designathon dinner', alt: 'designathon dinner' }
   ];
   var SPEED = 40;   // how fast the photos drift, in pixels a second
